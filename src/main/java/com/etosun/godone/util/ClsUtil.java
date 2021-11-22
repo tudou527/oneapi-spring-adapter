@@ -30,14 +30,20 @@ public class ClsUtil {
     public static String completeType(String typeName, List<String> imports) {
         AtomicReference<String> fullTypeName = new AtomicReference<>("");
         imports.forEach(name -> {
+            // import a.b.c.{typeName} 的情况
             if (name.endsWith("."+ typeName)) {
                 fullTypeName.set(name);
             }
         });
 
+        // 考虑同目录
+        
+
         if (fullTypeName.get().contains(".")) {
             return fullTypeName.get();
         }
+
+        // 可能存在 import a.b.c.* 的情况
 
         return null;
     }

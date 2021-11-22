@@ -8,7 +8,6 @@ package com.etosun.godone.analysis;
 
 import com.etosun.godone.models.ClsField;
 import com.etosun.godone.models.JavaCls;
-import com.etosun.godone.models.JavaFile;
 import com.etosun.godone.util.ClsUtil;
 import com.thoughtworks.qdox.model.JavaClass;
 

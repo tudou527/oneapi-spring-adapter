@@ -1,3 +1,9 @@
+/**
+ * Alipay.com Inc. Copyright (c) 2004-2021 All Rights Reserved.
+ *
+ * @auther xiaoyun
+ * @create 2021-06-02 下午7:40
+ */
 package com.etosun.godone;
 
 import com.alibaba.fastjson.JSON;
@@ -5,19 +11,13 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.etosun.godone.analysis.ProjectAnalysis;
 import com.etosun.godone.models.JavaFile;
 import com.etosun.godone.util.FileUtil;
+import com.etosun.godone.util.JarFileUtil;
 import com.etosun.godone.util.Logger;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-
-/**
- * Alipay.com Inc. Copyright (c) 2004-2021 All Rights Reserved.
- *
- * @auther xiaoyun
- * @create 2021-06-02 下午7:40
- */
 
 @SpringBootApplication
 public class App {
@@ -44,6 +44,8 @@ public class App {
         }
 
         Logger.info(arguments);
+
+        JarFileUtil.getClasses();
 
         ArrayList<JavaFile> result = new ProjectAnalysis().run(arguments);
         String content = JSON.toJSONString(result, SerializerFeature.DisableCircularReferenceDetect);

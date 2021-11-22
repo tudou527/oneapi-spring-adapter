@@ -7,7 +7,6 @@
 package com.etosun.godone.analysis;
 
 import com.etosun.godone.models.ClsMethod;
-import com.etosun.godone.models.JavaFile;
 import com.etosun.godone.models.JavaActualType;
 import com.etosun.godone.models.MethodParameter;
 import com.etosun.godone.util.ClsUtil;
