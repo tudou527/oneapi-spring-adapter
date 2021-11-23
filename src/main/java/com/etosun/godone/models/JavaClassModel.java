@@ -15,48 +15,48 @@ import java.util.ArrayList;
  * Class 模型
  */
 @Data
-public class JavaCls {
+public class JavaClassModel {
     // 类名
     @JSONField(ordinal = 0)
     String name;
 
     // class 路径 a.b.c.d
-    @JSONField(ordinal = 1)
+    @JSONField(ordinal = 10)
     String classPath;
 
     // 注释
-    @JSONField(ordinal = 2)
-    Description description;
+    @JSONField(ordinal = 20)
+    JavaDescriptionModel description;
 
     // 注解
-    @JSONField(ordinal = 4)
-    ArrayList<Annotation> annotation = new ArrayList<Annotation>();
+    @JSONField(ordinal = 30)
+    ArrayList<JavaAnnotationModel> annotation = new ArrayList<>();
 
     // 是否枚举
-    @JSONField(ordinal = 5)
+    @JSONField(ordinal = 40)
     Boolean isEnum = false;
 
     // 是否 interface
-    @JSONField(ordinal = 6)
+    @JSONField(ordinal = 50)
     Boolean isInterface = false;
 
     // 是否 抽象类
-    @JSONField(ordinal = 7)
+    @JSONField(ordinal = 70)
     Boolean isAbstract = false;
 
     // 是否 private class
-    @JSONField(ordinal = 8)
+    @JSONField(ordinal = 80)
     Boolean isPrivate = false;
 
     // 是否 private class
-    @JSONField(ordinal = 9)
+    @JSONField(ordinal = 90)
     Boolean isPublic = false;
 
     // 属性
-    @JSONField(ordinal = 10)
-    ArrayList<ClsField> fields = new ArrayList<>();
+    @JSONField(ordinal = 100)
+    ArrayList<JavaClassFieldModel> fields = new ArrayList<>();
 
     // 方法
-    @JSONField(ordinal = 11)
-    ArrayList<ClsMethod> methods = new ArrayList<>();
+    @JSONField(ordinal = 110)
+    ArrayList<JavaClassMethodModel> methods = new ArrayList<>();
 }

@@ -6,8 +6,8 @@
  */
 package com.etosun.godone.util;
 
-import com.etosun.godone.models.Annotation;
-import com.etosun.godone.models.Description;
+import com.etosun.godone.models.JavaAnnotationModel;
+import com.etosun.godone.models.JavaDescriptionModel;
 import com.etosun.godone.models.JavaActualType;
 import com.thoughtworks.qdox.model.DocletTag;
 import com.thoughtworks.qdox.model.JavaAnnotation;
@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class ClsUtil {
+public class ClassUtil {
     /**
      * 根据 typeName 推断出完整的类型名称
      */
@@ -51,8 +51,8 @@ public class ClsUtil {
     /**
       * 解析注解
       */
-    public static ArrayList<Annotation> getAnnotation(List<JavaAnnotation> annotations, List<String> imports) {
-        ArrayList<Annotation> ans = new ArrayList<Annotation>();
+    public static ArrayList<JavaAnnotationModel> getAnnotation(List<JavaAnnotation> annotations, List<String> imports) {
+        ArrayList<JavaAnnotationModel> ans = new ArrayList<>();
 
         if (annotations == null) {
             return null;
@@ -60,12 +60,10 @@ public class ClsUtil {
 
         // 遍历所有注解
         annotations.forEach(an -> {
-            Annotation javaAn = new Annotation();
+            JavaAnnotationModel javaAn = new JavaAnnotationModel();
 
             // 需要补全注解的完整类型
             String anClassName = an.getType().getName();
-            javaAn.setName(anClassName);
-            javaAn.setClassPath(completeType(anClassName, imports));
 
             Map<String, AnnotationValue> anMap = an.getPropertyMap();
 
@@ -93,8 +91,6 @@ public class ClsUtil {
                     }
                     anProperty.put(k, value);
                 });
-
-                javaAn.setFields(anProperty);
             }
 
             ans.add(javaAn);
@@ -106,9 +102,9 @@ public class ClsUtil {
     /**
      * 解析注释
      */
-    public static Description getDescription(String comment, List<DocletTag> tags) {
-        Description desc = new Description();
-        desc.setComment(comment);
+    public static JavaDescriptionModel getDescription(String comment, List<DocletTag> tags) {
+        JavaDescriptionModel desc = new JavaDescriptionModel();
+        desc.setText(comment);
 
         if (tags != null) {
             tags.forEach(tag -> {

@@ -8,20 +8,16 @@ package com.etosun.godone;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.etosun.godone.analysis.ProjectAnalysis;
-import com.etosun.godone.models.JavaFile;
-import com.etosun.godone.util.FileUtil;
-import com.etosun.godone.util.JarFileUtil;
-import com.etosun.godone.util.Logger;
+import com.etosun.godone.models.JavaFileModel;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import java.util.ArrayList;
+import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
 
 @SpringBootApplication
 public class App {
-    public static void run(String[] args) {
+    public static void run(String[] args) throws Exception {
         HashMap<String, String> arguments = new HashMap<>();
 
         Arrays.asList(args).forEach(arg -> {
@@ -29,35 +25,24 @@ public class App {
             arguments.put(str[0], str[1]);
         });
 
-        // 打印 request 参数方便排查
-        if (arguments.get("project") == null) {
-            Logger.info("参数错误，缺少 project 参数");
-            return;
-        }
-        if (arguments.get("savePath") == null) {
-            Logger.info("参数错误，缺少 savePath 参数");
-            return;
-        }
-        if (arguments.get("repository") == null) {
-            Logger.info("参数错误，缺少 repository 参数");
-            return;
+        if (arguments.get("filePath") == null) {
+            throw new Exception("参数错误，缺少 filePath 参数");
         }
 
-        Logger.info(arguments);
+        // 判断文件是否存在
+        File file = new File(arguments.get("filePath"));
+        if (!file.exists()) {
+            throw new Exception("文件不存在");
+        }
 
-        JarFileUtil.getClasses();
+        JavaFileModel fileModel = new JavaFileAnalysis().analysis(arguments);
 
-        ArrayList<JavaFile> result = new ProjectAnalysis().run(arguments);
-        String content = JSON.toJSONString(result, SerializerFeature.DisableCircularReferenceDetect);
-
-        FileUtil.createFile(content, arguments.get("savePath") + "/result.json");
-
-        Logger.info(String.format("%s", result.size()));
+        String logText = JSON.toJSONString(fileModel, SerializerFeature.DisableCircularReferenceDetect, SerializerFeature.PrettyFormat);
+        System.out.print(logText);
     }
+
     /**
-     * args.project {string} 项目路径
-     * args.savePath {string} json 文件保存地址
-     * args.repository {string} mvn 本地仓库路径
+     * args.project {string} java 文件地址
      */
     public static void main(String[] args) {
         try {

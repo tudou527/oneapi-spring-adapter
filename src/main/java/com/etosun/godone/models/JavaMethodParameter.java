@@ -15,7 +15,7 @@ import java.util.List;
  * 方法参数模型
  */
 @Data
-public class MethodParameter {
+public class JavaMethodParameter {
     // 参数名称
     @JSONField(ordinal = 0)
     String name;
@@ -26,9 +26,9 @@ public class MethodParameter {
 
     // 注释
     @JSONField(ordinal = 2)
-    Description description;
+    JavaDescriptionModel description;
 
     // 参数注解
     @JSONField(ordinal = 3)
-    List<Annotation> annotations;
+    List<JavaAnnotationModel> annotations;
 }

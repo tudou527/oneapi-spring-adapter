@@ -2,7 +2,7 @@
  * Alipay.com Inc. Copyright (c) 2004-2021 All Rights Reserved.
  *
  * @auther xiaoyun
- * @create 2021-02-02 下午11:57
+ * @create 2021-02-02 下午11:50
  */
 package com.etosun.godone.models;
 
@@ -12,27 +12,27 @@ import lombok.Data;
 import java.util.ArrayList;
 
 /**
- * class 方法模型
+ * class 字段
  */
 @Data
-public class ClsMethod {
-    // 方法名
+public class JavaClassFieldModel {
+    // 字段名称
     @JSONField(ordinal = 0)
     String name;
 
-    // 注释
+    // 字段类型
     @JSONField(ordinal = 1)
-    Description description;
+    JavaActualType type;
 
-    // 方法注解
+    // 字段默认值
+    @JSONField(ordinal = 2)
+    String defaultValue;
+
+    // 注释
     @JSONField(ordinal = 3)
-    ArrayList<Annotation> annotation = new ArrayList<>();
+    JavaDescriptionModel description;
 
-    // 入参
+    // 字段注解
     @JSONField(ordinal = 4)
-    ArrayList<MethodParameter> parameters = new ArrayList<>();
-
-    // 返回值
-    @JSONField(ordinal = 5)
-    JavaActualType returns;
+    ArrayList<JavaAnnotationModel> annotation = new ArrayList<>();
 }

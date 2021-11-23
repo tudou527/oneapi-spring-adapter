@@ -2,7 +2,7 @@
  * Alipay.com Inc. Copyright (c) 2004-2021 All Rights Reserved.
  *
  * @auther xiaoyun
- * @create 2021-02-02 下午11:50
+ * @create 2021-01-19 下午7:54
  */
 package com.etosun.godone.models;
 
@@ -10,29 +10,27 @@ import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Data;
 
 import java.util.ArrayList;
+import java.util.List;
 
-/**
- * class 字段
- */
 @Data
-public class ClsField {
-    // 字段名称
+public class JavaFileModel {
+    // 文件路径
     @JSONField(ordinal = 0)
-    String name;
+    String filePath;
 
-    // 字段类型
+    // 包名
     @JSONField(ordinal = 1)
-    JavaActualType type;
+    String packageName;
 
-    // 字段默认值
+    // 文件
     @JSONField(ordinal = 2)
-    String defaultValue;
+    JavaDescriptionModel description;
 
-    // 注释
+    // import 列表
     @JSONField(ordinal = 3)
-    Description description;
+    List<String> imports;
 
-    // 字段注解
+    // class 列表
     @JSONField(ordinal = 4)
-    ArrayList<Annotation> annotation = new ArrayList<>();
+    ArrayList<JavaClassModel> classList = new ArrayList<>();
 }
