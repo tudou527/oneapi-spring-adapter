@@ -21,6 +21,8 @@ import java.util.Optional;
  * 解析 java 文件中的 class
  */
 public class JavaFileAnalysis {
+    JavaFileModel fileModel;
+
     // 入口函数
     public JavaFileModel analysis(HashMap<String, String> arguments) throws Exception {
         String filePath = arguments.get("filePath");
@@ -37,7 +39,7 @@ public class JavaFileAnalysis {
 
         JavaSource source = javaSource.get();
 
-        JavaFileModel fileModel = new JavaFileModel();
+        fileModel = new JavaFileModel();
         fileModel.setFilePath(filePath);
         fileModel.setImports(source.getImports());
 
@@ -61,10 +63,11 @@ public class JavaFileAnalysis {
 
         classModel.setName(javaClass.getName());
         classModel.setClassPath(String.format("%s.%s", javaClass.getPackageName(), javaClass.getName()));
+        classModel.setType(ClassUtil.getClassTypeParameters(javaClass));
         // 注释
         classModel.setDescription(ClassUtil.getDescription(javaClass.getComment(), javaClass.getTags()));
         // 注解
-        classModel.setAnnotation(ClassUtil.getAnnotation(javaClass.getAnnotations(), javaClass.getSource().getImports()));
+        classModel.setAnnotation(ClassUtil.getAnnotation(javaClass.getAnnotations(), fileModel.getImports()));
 
         classModel.setIsEnum(javaClass.isEnum());
         classModel.setIsPublic(javaClass.isPublic());
@@ -92,12 +95,12 @@ public class JavaFileAnalysis {
         // 注释
         javaMethod.setDescription(ClassUtil.getDescription(method.getComment(), method.getTags()));
         // 注解
-        javaMethod.setAnnotation(ClassUtil.getAnnotation(method.getAnnotations(), javaClass.getSource().getImports()));
+        javaMethod.setAnnotation(ClassUtil.getAnnotation(method.getAnnotations(), fileModel.getImports()));
 
         // 入参
         javaMethod.setParameters(getParameters(method, javaClass));
         // 返回值
-        javaMethod.setReturns(ClassUtil.getType(method.getReturnType(), javaClass.getSource().getImports()));
+        javaMethod.setReturns(ClassUtil.getType(method.getReturnType(), fileModel.getImports()));
 
         return javaMethod;
     }
@@ -112,9 +115,9 @@ public class JavaFileAnalysis {
             JavaClassFieldModel field = new JavaClassFieldModel();
 
             field.setName(f.getName());
-            field.setType(ClassUtil.getType(f.getType(), javaClass.getSource().getImports()));
+            field.setType(ClassUtil.getType(f.getType(), fileModel.getImports()));
             field.setDescription(ClassUtil.getDescription(f.getComment(), f.getTags()));
-            field.setAnnotation(ClassUtil.getAnnotation(f.getAnnotations(), javaClass.getSource().getImports()));
+            field.setAnnotation(ClassUtil.getAnnotation(f.getAnnotations(), fileModel.getImports()));
 
             fields.add(field);
         });
@@ -138,9 +141,9 @@ public class JavaFileAnalysis {
             JavaMethodParameter param = new JavaMethodParameter();
 
             param.setName(p.getName());
-            param.setType(ClassUtil.getType(p.getType(), javaClass.getSource().getImports()));
+            param.setType(ClassUtil.getType(p.getType(), fileModel.getImports()));
             param.setDescription(ClassUtil.getDescription(p.getComment(), p.getTags()));
-            param.setAnnotations(ClassUtil.getAnnotation(p.getAnnotations(), javaClass.getSource().getImports()));
+            param.setAnnotations(ClassUtil.getAnnotation(p.getAnnotations(), fileModel.getImports()));
 
             paramList.add(param);
         });

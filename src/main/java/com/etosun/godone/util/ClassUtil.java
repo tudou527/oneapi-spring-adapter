@@ -9,9 +9,7 @@ package com.etosun.godone.util;
 import com.etosun.godone.models.JavaAnnotationModel;
 import com.etosun.godone.models.JavaDescriptionModel;
 import com.etosun.godone.models.JavaActualType;
-import com.thoughtworks.qdox.model.DocletTag;
-import com.thoughtworks.qdox.model.JavaAnnotation;
-import com.thoughtworks.qdox.model.JavaType;
+import com.thoughtworks.qdox.model.*;
 import com.thoughtworks.qdox.model.expression.AnnotationValue;
 import com.thoughtworks.qdox.model.expression.AnnotationValueList;
 import com.thoughtworks.qdox.model.impl.DefaultJavaParameterizedType;
@@ -54,7 +52,7 @@ public class ClassUtil {
     public static ArrayList<JavaAnnotationModel> getAnnotation(List<JavaAnnotation> annotations, List<String> imports) {
         ArrayList<JavaAnnotationModel> ans = new ArrayList<>();
 
-        if (annotations == null) {
+        if (annotations == null || annotations.isEmpty()) {
             return null;
         }
 
@@ -62,8 +60,7 @@ public class ClassUtil {
         annotations.forEach(an -> {
             JavaAnnotationModel javaAn = new JavaAnnotationModel();
 
-            // 需要补全注解的完整类型
-            String anClassName = an.getType().getName();
+            javaAn.setName(an.getType().getFullyQualifiedName());
 
             Map<String, AnnotationValue> anMap = an.getPropertyMap();
 
@@ -91,6 +88,8 @@ public class ClassUtil {
                     }
                     anProperty.put(k, value);
                 });
+
+                javaAn.setFields(anProperty);
             }
 
             ans.add(javaAn);
@@ -142,5 +141,19 @@ public class ClassUtil {
         }
 
         return javaType;
+    }
+
+    public static ArrayList<JavaActualType> getClassTypeParameters(JavaClass javaClass) {
+        List<JavaTypeVariable<JavaGenericDeclaration>> typeParameters = javaClass.getTypeParameters();
+
+        ArrayList<JavaActualType> classType = new ArrayList<>();
+        typeParameters.forEach(param -> {
+            JavaActualType type = new JavaActualType();
+            type.setName(param.getName());
+
+            classType.add(type);
+        });
+
+        return classType;
     }
 }

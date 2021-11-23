@@ -24,6 +24,10 @@ public class JavaClassModel {
     @JSONField(ordinal = 10)
     String classPath;
 
+    // 联合类型
+    @JSONField(ordinal = 11)
+    ArrayList<JavaActualType> type;
+
     // 注释
     @JSONField(ordinal = 20)
     JavaDescriptionModel description;
@@ -41,22 +45,22 @@ public class JavaClassModel {
     Boolean isInterface = false;
 
     // 是否 抽象类
-    @JSONField(ordinal = 70)
+    @JSONField(ordinal = 60)
     Boolean isAbstract = false;
 
     // 是否 private class
-    @JSONField(ordinal = 80)
+    @JSONField(ordinal = 70)
     Boolean isPrivate = false;
 
     // 是否 private class
-    @JSONField(ordinal = 90)
+    @JSONField(ordinal = 80)
     Boolean isPublic = false;
 
     // 属性
-    @JSONField(ordinal = 100)
+    @JSONField(ordinal = 90)
     ArrayList<JavaClassFieldModel> fields = new ArrayList<>();
 
     // 方法
-    @JSONField(ordinal = 110)
+    @JSONField(ordinal = 100)
     ArrayList<JavaClassMethodModel> methods = new ArrayList<>();
 }

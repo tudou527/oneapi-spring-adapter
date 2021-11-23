@@ -45,17 +45,16 @@
             <version>3.6.0</version>
         </dependency>
 
+        <!-- 文件编码探测  -->
         <dependency>
             <groupId>info.monitorenter</groupId>
             <artifactId>cpdetector</artifactId>
             <version>1.0.10</version>
-            <systemPath>${project.basedir}/src/main/resources/lib/cpdetector_1.0.10.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.mozilla.intl</groupId>
             <artifactId>chardet</artifactId>
             <version>1.0</version>
-            <systemPath>${project.basedir}/src/main/resources/lib/chardet-1.0.jar</systemPath>
         </dependency>
 
         <dependency>
@@ -76,6 +75,34 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>com.etosun.godone.App</mainClass>
+                                    <manifestEntries>
+                                        <Specification-Title>${project.artifactId}</Specification-Title>
+                                        <Specification-Version>${project.version}</Specification-Version>
+                                        <Implementation-Title>${project.artifactId}</Implementation-Title>
+                                        <Implementation-Version>${project.version}</Implementation-Version>
+                                        <Implementation-Vendor-Id>${project.groupId}</Implementation-Vendor-Id>
+                                    </manifestEntries>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
