@@ -13,7 +13,7 @@ import com.thoughtworks.qdox.model.*;
 import com.thoughtworks.qdox.model.expression.AnnotationValue;
 import com.thoughtworks.qdox.model.expression.AnnotationValueList;
 import com.thoughtworks.qdox.model.impl.DefaultJavaParameterizedType;
-import org.springframework.util.StringUtils;
+import org.codehaus.plexus.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -156,4 +156,5 @@ public class ClassUtil {
 
         return classType;
     }
+
 }

@@ -34,5 +34,5 @@ public class JavaClassFieldModel {
 
     // 字段注解
     @JSONField(ordinal = 4)
-    ArrayList<JavaAnnotationModel> annotation = new ArrayList<>();
+    ArrayList<JavaAnnotationModel> annotation = new ArrayList();
 }

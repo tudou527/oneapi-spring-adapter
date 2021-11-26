@@ -9,13 +9,11 @@ package com.etosun.godone;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.etosun.godone.models.JavaFileModel;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
 
-@SpringBootApplication
 public class App {
     public static void run(String[] args) throws Exception {
         HashMap<String, String> arguments = new HashMap<>();
@@ -37,7 +35,7 @@ public class App {
 
         JavaFileModel fileModel = new JavaFileAnalysis().analysis(arguments);
 
-        String logText = JSON.toJSONString(fileModel, SerializerFeature.DisableCircularReferenceDetect, SerializerFeature.PrettyFormat);
+        String logText = JSON.toJSONString(fileModel, SerializerFeature.DisableCircularReferenceDetect);
         System.out.print(logText);
     }
 

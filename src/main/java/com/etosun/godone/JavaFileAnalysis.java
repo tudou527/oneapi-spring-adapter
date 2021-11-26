@@ -115,6 +115,7 @@ public class JavaFileAnalysis {
             JavaClassFieldModel field = new JavaClassFieldModel();
 
             field.setName(f.getName());
+            field.setDefaultValue(f.getInitializationExpression());
             field.setType(ClassUtil.getType(f.getType(), fileModel.getImports()));
             field.setDescription(ClassUtil.getDescription(f.getComment(), f.getTags()));
             field.setAnnotation(ClassUtil.getAnnotation(f.getAnnotations(), fileModel.getImports()));
