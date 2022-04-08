@@ -6,37 +6,34 @@
  */
 package com.etosun.godone;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.etosun.godone.models.JavaFileModel;
+import com.etosun.godone.analysis.Project;
+import org.apache.commons.cli.*;
+import com.google.common.base.Stopwatch;
 
-import java.io.File;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
 public class App {
+    // 记录执行时间
+    static final Stopwatch stopwatch = Stopwatch.createStarted();
+    /**
+     * 参数列表
+     */
     public static void run(String[] args) throws Exception {
-        HashMap<String, String> arguments = new HashMap<>();
+        CommandLineParser parser = new DefaultParser();
+        Options options = new Options();
+        options.addOption("o", "output", true, "输出路径");
+        options.addOption("p", "project", true, "本地项目根目录");
 
-        Arrays.asList(args).forEach(arg -> {
-            String[] str = arg.split("=");
-            arguments.put(str[0], str[1]);
-        });
+        CommandLine cmd = parser.parse(options, args);
 
-        if (arguments.get("filePath") == null) {
-            throw new Exception("参数错误，缺少 filePath 参数");
+        if (!cmd.hasOption("p") || !cmd.hasOption("o")) {
+            System.out.println("project 参数不存在");
+            System.exit(-1);
         }
 
-        // 判断文件是否存在
-        File file = new File(arguments.get("filePath"));
-        if (!file.exists()) {
-            throw new Exception("文件不存在");
-        }
-
-        JavaFileModel fileModel = new JavaFileAnalysis().analysis(arguments);
-
-        String logText = JSON.toJSONString(fileModel, SerializerFeature.DisableCircularReferenceDetect);
-        System.out.print(logText);
+        new Project(cmd).getSchema();
+        // String logText = JSON.toJSONString(projectAnalysis, SerializerFeature.DisableCircularReferenceDetect);
+        System.out.printf("execTime: %ss%n", stopwatch.elapsed(TimeUnit.SECONDS));
     }
 
     /**

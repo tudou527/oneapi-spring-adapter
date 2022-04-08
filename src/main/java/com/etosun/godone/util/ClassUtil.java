@@ -6,9 +6,9 @@
  */
 package com.etosun.godone.util;
 
+import com.etosun.godone.models.JavaActualType;
 import com.etosun.godone.models.JavaAnnotationModel;
 import com.etosun.godone.models.JavaDescriptionModel;
-import com.etosun.godone.models.JavaActualType;
 import com.thoughtworks.qdox.model.*;
 import com.thoughtworks.qdox.model.expression.AnnotationValue;
 import com.thoughtworks.qdox.model.expression.AnnotationValueList;
@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Stream;
 
 public class ClassUtil {
     /**
@@ -101,10 +102,21 @@ public class ClassUtil {
     /**
      * 解析注释
      */
-    public static JavaDescriptionModel getDescription(String comment, List<DocletTag> tags) {
+    public static JavaDescriptionModel getDescription(JavaAnnotatedElement javaElement, List<String> fileLines) {
+        String comment = javaElement.getComment();
+
+        if (comment == null && javaElement.getLineNumber() > 1) {
+            // 尝试按行读取单行注释
+            String prevLineStr = fileLines.get(javaElement.getLineNumber() - 2);
+            if (prevLineStr.trim().startsWith("//")) {
+                comment = prevLineStr.trim().replaceFirst("//", "").trim();
+            }
+        }
+
         JavaDescriptionModel desc = new JavaDescriptionModel();
         desc.setText(comment);
 
+        List<DocletTag> tags = javaElement.getTags();
         if (tags != null) {
             tags.forEach(tag -> {
                 if (desc.getTag() == null) {

@@ -12,9 +12,13 @@ import info.monitorenter.cpdetector.io.CodepageDetectorProxy;
 import info.monitorenter.cpdetector.io.JChardetFacade;
 import info.monitorenter.cpdetector.io.UnicodeDetector;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FileUtil {
     /**
@@ -82,4 +86,55 @@ public class FileUtil {
 
         return null;
     }
+
+    // 从指定目录中匹配文件
+    public static List<String> findFileList(String glob, String location) {
+        final PathMatcher pathMatcher = FileSystems.getDefault().getPathMatcher(glob);
+        List<String> targetFile = new ArrayList<>();
+
+        try {
+            Files.walkFileTree(Paths.get(location), new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
+                    if (pathMatcher.matches(path)) {
+                        targetFile.add(path.toString());
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (Exception ignored) {}
+
+        return targetFile;
+    }
+
+    // 写文件
+    public static void writeFile(String content, String targetPath, Charset encode) {
+        try {
+            // 生成json格式文件
+            File file = new File(targetPath);
+
+            if (!file.getParentFile().exists()) {
+                // 如果父目录不存在，创建父目录
+                file.getParentFile().mkdirs();
+            }
+            if (file.exists()) {
+                // 如果已存在,删除旧文件
+                file.delete();
+            }
+            file.createNewFile();
+
+            // 将格式化后的字符串写入文件
+            Writer write = new OutputStreamWriter(new FileOutputStream(file), encode != null ? encode : StandardCharsets.UTF_8);
+            write.write(content);
+            write.flush();
+            write.close();
+        } catch (IOException ignore) {
+        }
+    }
+
 }
