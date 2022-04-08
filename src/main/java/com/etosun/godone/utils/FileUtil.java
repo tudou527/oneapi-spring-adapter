@@ -4,7 +4,7 @@
  * @auther xiaoyun
  * @create 2021-01-18 下午10:33
  */
-package com.etosun.godone.util;
+package com.etosun.godone.utils;
 
 import com.thoughtworks.qdox.JavaProjectBuilder;
 import info.monitorenter.cpdetector.io.ASCIIDetector;
@@ -12,6 +12,7 @@ import info.monitorenter.cpdetector.io.CodepageDetectorProxy;
 import info.monitorenter.cpdetector.io.JChardetFacade;
 import info.monitorenter.cpdetector.io.UnicodeDetector;
 
+import javax.inject.Singleton;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -20,11 +21,12 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 
+@Singleton
 public class FileUtil {
     /**
      * 获取探测到的文件对象
      */
-    private static CodepageDetectorProxy getDetector() {
+    private CodepageDetectorProxy getDetector() {
         /*
          * detector是探测器，它把探测任务交给具体的探测实现类的实例完成。
          * cpDetector内置了一些常用的探测实现类，这些探测实现类的实例可以通过add方法 加进来，如ParsingDetector、
@@ -57,7 +59,7 @@ public class FileUtil {
     /**
      * 根据"encodeType"获取文本编码或文件流编码
      */
-    public static Charset getFileOrIOEncode(String path) {
+    public Charset getFileOrIOEncode(String path) {
         CodepageDetectorProxy detector = getDetector();
         File file = new File(path);
         Charset charset = null;
@@ -73,7 +75,7 @@ public class FileUtil {
     /**
      * 解析文件为 JavaProjectBuilder
      */
-    public static JavaProjectBuilder getBuilder(String filePath) {
+    public JavaProjectBuilder getBuilder(String filePath) {
         try {
             JavaProjectBuilder builder = new JavaProjectBuilder();
             // 设置文件编码
@@ -81,14 +83,15 @@ public class FileUtil {
             builder.addSourceTree(new File(filePath));
 
             return builder;
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         return null;
     }
 
     // 从指定目录中匹配文件
-    public static List<String> findFileList(String glob, String location) {
+    public List<String> findFileList(String glob, String location) {
         final PathMatcher pathMatcher = FileSystems.getDefault().getPathMatcher(glob);
         List<String> targetFile = new ArrayList<>();
 
@@ -113,7 +116,7 @@ public class FileUtil {
     }
 
     // 写文件
-    public static void writeFile(String content, String targetPath, Charset encode) {
+    public void writeFile(String content, String targetPath, Charset encode) {
         try {
             // 生成json格式文件
             File file = new File(targetPath);

@@ -4,7 +4,7 @@
  * @auther xiaoyun
  * @create 2021-02-22 下午8:44
  */
-package com.etosun.godone.util;
+package com.etosun.godone.utils;
 
 import com.etosun.godone.models.JavaActualType;
 import com.etosun.godone.models.JavaAnnotationModel;
@@ -15,18 +15,17 @@ import com.thoughtworks.qdox.model.expression.AnnotationValueList;
 import com.thoughtworks.qdox.model.impl.DefaultJavaParameterizedType;
 import org.codehaus.plexus.util.StringUtils;
 
+import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Stream;
 
+@Singleton
 public class ClassUtil {
-    /**
-     * 根据 typeName 推断出完整的类型名称
-     */
-    public static String completeType(String typeName, List<String> imports) {
+    // 根据 typeName 推断出完整的类型名称
+    public String completeType(String typeName, List<String> imports) {
         AtomicReference<String> fullTypeName = new AtomicReference<>("");
         imports.forEach(name -> {
             // import a.b.c.{typeName} 的情况
@@ -47,10 +46,8 @@ public class ClassUtil {
         return null;
     }
 
-    /**
-      * 解析注解
-      */
-    public static ArrayList<JavaAnnotationModel> getAnnotation(List<JavaAnnotation> annotations, List<String> imports) {
+    // 解析注解
+    public ArrayList<JavaAnnotationModel> getAnnotation(List<JavaAnnotation> annotations, List<String> imports) {
         ArrayList<JavaAnnotationModel> ans = new ArrayList<>();
 
         if (annotations == null || annotations.isEmpty()) {
@@ -99,10 +96,8 @@ public class ClassUtil {
         return ans;
     }
 
-    /**
-     * 解析注释
-     */
-    public static JavaDescriptionModel getDescription(JavaAnnotatedElement javaElement, List<String> fileLines) {
+    // 解析注释
+    public JavaDescriptionModel getDescription(JavaAnnotatedElement javaElement, List<String> fileLines) {
         String comment = javaElement.getComment();
 
         if (comment == null && javaElement.getLineNumber() > 1) {
@@ -129,10 +124,8 @@ public class ClassUtil {
         return desc;
     }
 
-    /**
-     * 解析类型
-     */
-    public static JavaActualType getType(JavaType type, List<String> imports) {
+    // 解析类型
+    public JavaActualType getType(JavaType type, List<String> imports) {
         JavaActualType javaType = new JavaActualType();
 
         javaType.setName(type.getFullyQualifiedName());
@@ -155,7 +148,7 @@ public class ClassUtil {
         return javaType;
     }
 
-    public static ArrayList<JavaActualType> getClassTypeParameters(JavaClass javaClass) {
+    public ArrayList<JavaActualType> getClassTypeParameters(JavaClass javaClass) {
         List<JavaTypeVariable<JavaGenericDeclaration>> typeParameters = javaClass.getTypeParameters();
 
         ArrayList<JavaActualType> classType = new ArrayList<>();

@@ -169,6 +169,6 @@
   </dependencies>
   <properties>
     <java.version>1.8</java.version>
-    <start-class>com.etosun.godone.App</start-class>
+    <start-class>com.etosun.godone.Application</start-class>
   </properties>
 </project>

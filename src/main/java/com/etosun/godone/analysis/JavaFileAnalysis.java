@@ -7,61 +7,67 @@
 package com.etosun.godone.analysis;
 
 import com.etosun.godone.models.*;
-import com.etosun.godone.util.ClassUtil;
-import com.etosun.godone.util.FileUtil;
+import com.etosun.godone.utils.ClassUtil;
+import com.etosun.godone.utils.FileUtil;
+import com.google.inject.Inject;
 import com.thoughtworks.qdox.JavaProjectBuilder;
 import com.thoughtworks.qdox.model.*;
-import lombok.SneakyThrows;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 /**
  * 解析 java 文件中的 class
  */
-public class JavaFile {
+public class JavaFileAnalysis {
+    // 文件路径
     String filePath;
+    // 按行读取的文件内容
     List<String> fileLines;
+    // 解析结果
     JavaFileModel fileModel;
-    JavaSource fileSource;
-    JavaProjectBuilder builder;
 
-    @SneakyThrows
-    public JavaFile(String filePath) {
-        builder = FileUtil.getBuilder(filePath);
-        fileLines = Files.readAllLines(Paths.get(filePath), FileUtil.getFileOrIOEncode(filePath));
-    }
+    @Inject
+    private FileUtil fileUtil;
+    @Inject
+    private ClassUtil classUtil;
 
     // 入口函数
-    public JavaFileModel analysis() {
+    public JavaFileModel analysis(String filePath) {
+        JavaProjectBuilder builder = fileUtil.getBuilder(filePath);
+
         if (builder == null) {
             return null;
         }
 
-        Optional<JavaSource> javaSource = builder.getSources().stream().findFirst();
-        if (!javaSource.isPresent()) {
+        Optional<JavaSource> OptionalJavaSource = builder.getSources().stream().findFirst();
+        if (!OptionalJavaSource.isPresent()) {
             return null;
         }
 
-        fileSource = javaSource.get();
+        JavaSource javaSource = OptionalJavaSource.get();
+        try {
+            fileLines = Files.readAllLines(Paths.get(filePath), fileUtil.getFileOrIOEncode(filePath));
+        } catch (IOException ignored) {
+        }
 
         fileModel = new JavaFileModel();
         fileModel.setFilePath(filePath);
-        fileModel.setImports(fileSource.getImports());
+        fileModel.setImports(javaSource.getImports());
 
-        JavaPackage pkg = fileSource.getPackage();
+        JavaPackage pkg = javaSource.getPackage();
 
         // 文件注释
         fileModel.setPackageName(pkg.getName());
-        JavaDescriptionModel description = ClassUtil.getDescription(pkg, fileLines);
+        JavaDescriptionModel description = classUtil.getDescription(pkg, fileLines);
         fileModel.setDescription(description);
 
         // 解析 class
-        fileSource.getClasses().forEach(cls -> {
+        javaSource.getClasses().forEach(cls -> {
             fileModel.getClassList().add(analysisClass(cls));
         });
 
@@ -73,11 +79,11 @@ public class JavaFile {
 
         classModel.setName(javaClass.getName());
         classModel.setClassPath(String.format("%s.%s", javaClass.getPackageName(), javaClass.getName()));
-        classModel.setType(ClassUtil.getClassTypeParameters(javaClass));
+        classModel.setType(classUtil.getClassTypeParameters(javaClass));
         // 注释
-        classModel.setDescription(ClassUtil.getDescription(javaClass, fileLines));
+        classModel.setDescription(classUtil.getDescription(javaClass, fileLines));
         // 注解
-        classModel.setAnnotation(ClassUtil.getAnnotation(javaClass.getAnnotations(), fileModel.getImports()));
+        classModel.setAnnotation(classUtil.getAnnotation(javaClass.getAnnotations(), fileModel.getImports()));
 
         classModel.setIsEnum(javaClass.isEnum());
         classModel.setIsPublic(javaClass.isPublic());
@@ -103,14 +109,14 @@ public class JavaFile {
 
         javaMethod.setName(method.getName());
         // 注释
-        javaMethod.setDescription(ClassUtil.getDescription(method, fileLines));
+        javaMethod.setDescription(classUtil.getDescription(method, fileLines));
         // 注解
-        javaMethod.setAnnotation(ClassUtil.getAnnotation(method.getAnnotations(), fileModel.getImports()));
+        javaMethod.setAnnotation(classUtil.getAnnotation(method.getAnnotations(), fileModel.getImports()));
 
         // 入参
         javaMethod.setParameters(getParameters(method, javaClass));
         // 返回值
-        javaMethod.setReturns(ClassUtil.getType(method.getReturnType(), fileModel.getImports()));
+        javaMethod.setReturns(classUtil.getType(method.getReturnType(), fileModel.getImports()));
 
         return javaMethod;
     }
@@ -126,9 +132,9 @@ public class JavaFile {
 
             field.setName(f.getName());
             field.setDefaultValue(f.getInitializationExpression());
-            field.setType(ClassUtil.getType(f.getType(), fileModel.getImports()));
-            field.setDescription(ClassUtil.getDescription(f, fileLines));
-            field.setAnnotation(ClassUtil.getAnnotation(f.getAnnotations(), fileModel.getImports()));
+            field.setType(classUtil.getType(f.getType(), fileModel.getImports()));
+            field.setDescription(classUtil.getDescription(f, fileLines));
+            field.setAnnotation(classUtil.getAnnotation(f.getAnnotations(), fileModel.getImports()));
 
             fields.add(field);
         });
@@ -152,9 +158,9 @@ public class JavaFile {
             JavaMethodParameter param = new JavaMethodParameter();
 
             param.setName(p.getName());
-            param.setType(ClassUtil.getType(p.getType(), fileModel.getImports()));
-            param.setDescription(ClassUtil.getDescription(p, fileLines));
-            param.setAnnotations(ClassUtil.getAnnotation(p.getAnnotations(), fileModel.getImports()));
+            param.setType(classUtil.getType(p.getType(), fileModel.getImports()));
+            param.setDescription(classUtil.getDescription(p, fileLines));
+            param.setAnnotations(classUtil.getAnnotation(p.getAnnotations(), fileModel.getImports()));
 
             paramList.add(param);
         });
