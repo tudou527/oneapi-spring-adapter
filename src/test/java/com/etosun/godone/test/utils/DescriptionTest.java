@@ -1,4 +1,4 @@
-package com.etosun.godone.test.utils.description;
+package com.etosun.godone.test.utils;
 
 import com.etosun.godone.models.JavaDescriptionModel;
 import com.etosun.godone.utils.ClassUtil;

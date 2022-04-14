@@ -6,48 +6,38 @@
  */
 package com.etosun.godone.utils;
 
+import com.etosun.godone.analysis.TypeAnalysis;
 import com.etosun.godone.models.JavaActualType;
 import com.etosun.godone.models.JavaAnnotationModel;
 import com.etosun.godone.models.JavaDescriptionModel;
+import com.etosun.godone.models.JavaFileModel;
+import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.thoughtworks.qdox.model.*;
 import com.thoughtworks.qdox.model.expression.AnnotationValue;
 import com.thoughtworks.qdox.model.expression.AnnotationValueList;
+import com.thoughtworks.qdox.model.expression.Constant;
+import com.thoughtworks.qdox.model.expression.FieldRef;
 import com.thoughtworks.qdox.model.impl.DefaultJavaParameterizedType;
-import org.codehaus.plexus.util.StringUtils;
 
 import javax.inject.Singleton;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
+import java.io.File;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Singleton
 public class ClassUtil {
-    // 根据 typeName 推断出完整的类型名称
-    public String completeType(String typeName, List<String> imports) {
-        AtomicReference<String> fullTypeName = new AtomicReference<>("");
-        imports.forEach(name -> {
-            // import a.b.c.{typeName} 的情况
-            if (name.endsWith("."+ typeName)) {
-                fullTypeName.set(name);
-            }
-        });
+    @Inject
+    private RefUtil refUtil;
+    @Inject
+    private MavenUtil mvnUtil;
+    @Inject
+    Provider<TypeAnalysis> typeAnalysis;
+    @Inject
+    private CommonCache commonCache;
 
-        // 考虑同目录
-        
-
-        if (fullTypeName.get().contains(".")) {
-            return fullTypeName.get();
-        }
-
-        // 可能存在 import a.b.c.* 的情况
-
-        return null;
-    }
-
-    // 解析注解
-    public ArrayList<JavaAnnotationModel> getAnnotation(List<JavaAnnotation> annotations, List<String> imports) {
+    // 注解
+    public ArrayList<JavaAnnotationModel> getAnnotation(List<JavaAnnotation> annotations, JavaFileModel hostModel) {
         ArrayList<JavaAnnotationModel> ans = new ArrayList<>();
 
         if (annotations == null || annotations.isEmpty()) {
@@ -57,46 +47,57 @@ public class ClassUtil {
         // 遍历所有注解
         annotations.forEach(an -> {
             JavaAnnotationModel javaAn = new JavaAnnotationModel();
+            String typeName = an.getType().getSimpleName();
+            String anSimpleName = typeName.substring(typeName.lastIndexOf(".") + 1);
 
-            javaAn.setName(an.getType().getFullyQualifiedName());
+            // 注解名称（非 classPath）
+            javaAn.setName(anSimpleName);
+            Optional<String> optionalAnName= hostModel.getImports().stream().filter(str -> str.endsWith(anSimpleName)).findFirst();
+            optionalAnName.ifPresent(javaAn::setClassPath);
 
             Map<String, AnnotationValue> anMap = an.getPropertyMap();
-
             if (anMap != null) {
                 HashMap<String, Object> anProperty = new HashMap<>();
                 an.getPropertyMap().forEach((k, v) -> {
-                    Object value = v.getParameterValue().toString().replaceAll("^\"|\"$", "");
-
-                    if (value.toString().contains(".")) {
-                        String[] clsName = StringUtils.split(value.toString(), ".");
-                        assert clsName != null;
-                        String fullClsName = completeType(clsName[0], imports);
-
-                        if (fullClsName != null) {
-                            value = fullClsName +"."+ clsName[1];
-                        }
-                    }
-
+                    boolean isArray = false;
+                    ArrayList<AnnotationValue> value = new ArrayList<>();
+                    // 注解值为数组的情况: @Autowired(name={"a", "b", "c"})
                     if (v instanceof AnnotationValueList) {
-                        value = new ArrayList<>();
-                        Object finalValue = value;
-                        ((AnnotationValueList) v).getValueList().forEach(val -> {
-                            ((ArrayList) finalValue).add(val.toString().replaceAll("^\"|\"$", ""));
-                        });
+                        isArray = true;
+                        value.addAll(((AnnotationValueList) v).getValueList());
+                    } else {
+                        value.add(v);
                     }
-                    anProperty.put(k, value);
-                });
 
+                    List<Object> valueList = value.stream().map(val -> {
+                        // 值为引用类型Exp: @AppSwitch(level = Switch.Level.p2)
+                        if (val instanceof FieldRef) {
+                            FieldRef refValue = (FieldRef) val;
+                            refUtil.getRef(refValue.getName(), hostModel);
+                            return null;
+                        }
+                        if (val instanceof DefaultJavaParameterizedType) {
+                            System.out.println("DefaultJavaParameterizedType: " + val);
+                        }
+
+                        if (val instanceof  Constant) {
+                            // 其他情况保持值类型不变: @Autowired(value="name", required=false, index=2) 类型应该分别是 string/boolean/int
+                            return ((Constant) val).getValue();
+                        }
+
+                        return null;
+                    }).collect(Collectors.toList());
+                    anProperty.put(k, isArray ? valueList : valueList.get(0));
+                });
                 javaAn.setFields(anProperty);
             }
-
             ans.add(javaAn);
         });
 
         return ans;
     }
 
-    // 解析注释
+    // 描述
     public JavaDescriptionModel getDescription(JavaAnnotatedElement javaElement, List<String> fileLines) {
         String comment = javaElement.getComment();
 
@@ -112,54 +113,70 @@ public class ClassUtil {
         desc.setText(comment);
 
         List<DocletTag> tags = javaElement.getTags();
-        if (tags != null) {
-            tags.forEach(tag -> {
-                if (desc.getTag() == null) {
-                    desc.setTag(new HashMap<>());
+        if (tags != null && tags.size() > 0) {
+            HashMap<String, List<String>> commentTag = new HashMap<>();
+
+            tags.forEach(t -> {
+                // tag 不存在时，初始化值为数组
+                List<String> tagParam = commentTag.get(t.getName());
+                if (tagParam == null) {
+                    tagParam = new ArrayList<>();
                 }
-                desc.getTag().put(tag.getName(), tag.getValue().trim());
+                tagParam.add(t.getValue().trim());
+                // 更新 tag
+                commentTag.put(t.getName(), tagParam);
             });
+            desc.setTag(commentTag);
         }
 
         return desc;
     }
 
-    // 解析类型
-    public JavaActualType getType(JavaType type, List<String> imports) {
-        JavaActualType javaType = new JavaActualType();
+    // 返回完整的 import 列表
+    public List<String> getImports(JavaClass javaClass) {
+        List<String> importList = new ArrayList<>();
 
-        javaType.setName(type.getFullyQualifiedName());
-
-        // 包含子类型，Exp: HashMap<String, List<String>>
-        if (type instanceof DefaultJavaParameterizedType) {
-
-            // 子类型
-            List<JavaType> childTypeList = ((DefaultJavaParameterizedType) type).getActualTypeArguments();
-
-            for (JavaType ct: childTypeList) {
-                if (javaType.getItem() == null) {
-                    javaType.setItem(new ArrayList<>());
-                }
-                // 递归解析每个子类型
-                javaType.getItem().add(getType(ct, imports));
+        javaClass.getSource().getImports().forEach(imp -> {
+            if (imp.endsWith(".*")) {
+                // 尝试从当前资源文件、JAR 包中匹配导入
+                importList.addAll(mvnUtil.getFuzzyImportPackage(imp));
+            } else {
+                importList.add(imp);
             }
-        }
-
-        return javaType;
-    }
-
-    public ArrayList<JavaActualType> getClassTypeParameters(JavaClass javaClass) {
-        List<JavaTypeVariable<JavaGenericDeclaration>> typeParameters = javaClass.getTypeParameters();
-
-        ArrayList<JavaActualType> classType = new ArrayList<>();
-        typeParameters.forEach(param -> {
-            JavaActualType type = new JavaActualType();
-            type.setName(param.getName());
-
-            classType.add(type);
+        });
+        
+        // 根据 java 的导入规则，当前目录下的文件可以不用手动 import，所以这里需要补全当前目录下的其他 class 作为默认导入
+        String classDirPath = new File(javaClass.getSource().getURL().getPath()).getParent();
+        commonCache.getResource().keySet().forEach((classPath) -> {
+            String file = commonCache.getResource().get(classPath);
+            String fileDirPath = new File(file).getParent();
+            if (classDirPath.equals(fileDirPath)) {
+                importList.add(classPath);
+            }
         });
 
-        return classType;
+        return importList;
     }
+    
+    /**
+     * 返回 class 泛型
+     * Exp: class PageResult<T> 将会返回 T
+     */
+    public ArrayList<JavaActualType> getActualTypeParameters(JavaClass javaClass) {
+        List<JavaTypeVariable<JavaGenericDeclaration>> typeParameters = javaClass.getTypeParameters();
 
+        if (typeParameters.size() > 0) {
+            ArrayList<JavaActualType> classType = new ArrayList<>();
+            typeParameters.forEach(param -> {
+                JavaActualType type = new JavaActualType();
+                type.setName(param.getName());
+        
+                classType.add(type);
+            });
+    
+            return classType;
+        }
+        
+        return null;
+    }
 }

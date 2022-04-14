@@ -19,7 +19,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 @Singleton
 public class FileUtil {
@@ -80,7 +83,7 @@ public class FileUtil {
             JavaProjectBuilder builder = new JavaProjectBuilder();
             // 设置文件编码
             builder.setEncoding(getFileOrIOEncode(filePath).name());
-            builder.addSourceTree(new File(filePath));
+            builder.addSource(new File(filePath));
 
             return builder;
         } catch (Exception e) {
@@ -140,4 +143,67 @@ public class FileUtil {
         }
     }
 
+    /**
+     * 解压 jar 包
+     * @param jarFile 目标 jar 包
+     * @param target 解压目录
+     */
+    public void unzipJar(File jarFile, String target) {
+        // 时间戳文件名
+        String timestamp = String.format("%s/.godone.unzip_success", target);
+
+        // 不重复解压
+        if (new File(timestamp).exists()) {
+            return;
+        }
+
+        try {
+            JarFile jar = new java.util.jar.JarFile(jarFile);
+            Enumeration<JarEntry> enumEntries = jar.entries();
+
+            File targetFile = new File(target);
+            if (!targetFile.exists()) {
+                // 如果目录不存在，创建目录
+                targetFile.mkdir();
+            }
+
+            while (enumEntries.hasMoreElements()) {
+                JarEntry file = enumEntries.nextElement();
+                File f = new File(target + java.io.File.separator + file.getName());
+                if (file.isDirectory()) {
+                    f.mkdir();
+                    continue;
+                } else {
+                    if (!f.getParentFile().exists()) {
+                        // 如果父目录不存在，创建父目录
+                        f.getParentFile().mkdirs();
+                    }
+
+                    // 只解压白名单文件文件
+                    ArrayList<String> whitelist = new ArrayList<String>(){{
+                        add(".java");
+                        add(".xml");
+                    }};
+                    if (whitelist.stream().noneMatch(b -> f.getName().toLowerCase().endsWith(b))) {
+                        continue;
+                    }
+                }
+                java.io.InputStream is = jar.getInputStream(file);
+                java.io.FileOutputStream fos = new java.io.FileOutputStream(f);
+                while (is.available() > 0) {
+                    fos.write(is.read());
+                }
+                fos.close();
+                is.close();
+            }
+            jar.close();
+
+            writeFile("done", timestamp, Charset.defaultCharset());
+
+            // 退出时删除解压目录
+            targetFile.deleteOnExit();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

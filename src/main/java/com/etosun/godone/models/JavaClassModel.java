@@ -24,9 +24,9 @@ public class JavaClassModel {
     @JSONField(ordinal = 10)
     String classPath;
 
-    // 联合类型
+    // 联合类型，Exp： class PageResult<T> {}
     @JSONField(ordinal = 11)
-    ArrayList<JavaActualType> type;
+    ArrayList<JavaActualType> actualType;
 
     // 注释
     @JSONField(ordinal = 20)
@@ -55,6 +55,9 @@ public class JavaClassModel {
     // 是否 private class
     @JSONField(ordinal = 80)
     Boolean isPublic = false;
+    
+    @JSONField(ordinal = 81)
+    String parentClass;
 
     // 属性
     @JSONField(ordinal = 90)

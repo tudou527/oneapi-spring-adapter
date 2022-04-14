@@ -13,15 +13,18 @@ import java.util.ArrayList;
 
 /**
  * Java 类型
- *
  */
 @Data
 public class JavaActualType {
     // 类型字面量
-    @JSONField(ordinal = 1)
+    @JSONField(ordinal = 10)
     String name;
+    
+    // class 路径 a.b.c.d
+    @JSONField(ordinal = 15)
+    String classPath;
 
     // 子类型
-    @JSONField(ordinal = 2)
+    @JSONField(ordinal = 20)
     ArrayList<JavaActualType> item;
 }
