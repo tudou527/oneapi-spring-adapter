@@ -89,6 +89,7 @@ public class TypeAnalysis {
             add("javax.");
             add("void");
             add("org.springframework.");
+            add("org.slf4j.");
         }};
         if (startsWithBlackList.stream().anyMatch(typeName::startsWith) || simpleTypeName.length() == 1) {
             return typeName;
@@ -97,7 +98,7 @@ public class TypeAnalysis {
         Optional<String> optionalFullTypeName = hostModel.getImports().stream().filter(str -> str.endsWith(simpleTypeName)).findFirst();
         if (optionalFullTypeName.isPresent()) {
             if (commonCache.getPaddingClassPath(optionalFullTypeName.get()) == null) {
-                commonCache.savePaddingClassPath(optionalFullTypeName.get());
+                commonCache.savePaddingClassPath(optionalFullTypeName.get(), 1);
             }
         }
 

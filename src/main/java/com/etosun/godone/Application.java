@@ -6,22 +6,21 @@
  */
 package com.etosun.godone;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.etosun.godone.analysis.BasicAnalysis;
 import com.etosun.godone.analysis.EntryAnalysis;
+import com.etosun.godone.analysis.ReflectAnalysis;
 import com.etosun.godone.models.JavaFileModel;
-import com.etosun.godone.utils.FileUtil;
+import com.etosun.godone.utils.CommonCache;
 import com.etosun.godone.utils.Logger;
 import com.etosun.godone.utils.MavenUtil;
-import com.etosun.godone.utils.CommonCache;
+import com.google.common.base.Stopwatch;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Provider;
 import org.apache.commons.cli.*;
-import com.google.common.base.Stopwatch;
+
 import javax.inject.Singleton;
-import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 @Singleton
@@ -29,17 +28,20 @@ public class Application {
     private String projectPath;
     private String outputFilePath;
     private String localRepository;
+    private Integer loopCount = 0;
 
     @Inject
     private CommonCache commonCache;
-    @Inject
-    private FileUtil fileUtil;
     @Inject
     private MavenUtil mvnUtil;
     @Inject
     private Logger logger;
     @Inject
     Provider<EntryAnalysis> entryAnalysis;
+    @Inject
+    Provider<BasicAnalysis> basicAnalysis;
+    @Inject
+    Provider<ReflectAnalysis> reflectAnalysis;
 
     // 记录执行时间
     static final Stopwatch stopwatch = Stopwatch.createStarted();
@@ -67,8 +69,18 @@ public class Application {
             mvnUtil.saveResource(projectPath, true);
             // 缓存 JAR 包中的 class
             mvnUtil.saveReflectClassCache(localRepository);
-
-            getSchema();
+    
+            // 分析入口文件
+            commonCache.getEntry().forEach(entry -> {
+                logger.message("analysis file: %s", entry);
+                JavaFileModel fileModel = entryAnalysis.get().analysis(entry);
+                if (fileModel != null) {
+                    commonCache.saveModel(fileModel.getClassModel().getClassPath(), fileModel);
+                }
+            });
+            
+            // 待解析的资源
+            analysisResource();
     
             logger.message("execTime: %s", stopwatch.elapsed(TimeUnit.SECONDS));
         } catch (ParseException e) {
@@ -76,21 +88,32 @@ public class Application {
         }
     }
 
-    private void getSchema() {
-        // 分析入口文件
-        commonCache.getEntry().forEach(entry -> {
-            logger.message("analysis file: %s", entry);
-            JavaFileModel fileModel = entryAnalysis.get().analysis(entry);
+    private void analysisResource() {
+        // 所有待解析的资源
+        commonCache.getPaddingClassPath().forEach(classPath -> {
+            JavaFileModel fileModel;
+            String resourceFilePath = commonCache.getResource(classPath);
+            
+            if (resourceFilePath != null) {
+                fileModel = basicAnalysis.get().analysis(resourceFilePath);
+            } else {
+                fileModel = reflectAnalysis.get().analysis(classPath);
+            }
+
             if (fileModel != null) {
                 commonCache.saveModel(fileModel.getClassModel().getClassPath(), fileModel);
             }
+            commonCache.savePaddingClassPath(classPath, 2);
         });
-
-        String result = JSON.toJSONString(commonCache.getModel(), SerializerFeature.DisableCircularReferenceDetect);
-        fileUtil.writeFile(result, outputFilePath + "/result.json", null);
         
-        System.out.print(String.join("\n", commonCache.getPaddingClassPath()));
-
+        if (commonCache.getPaddingClassPath().size() > 0 && loopCount < 10) {
+            loopCount++;
+            logger.message("loop: %s", loopCount);
+            analysisResource();
+        } else {
+            logger.message("timeout: %s", commonCache.getPaddingClassPath().size());
+        }
+        
         logger.message("found %s files%n", commonCache.getModel().size());
     }
 

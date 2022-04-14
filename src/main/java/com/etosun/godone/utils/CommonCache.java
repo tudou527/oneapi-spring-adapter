@@ -22,8 +22,8 @@ public class CommonCache {
     private final ConcurrentHashMap<String, String> reflectClassPath = new ConcurrentHashMap<>();
     // 已解析的结果 classPath (key 为 classPath value 为 解析结果)
     private final ConcurrentHashMap<String, JavaFileModel> fileModel = new ConcurrentHashMap<>();
-    // 待处理的队列
-    private final ConcurrentHashMap<String, String> paddingClassPath = new ConcurrentHashMap<>();
+    // 待处理的队列 (1: 待解析 2：完成）
+    private final ConcurrentHashMap<String, Integer> paddingClassPath = new ConcurrentHashMap<>();
 
     public Collection<String> getEntry() {
         return entry.values();
@@ -37,6 +37,9 @@ public class CommonCache {
 
     public ConcurrentHashMap<String, String> getResource() {
         return resource;
+    }
+    public String getResource(String classPath) {
+        return resource.get(classPath);
     }
     public void saveResource(String classPath, String filePath) {
         if (classPath == null || filePath == null) {
@@ -65,23 +68,27 @@ public class CommonCache {
     public ConcurrentHashMap<String, String> getReflectClass() {
         return reflectClassPath;
     }
+    public String getReflectClass(String classPath) {
+        return reflectClassPath.get(classPath);
+    }
     public void saveReflectClass(String classPath, String filePath) {
         if (classPath == null || filePath == null) {
             return;
         }
         reflectClassPath.putIfAbsent(classPath, filePath);
     }
-    
+
     public List<String> getPaddingClassPath() {
-        return new ArrayList<>(paddingClassPath.keySet());
+        return paddingClassPath.keySet().stream().filter(k -> paddingClassPath.get(k) == 1).collect(Collectors.toList());
     }
-    public String getPaddingClassPath(String classPath) {
+    public Integer getPaddingClassPath(String classPath) {
         return paddingClassPath.get(classPath);
     }
-    public void savePaddingClassPath(String classPath) {
-        if (classPath == null || paddingClassPath.get(classPath) != null) {
+    public void savePaddingClassPath(String classPath, Integer statusVal) {
+        if (classPath == null) {
             return;
         }
-        paddingClassPath.put(classPath, classPath);
+        paddingClassPath.put(classPath, statusVal);
     }
+    
 }

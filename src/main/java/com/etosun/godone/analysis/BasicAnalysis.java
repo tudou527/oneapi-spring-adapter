@@ -91,6 +91,7 @@ public class BasicAnalysis {
             add("Object");
         }};
         
+        // 继承关系
         if (javaClass.getSuperClass() != null) {
             String superClassName = javaClass.getSuperClass().getValue();
             if (!superClassBlackList.contains(superClassName)) {

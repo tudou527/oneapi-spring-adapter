@@ -7,8 +7,6 @@
 package com.etosun.godone.analysis;
 
 import com.etosun.godone.models.*;
-import com.thoughtworks.qdox.model.JavaClass;
-import com.thoughtworks.qdox.model.JavaMember;
 import com.thoughtworks.qdox.model.JavaMethod;
 import com.thoughtworks.qdox.model.JavaParameter;
 
@@ -16,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 解析 java 文件中的 class
+ * 入口文件解析，在 BasicAnalysis 的基础上多了 method 相关的逻辑
  */
 public class EntryAnalysis extends BasicAnalysis {
 
