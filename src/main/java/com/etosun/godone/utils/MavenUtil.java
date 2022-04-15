@@ -1,19 +1,17 @@
 package com.etosun.godone.utils;
 
-import com.etosun.godone.models.JavaClassModel;
-import com.etosun.godone.models.JavaDescriptionModel;
-import com.etosun.godone.models.JavaFileModel;
 import com.google.inject.Inject;
 import com.thoughtworks.qdox.JavaProjectBuilder;
-import com.thoughtworks.qdox.model.JavaClass;
 
 import javax.inject.Singleton;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -25,37 +23,6 @@ public class MavenUtil {
     private Logger logger;
     @Inject
     private CommonCache commonCache;
-
-    // 通过反射获取 jar 中与 classPath 的所有 class
-    private Class<?> getMatchReflectClass(String classPath, String jarFilePath) {
-        Class<?> matchClass = null;
-
-        try {
-            JarEntry entry;
-            JarFile jarFile = new JarFile(jarFilePath);
-            Enumeration<JarEntry> entries = jarFile.entries();
-
-            URL[] urls = new URL[]{ new URL("file:"+ jarFilePath) };
-            URLClassLoader childClassLoader = new URLClassLoader(urls, ClassLoader.getSystemClassLoader());
-
-            while (entries.hasMoreElements()) {
-                entry = entries.nextElement();
-                if (!entry.getName().contains("META-INF") && entry.getName().contains(".class")) {
-                    String className = entry.getName().substring(0, entry.getName().length() - 6).replace("/", ".");
-
-                    if (className.equals(classPath)) {
-                        try {
-                            matchClass = Class.forName(className, true, childClassLoader);
-                        } catch (ClassNotFoundException ignored) {
-                        }
-                    }
-                }
-            }
-        } catch (Exception ignored) {
-        }
-
-        return matchClass;
-    }
 
     // 缓存入口文件及其他资源文件
     public void saveResource(String entryDir, boolean saveAsEntry) {
@@ -119,28 +86,6 @@ public class MavenUtil {
         return fieldList;
     }
 
-    // 从 JAR 包中构建解析结果
-    public JavaFileModel builderFromReflectClass(String classPath, String jarFilePath) {
-        JavaFileModel fileModel = new JavaFileModel();
-    
-        // 使用 jar 包地址
-        fileModel.setFilePath(jarFilePath);
-        // import 地址为空
-        fileModel.setImports(new ArrayList<>());
-        
-        String packageName = classPath.substring(classPath.lastIndexOf(".") + 1);
-        fileModel.setPackageName(packageName);
-    
-        Class<?> targetClass = getMatchReflectClass(classPath, jarFilePath);
-        if (targetClass != null) {
-            JavaClassModel classModel = new JavaClassModel();
-            classModel.setName(targetClass.getName());
-            classModel.setClassPath(classPath);
-        }
-        
-        return fileModel;
-    }
-
     // 为 .* 的模糊 import 补全路径
     public List<String> getFuzzyImportPackage(String fuzzyImport) {
         String importPrefix = fuzzyImport.substring(0, fuzzyImport.length() - 1);
@@ -161,5 +106,36 @@ public class MavenUtil {
         });
 
         return reflectClassList;
+    }
+    
+    // 通过反射获取 jar 中与 classPath 的所有 class
+    public Class<?> getMatchReflectClass(String classPath, String jarFilePath) {
+        Class<?> matchClass = null;
+        
+        try {
+            JarEntry entry;
+            JarFile jarFile = new JarFile(jarFilePath);
+            Enumeration<JarEntry> entries = jarFile.entries();
+            
+            URL[] urls = new URL[]{ new URL("file:"+ jarFilePath) };
+            URLClassLoader childClassLoader = new URLClassLoader(urls, ClassLoader.getSystemClassLoader());
+            
+            while (entries.hasMoreElements()) {
+                entry = entries.nextElement();
+                if (!entry.getName().contains("META-INF") && entry.getName().contains(".class")) {
+                    String className = entry.getName().substring(0, entry.getName().length() - 6).replace("/", ".");
+                    
+                    if (className.equals(classPath)) {
+                        try {
+                            matchClass = Class.forName(className, true, childClassLoader);
+                        } catch (ClassNotFoundException ignored) {
+                        }
+                    }
+                }
+            }
+        } catch (Exception ignored) {
+        }
+        
+        return matchClass;
     }
 }

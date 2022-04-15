@@ -56,8 +56,9 @@ public class JavaClassModel {
     @JSONField(ordinal = 80)
     Boolean isPublic = false;
     
+    // 父类
     @JSONField(ordinal = 81)
-    String parentClass;
+    JavaActualType superClass;
 
     // 属性
     @JSONField(ordinal = 90)

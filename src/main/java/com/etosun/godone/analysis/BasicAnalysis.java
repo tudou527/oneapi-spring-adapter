@@ -6,10 +6,7 @@
  */
 package com.etosun.godone.analysis;
 
-import com.etosun.godone.models.JavaClassFieldModel;
-import com.etosun.godone.models.JavaClassModel;
-import com.etosun.godone.models.JavaDescriptionModel;
-import com.etosun.godone.models.JavaFileModel;
+import com.etosun.godone.models.*;
 import com.etosun.godone.utils.ClassUtil;
 import com.etosun.godone.utils.FileUtil;
 import com.etosun.godone.utils.Logger;
@@ -17,6 +14,9 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.thoughtworks.qdox.JavaProjectBuilder;
 import com.thoughtworks.qdox.model.JavaClass;
+import com.thoughtworks.qdox.model.JavaMember;
+import com.thoughtworks.qdox.model.JavaType;
+import org.checkerframework.checker.units.qual.A;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -86,20 +86,10 @@ public class BasicAnalysis {
         classModel.setName(javaClass.getName());
         classModel.setClassPath(String.format("%s.%s", javaClass.getPackageName(), javaClass.getName()));
         classModel.setActualType(classUtil.getActualTypeParameters(javaClass));
-
-        List<String> superClassBlackList = new ArrayList<String>(){{
-            add("Object");
-        }};
         
         // 继承关系
-        if (javaClass.getSuperClass() != null) {
-            String superClassName = javaClass.getSuperClass().getValue();
-            if (!superClassBlackList.contains(superClassName)) {
-                Optional<String> prentClassPath = fileModel.getImports().stream().filter(str -> str.endsWith(superClassName)).findFirst();
-                prentClassPath.ifPresent(classModel::setParentClass);
-            }
-        }
-
+        classModel.setSuperClass(getParentClass(javaClass));
+        
         // 描述&注解
         classModel.setDescription(classUtil.getDescription(javaClass, fileLines));
         classModel.setAnnotation(classUtil.getAnnotation(javaClass.getAnnotations(), fileModel));
@@ -114,6 +104,7 @@ public class BasicAnalysis {
 
         // class 字段
         ArrayList<JavaClassFieldModel> fieldList = new ArrayList<>();
+        // 只处理 public 字段
         javaClass.getFields().forEach(f -> {
             JavaClassFieldModel field = new JavaClassFieldModel();
     
@@ -132,5 +123,23 @@ public class BasicAnalysis {
         classModel.setFields(fieldList);
 
         return classModel;
+    }
+    
+    // 父类
+    private JavaActualType getParentClass(JavaClass javaClass) {
+        JavaType superClass = javaClass.getSuperClass();
+        
+        if (superClass == null) {
+            return null;
+        }
+    
+        List<String> superClassBlackList = new ArrayList<String>(){{
+            add("Object");
+        }};
+        String simpleSuperClassName = superClass.getBinaryName().substring(superClass.getBinaryName().lastIndexOf(".") + 1);
+        if (superClassBlackList.contains(simpleSuperClassName)) {
+            return null;
+        }
+        return typeAnalysis.get().analysis(superClass, fileModel);
     }
 }

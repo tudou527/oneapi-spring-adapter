@@ -6,11 +6,14 @@
  */
 package com.etosun.godone;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.etosun.godone.analysis.BasicAnalysis;
 import com.etosun.godone.analysis.EntryAnalysis;
 import com.etosun.godone.analysis.ReflectAnalysis;
 import com.etosun.godone.models.JavaFileModel;
 import com.etosun.godone.utils.CommonCache;
+import com.etosun.godone.utils.FileUtil;
 import com.etosun.godone.utils.Logger;
 import com.etosun.godone.utils.MavenUtil;
 import com.google.common.base.Stopwatch;
@@ -34,6 +37,8 @@ public class Application {
     private CommonCache commonCache;
     @Inject
     private MavenUtil mvnUtil;
+    @Inject
+    private FileUtil fileUtil;
     @Inject
     private Logger logger;
     @Inject
@@ -100,7 +105,7 @@ public class Application {
                 fileModel = reflectAnalysis.get().analysis(classPath);
             }
 
-            if (fileModel != null) {
+            if (fileModel != null && fileModel.getClassModel() != null) {
                 commonCache.saveModel(fileModel.getClassModel().getClassPath(), fileModel);
             }
             commonCache.savePaddingClassPath(classPath, 2);
@@ -113,8 +118,9 @@ public class Application {
         } else {
             logger.message("timeout: %s", commonCache.getPaddingClassPath().size());
         }
-        
-        logger.message("found %s files%n", commonCache.getModel().size());
+    
+        String result = JSON.toJSONString(commonCache.getModel(), SerializerFeature.DisableCircularReferenceDetect);
+        fileUtil.writeFile(result, outputFilePath + "/result.json", null);
     }
 
     public static void main(String[] args) {

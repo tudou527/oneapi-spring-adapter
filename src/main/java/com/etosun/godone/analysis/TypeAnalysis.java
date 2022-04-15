@@ -3,30 +3,21 @@ package com.etosun.godone.analysis;
 import com.etosun.godone.models.JavaActualType;
 import com.etosun.godone.models.JavaFileModel;
 import com.etosun.godone.utils.CommonCache;
-import com.etosun.godone.utils.FileUtil;
 import com.etosun.godone.utils.Logger;
-import com.etosun.godone.utils.MavenUtil;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.thoughtworks.qdox.model.JavaPackage;
 import com.thoughtworks.qdox.model.JavaType;
 import com.thoughtworks.qdox.model.impl.DefaultJavaParameterizedType;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class TypeAnalysis {
     private JavaType type;
     // type 所在的宿主文件
     private JavaFileModel hostModel;
-    
-    @Inject
-    private MavenUtil mvnUtil;
-    @Inject
-    private FileUtil fileUtil;
+
     @Inject
     private Logger logger;
     @Inject
@@ -103,43 +94,5 @@ public class TypeAnalysis {
         }
 
         return optionalFullTypeName.orElse(null);
-    }
-    
-    // 解析类型对应的文件
-    private void analysisTypeClass(String classPath) {
-        if (commonCache.getModel(classPath) != null) {
-            return;
-        }
-        
-        String classFilePath = commonCache.getResource().get(classPath);
-        if (classFilePath != null) {
-            JavaFileModel fileModel = baseAnalysis.get().analysis(classFilePath);
-            commonCache.saveModel(fileModel.getClassModel().getClassPath(), fileModel);
-            return;
-        }
-
-        // 尝试判断 classPath 是否来自 JAR 包
-        String jarFilePath = commonCache.getReflectClass().get(classPath);
-        if (jarFilePath == null) {
-            return;
-        }
-
-        // 判断源码 JAR 是否存在
-        File sourceJar = new File(jarFilePath.replace(".jar", "-sources.jar"));
-        if (sourceJar.exists()) {
-            String zipDir = sourceJar.getParent() + "/source";
-            // 解压源码JAR
-            fileUtil.unzipJar(sourceJar, zipDir);
-            // 缓存解压的资源文件
-            mvnUtil.saveResource(zipDir, false);
-        
-            // 重新调用自己（会走到第一个分支逻辑中）
-            analysisTypeClass(classPath);
-            return;
-        }
-
-        // 尝试从 JAR 包中解析类型
-        JavaFileModel fileModel = mvnUtil.builderFromReflectClass(classPath, jarFilePath);
-        commonCache.saveModel(classPath, fileModel);
     }
 }
