@@ -2,16 +2,13 @@ package com.etosun.godone.utils;
 
 import com.google.inject.Inject;
 import com.thoughtworks.qdox.JavaProjectBuilder;
+import com.thoughtworks.qdox.model.JavaClass;
 
 import javax.inject.Singleton;
-import java.io.File;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.List;
+import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -26,24 +23,24 @@ public class MavenUtil {
 
     // 缓存入口文件及其他资源文件
     public void saveResource(String entryDir, boolean saveAsEntry) {
-        JavaProjectBuilder builder = new JavaProjectBuilder();
-        // 添加项目目录及本地 mvn 仓库目录
-        try {
-            builder.addSourceTree(new File(entryDir));
-        } catch (Exception ignored) {}
-
-        builder.getClasses().forEach(cls -> {
-            String className = String.format("%s.%s", cls.getPackageName(), cls.getName());
-            String filePath = cls.getSource().getURL().getFile();
+        fileUtil.findFileList("glob:**/*.java", entryDir).forEach(filePath -> {
+            JavaProjectBuilder builder = fileUtil.getBuilder(filePath);
+            if (builder != null) {
+                Optional<JavaClass> optionalJavaClass = builder.getClasses().stream().filter(JavaClass::isPublic).findFirst();
     
-            // 缓存为资源文件
-            commonCache.saveResource(className, filePath);
-
-            boolean hasEntryAnnotation = cls.getAnnotations().stream().anyMatch(an -> an.getType().getName().endsWith("Controller"));
-            // 缓存为入口
-            if (saveAsEntry && hasEntryAnnotation) {
-                logger.message("cache entry: %s", className);
-                commonCache.saveEntry(className, filePath);
+                if (optionalJavaClass.isPresent()) {
+                    JavaClass javaClass = optionalJavaClass.get();
+                    String className = String.format("%s.%s", javaClass.getPackageName(), javaClass.getName());
+        
+                    // 缓存为资源文件
+                    commonCache.saveResource(className, filePath);
+                    boolean hasEntryAnnotation = javaClass.getAnnotations().stream().anyMatch(an -> an.getType().getName().endsWith("Controller"));
+                    // 缓存为入口
+                    if (saveAsEntry && hasEntryAnnotation) {
+                        logger.message("cache entry: %s", className);
+                        commonCache.saveEntry(className, filePath);
+                    }
+                }
             }
         });
     }
@@ -128,7 +125,7 @@ public class MavenUtil {
                     if (className.equals(classPath)) {
                         try {
                             matchClass = Class.forName(className, true, childClassLoader);
-                        } catch (ClassNotFoundException ignored) {
+                        } catch (NoClassDefFoundError ignore) {
                         }
                     }
                 }

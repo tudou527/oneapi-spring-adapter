@@ -112,6 +112,10 @@ public class BasicAnalysis {
     
             field.setName(f.getName());
             field.setDefaultValue(f.getInitializationExpression());
+
+            field.setIsPublic(f.isPublic());
+            field.setIsPrivate(f.isPrivate());
+            field.setIsProtected(f.isProtected());
             // 字段类型
             field.setType(typeAnalysis.get().analysis(f.getType(), fileModel));
             // 描述&注解

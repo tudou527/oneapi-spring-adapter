@@ -86,8 +86,7 @@ public class FileUtil {
             builder.addSource(new File(filePath));
 
             return builder;
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ignore) {
         }
 
         return null;

@@ -69,6 +69,9 @@ public class Application {
             projectPath = cmd.getOptionValue("p");
             outputFilePath = cmd.getOptionValue("o");
             localRepository = cmd.getOptionValue("r");
+            
+            commonCache.setProjectPath(projectPath);
+            commonCache.setLocalRepository(localRepository);
 
             // 缓存入口文件及其他资源文件
             mvnUtil.saveResource(projectPath, true);
@@ -108,7 +111,7 @@ public class Application {
             if (fileModel != null && fileModel.getClassModel() != null) {
                 commonCache.saveModel(fileModel.getClassModel().getClassPath(), fileModel);
             }
-            commonCache.savePaddingClassPath(classPath, 2);
+            commonCache.removePaddingClassPath(classPath);
         });
         
         if (commonCache.getPaddingClassPath().size() > 0 && loopCount < 10) {

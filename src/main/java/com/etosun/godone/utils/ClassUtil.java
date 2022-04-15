@@ -117,7 +117,6 @@ public class ClassUtil {
             HashMap<String, List<String>> commentTag = new HashMap<>();
 
             tags.forEach(t -> {
-                // tag 不存在时，初始化值为数组
                 List<String> tagParam = commentTag.get(t.getName());
                 if (tagParam == null) {
                     tagParam = new ArrayList<>();
@@ -147,9 +146,8 @@ public class ClassUtil {
         
         // 根据 java 的导入规则，当前目录下的文件可以不用手动 import，所以这里需要补全当前目录下的其他 class 作为默认导入
         String classDirPath = new File(javaClass.getSource().getURL().getPath()).getParent();
-        commonCache.getResource().keySet().forEach((classPath) -> {
-            String file = commonCache.getResource().get(classPath);
-            String fileDirPath = new File(file).getParent();
+        commonCache.getResource().forEach((classPath, filePath) -> {
+            String fileDirPath = new File(filePath).getParent();
             if (classDirPath.equals(fileDirPath)) {
                 importList.add(classPath);
             }
