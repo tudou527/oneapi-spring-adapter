@@ -1,36 +1,34 @@
 package com.etosun.godone.analysis;
 
-import com.etosun.godone.models.JavaActualType;
 import com.etosun.godone.models.JavaClassModel;
 import com.etosun.godone.models.JavaFileModel;
-import com.etosun.godone.utils.CommonCache;
-import com.etosun.godone.utils.FileUtil;
-import com.etosun.godone.utils.MavenUtil;
+import com.etosun.godone.utils.*;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.thoughtworks.qdox.model.JavaType;
 
 import java.io.File;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 
 /**
  * JAR 包资源解析
  */
 public class ReflectAnalysis {
     @Inject
+    private Logger logger;
+    @Inject
     private MavenUtil mvnUtil;
     @Inject
+    private ClassUtil classUtil;
+    @Inject
     private FileUtil fileUtil;
+
     @Inject
     private CommonCache commonCache;
     @Inject
-    Provider<BasicAnalysis> basicAnalysis;
+    private Provider<BasicAnalysis> basicAnalysis;
+    @Inject
+    private Provider<TypeAnalysis> typeAnalysis;
+    
 
     public JavaFileModel analysis(String classPath) {
         // 判断 classPath 是否来自 JAR 包
@@ -65,19 +63,20 @@ public class ReflectAnalysis {
         fileModel.setFilePath(jarFilePath);
         // import 地址为空
         fileModel.setImports(new ArrayList<>());
+        fileModel.setPackageName(classPath);
         
-        String packageName = classPath.substring(classPath.lastIndexOf(".") + 1);
-        fileModel.setPackageName(packageName);
+        String simpleClassName = classPath.substring(classPath.lastIndexOf(".") + 1);
 
         Class<?> targetClass = mvnUtil.getMatchReflectClass(classPath, jarFilePath);
         if (targetClass != null) {
             JavaClassModel classModel = new JavaClassModel();
-            classModel.setName(targetClass.getName());
+            classModel.setName(simpleClassName);
             classModel.setClassPath(classPath);
+            
+            // TODO: 处理字段
         }
         
         return fileModel;
     }
-
     
 }

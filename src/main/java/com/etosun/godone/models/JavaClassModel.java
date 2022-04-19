@@ -54,7 +54,7 @@ public class JavaClassModel {
 
     // 是否 private class
     @JSONField(ordinal = 80)
-    Boolean isPublic = false;
+    Boolean isPublic = true;
     
     // 父类
     @JSONField(ordinal = 81)

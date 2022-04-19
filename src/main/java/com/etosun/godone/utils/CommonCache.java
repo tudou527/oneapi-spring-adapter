@@ -1,10 +1,7 @@
 package com.etosun.godone.utils;
 
 import com.etosun.godone.models.JavaFileModel;
-import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.Collection;

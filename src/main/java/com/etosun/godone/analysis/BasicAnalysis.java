@@ -14,9 +14,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.thoughtworks.qdox.JavaProjectBuilder;
 import com.thoughtworks.qdox.model.JavaClass;
-import com.thoughtworks.qdox.model.JavaMember;
 import com.thoughtworks.qdox.model.JavaType;
-import org.checkerframework.checker.units.qual.A;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -104,7 +102,6 @@ public class BasicAnalysis {
 
         // class 字段
         ArrayList<JavaClassFieldModel> fieldList = new ArrayList<>();
-        // 只处理 public 字段
         javaClass.getFields().forEach(f -> {
             JavaClassFieldModel field = new JavaClassFieldModel();
     
