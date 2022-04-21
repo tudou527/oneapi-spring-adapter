@@ -9,13 +9,14 @@ package com.etosun.godone.models;
 import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * class 字段
  */
 @Data
-public class JavaClassFieldModel {
+public class JavaClassFieldModel implements Serializable {
     // 字段名称
     @JSONField(ordinal = 0)
     String name;

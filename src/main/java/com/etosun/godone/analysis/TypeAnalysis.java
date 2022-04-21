@@ -1,8 +1,8 @@
 package com.etosun.godone.analysis;
 
+import com.etosun.godone.cache.PendingCache;
 import com.etosun.godone.models.JavaActualType;
 import com.etosun.godone.models.JavaFileModel;
-import com.etosun.godone.utils.CommonCache;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.thoughtworks.qdox.model.JavaType;
@@ -20,7 +20,7 @@ public class TypeAnalysis {
     private JavaFileModel hostModel;
 
     @Inject
-    private CommonCache commonCache;
+    private PendingCache pendingCache;
     @Inject
     Provider<TypeAnalysis> typeAnalysis;
     
@@ -87,7 +87,7 @@ public class TypeAnalysis {
         }
         
         Optional<String> optionalFullTypeName = hostModel.getImports().stream().filter(str -> str.endsWith(simpleTypeName)).findFirst();
-        optionalFullTypeName.ifPresent(s -> commonCache.savePaddingClassPath(s));
+        optionalFullTypeName.ifPresent(s -> pendingCache.setCache(s));
 
         return optionalFullTypeName.orElse(null);
     }

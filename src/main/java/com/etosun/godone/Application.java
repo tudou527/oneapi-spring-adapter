@@ -6,14 +6,11 @@
  */
 package com.etosun.godone;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.etosun.godone.analysis.BasicAnalysis;
 import com.etosun.godone.analysis.EntryAnalysis;
 import com.etosun.godone.analysis.ReflectAnalysis;
+import com.etosun.godone.cache.*;
 import com.etosun.godone.models.JavaFileModel;
-import com.etosun.godone.utils.CommonCache;
-import com.etosun.godone.utils.FileUtil;
 import com.etosun.godone.utils.MavenUtil;
 import com.google.common.base.Stopwatch;
 import com.google.inject.Guice;
@@ -35,11 +32,16 @@ public class Application {
     private Integer loopCount = 0;
 
     @Inject
-    private CommonCache commonCache;
-    @Inject
     private MavenUtil mvnUtil;
     @Inject
-    private FileUtil fileUtil;
+    private BaseCache baseCache;
+    @Inject
+    private EntryCache entryCache;
+    @Inject
+    private FileModelCache modelCache;
+    @Inject
+    private PendingCache pendingCache;
+    
     @Inject
     Provider<EntryAnalysis> entryAnalysis;
     @Inject
@@ -68,40 +70,45 @@ public class Application {
             projectPath = cmd.getOptionValue("p");
             outputFilePath = cmd.getOptionValue("o");
             localRepository = cmd.getOptionValue("r");
-            
-            commonCache.setProjectPath(projectPath);
-            commonCache.setLocalRepository(localRepository);
-
+    
+            log.info("save resource");
             // 缓存入口文件及其他资源文件
             mvnUtil.saveResource(projectPath, true);
+
+            log.info("save reflect class cache");
             // 缓存 JAR 包中的 class
             mvnUtil.saveReflectClassCache(localRepository);
     
+            log.info("analysis entry");
             // 分析入口文件
-            commonCache.getEntry().forEach(entry -> {
-                log.info("analysis file: {}", entry);
-
-                JavaFileModel fileModel = entryAnalysis.get().analysis(entry);
+            entryCache.getCache().forEach(classPath -> {
+                String filePath = entryCache.getCache(classPath);
+                log.info("analysis file: {}", filePath);
+                JavaFileModel fileModel = entryAnalysis.get().analysis(filePath);
                 if (fileModel != null) {
-                    commonCache.saveModel(fileModel.getClassModel().getClassPath(), fileModel);
+                    modelCache.setCache(fileModel);
                 }
             });
             
             // 待解析的资源
-            analysisResource();
+            log.info("analysis class reference");
+            analysisClassReference();
+        
+            // 清空所有缓存
+            baseCache.clearAll();
     
-            log.info("execTime: {}", stopwatch.elapsed(TimeUnit.SECONDS));
+            log.info("exec time: {} second", stopwatch.elapsed(TimeUnit.SECONDS));
         } catch (ParseException e) {
             e.printStackTrace();
         }
     }
 
-    private void analysisResource() {
+    private void analysisClassReference() {
         // 所有待解析的资源
-        commonCache.getPaddingClassPath().forEach(classPath -> {
+        pendingCache.getCache().forEach(classPath -> {
             JavaFileModel fileModel;
-            String resourceFilePath = commonCache.getResource(classPath);
-            
+            String resourceFilePath = pendingCache.getCache(classPath);
+
             if (resourceFilePath != null) {
                 fileModel = basicAnalysis.get().analysis(resourceFilePath);
             } else {
@@ -109,26 +116,23 @@ public class Application {
             }
 
             if (fileModel != null && fileModel.getClassModel() != null) {
-                commonCache.saveModel(fileModel.getClassModel().getClassPath(), fileModel);
+                modelCache.setCache(fileModel);
             }
-            commonCache.removePaddingClassPath(classPath);
+            pendingCache.removeCache(classPath);
         });
         
-        if (commonCache.getPaddingClassPath().size() > 0 && loopCount < 10) {
+        if (pendingCache.getCache().size() > 0 && loopCount < 10) {
             loopCount++;
-            log.info("loop: {}", loopCount);
-            analysisResource();
+            analysisClassReference();
         } else {
-            log.info("timeout: {}", commonCache.getPaddingClassPath().size());
+            log.info("after loop {}, remain {} class", loopCount, pendingCache.getCache().size());
         }
-    
-        String result = JSON.toJSONString(commonCache.getModel(), SerializerFeature.DisableCircularReferenceDetect);
-        fileUtil.writeFile(result, outputFilePath + "/result.json", null);
     }
 
     public static void main(String[] args) {
         Injector injector = Guice.createInjector();
         Application app = injector.getInstance(Application.class);
+
         app.run(args);
     }
 }

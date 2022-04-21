@@ -17,9 +17,7 @@ import java.util.List;
 /**
  * 入口文件解析，在 BasicAnalysis 的基础上多了 method 相关的逻辑
  */
-@Slf4j
 public class EntryAnalysis extends BasicAnalysis {
-
     // 入口函数
     public JavaFileModel analysis(String filePath) {
         super.analysis(filePath);
@@ -45,7 +43,7 @@ public class EntryAnalysis extends BasicAnalysis {
         // 入参及类型
         javaMethod.setParameters(getParameters(method));
     
-        log.info("  analysis method: {}", method.getName());
+//        log.info("  analysis method: {}", method.getName());
 
         // 返回值及类型
         JavaActualType methodReturnType = typeAnalysis.get().analysis(method.getReturnType(), fileModel);

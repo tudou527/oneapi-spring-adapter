@@ -1,5 +1,8 @@
 package com.etosun.godone.analysis;
 
+import com.etosun.godone.cache.PendingCache;
+import com.etosun.godone.cache.ReflectCache;
+import com.etosun.godone.cache.ResourceCache;
 import com.etosun.godone.models.JavaActualType;
 import com.etosun.godone.models.JavaClassFieldModel;
 import com.etosun.godone.models.JavaClassModel;
@@ -22,15 +25,20 @@ public class ReflectAnalysis {
     private MavenUtil mvnUtil;
     @Inject
     private FileUtil fileUtil;
-
+    
     @Inject
-    private CommonCache commonCache;
+    private ResourceCache resourceCache;
+    @Inject
+    private PendingCache pendingCache;
+    @Inject
+    private ReflectCache reflectCache;
+    
     @Inject
     private Provider<BasicAnalysis> basicAnalysis;
     
     public JavaFileModel analysis(String classPath) {
         // 判断 classPath 是否来自 JAR 包
-        String jarFilePath = commonCache.getReflectClass().get(classPath);
+        String jarFilePath = reflectCache.getCache(classPath);
         if (jarFilePath == null) {
             return null;
         }
@@ -44,7 +52,7 @@ public class ReflectAnalysis {
             // 缓存解压的资源文件
             mvnUtil.saveResource(zipDir, false);
     
-            String resourceFilePath = commonCache.getResource(classPath);
+            String resourceFilePath = resourceCache.getCache(classPath);
             if (resourceFilePath != null) {
                 return basicAnalysis.get().analysis(resourceFilePath);
             }
@@ -138,7 +146,7 @@ public class ReflectAnalysis {
         actualType.setClassPath(superClassName);
     
         if (TypeAnalysis.startsWithBlackList.stream().noneMatch(simpleSuperClassName::startsWith) && simpleSuperClassName.length() != 1) {
-            commonCache.savePaddingClassPath(superClassName);
+            pendingCache.setCache(superClassName);
         }
         
         return actualType;

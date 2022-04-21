@@ -2,29 +2,88 @@
 <ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd">
 
     <!-- 磁盘缓存位置 -->
-    <diskStore path="java.io.tmpdir/ehcache" />
+    <diskStore path="/Users/xiaoyun/ehcache" />
 
     <!--
         Doc: https://www.cnblogs.com/myseries/p/11370109.html
-        maxElementsInMemory：内存中允许存储的最大的元素个数，0 代表无限个
-        clearOnFlush：内存数量最大时是否清除
-        timeToLiveSeconds：缓存数据的生存时间（TTL），也就是一个元素从构建到消亡的最大时间间隔值，这只能在元素不是永久驻留时有效，如果该值是 0 就意味着元素可以停顿无穷长的时间
-        eternal：缓存中对象是否为永。true: 超时设置将被忽略，对象从不过期。根据存储数据的不同，例如一些静态不变的数据如省市区等可以设置为永不过时
-        timeToIdleSeconds：设置对象在失效前的允许闲置时间（单位：秒）。仅当eternal=false对象不是永久有效时使用，可选属性，默认值是 0，也就是可闲置时间无穷大
-        overflowToDisk：内存不足时，是否启用磁盘缓存
-        maxEntriesLocalDisk：当内存中对象数量达到 maxElementsInMemory 时，Ehcache 将会对象写到磁盘中
-        maxElementsOnDisk：硬盘最大缓存个数
-        diskSpoolBufferSizeMB：这个参数设置 DiskStore（磁盘缓存）的缓存区大小，默认 30MB。每个Cache都应该有自己的一个缓冲区
-        diskPersistent：是否在 VM 重启时存储硬盘的缓存数据，默认值是false
-        diskExpiryThreadIntervalSeconds：磁盘失效线程运行时间间隔，默认是120秒
+        @param {number} maxElementsInMemory：内存中允许存储的最大的元素个数，0 代表无限个
+        @param {boolean} overflowToDisk：内存不足时，是否启用磁盘缓存
+        @param {number} maxEntriesLocalDisk：磁盘中的最大对象数
+        @param {boolean} clearOnFlush：内存数量最大时是否清除
+        @param {number} timeToLiveSeconds：缓存数据的生存时间（TTL），也就是一个元素从构建到消亡的最大时间间隔值，这只能在元素不是永久驻留时有效，如果该值是 0 就意味着元素可以停顿无穷长的时间
+        @param {boolean} eternal：缓存中对象是否为永。true: 超时设置将被忽略，对象从不过期。根据存储数据的不同，例如一些静态不变的数据如省市区等可以设置为永不过时
+        @param {number} timeToIdleSeconds：设置对象在失效前的允许闲置时间（单位：秒）。仅当 eternal=false 对象不是永久有效时使用，可选属性，默认值是 0，也就是可闲置时间无穷大
+        @param {number} maxElementsOnDisk：硬盘最大缓存个数
+        @param {number} diskSpoolBufferSizeMB：这个参数设置 DiskStore（磁盘缓存）的缓存区大小，默认 30MB。每个Cache都应该有自己的一个缓冲区
+        @param {boolean} diskPersistent：是否在 VM 重启时存储硬盘的缓存数据，默认值是false
+        @param {number} diskExpiryThreadIntervalSeconds：磁盘失效线程运行时间间隔，默认是120秒
+        @param {number} memoryStoreEvictionPolicy：缓存算法，LRU、LFU、FIFO
     -->
 
-    <cache name=""
-        maxElementsInMemory="1000"
-        eternal="false"
-        timeToIdleSeconds="5"
-        timeToLiveSeconds="5"
-        overflowToDisk="false"
+    <!--
+        入口缓存
+        内存最多缓存 100 条数据，超过时写入磁盘（磁盘上限 30w)
+    -->
+    <cache name="EntryCache"
+        maxElementsInMemory="100"
+        maxEntriesLocalDisk="300000"
+        eternal="true"
+        overflowToDisk="true"
+        diskPersistent="false"
         memoryStoreEvictionPolicy="LRU"
     />
+
+    <!--
+        资源文件缓存
+        内存最多缓存 500 条数据，超过时写入磁盘（磁盘上限 30w)
+    -->
+    <cache name="ResourceCache"
+           maxElementsInMemory="200"
+           maxEntriesLocalDisk="300000"
+           eternal="true"
+           overflowToDisk="true"
+           diskPersistent="false"
+           memoryStoreEvictionPolicy="LRU"
+    />
+
+    <!--
+        解析结果缓存
+        内存最多缓存 100 条数据，超过时写入磁盘（磁盘上限 30w)
+    -->
+    <cache name="JavaModelCache"
+           maxElementsInMemory="10"
+           maxEntriesLocalDisk="300000"
+           eternal="true"
+           overflowToDisk="true"
+           diskPersistent="false"
+           memoryStoreEvictionPolicy="LRU"
+    />
+
+    <!--
+        待处理的资源队列
+        内存最多缓存 500 条数据，超过时写入磁盘（磁盘上限 30w)
+    -->
+    <cache name="PendingClassCache"
+           maxElementsInMemory="200"
+           maxEntriesLocalDisk="300000"
+           eternal="true"
+           overflowToDisk="true"
+           diskPersistent="false"
+           memoryStoreEvictionPolicy="LRU"
+    />
+
+    <!--
+        通过反射获得的 class 队列
+        内存最多缓存 500 条数据，超过时写入磁盘（磁盘上限 30w)
+    -->
+    <cache name="ReflectClassCache"
+           maxElementsInMemory="200"
+           maxEntriesLocalDisk="300000"
+           eternal="true"
+           overflowToDisk="true"
+           diskPersistent="false"
+           memoryStoreEvictionPolicy="LRU"
+    />
+
+
 </ehcache>

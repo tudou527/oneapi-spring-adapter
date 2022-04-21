@@ -9,10 +9,11 @@ package com.etosun.godone.models;
 import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
 @Data
-public class JavaAnnotationModel {
+public class JavaAnnotationModel implements Serializable {
     // 注解名
     @JSONField(ordinal = 0)
     String name;

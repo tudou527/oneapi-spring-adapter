@@ -1,5 +1,8 @@
 package com.etosun.godone.utils;
 
+import com.etosun.godone.cache.EntryCache;
+import com.etosun.godone.cache.ReflectCache;
+import com.etosun.godone.cache.ResourceCache;
 import com.google.inject.Inject;
 import com.thoughtworks.qdox.JavaProjectBuilder;
 import com.thoughtworks.qdox.model.JavaClass;
@@ -19,7 +22,12 @@ public class MavenUtil {
     @Inject
     private FileUtil fileUtil;
     @Inject
-    private CommonCache commonCache;
+    private EntryCache entryCache;
+    @Inject
+    private ReflectCache reflectCache;
+    @Inject
+    private ResourceCache resourceCache;
+    
 
     // 缓存入口文件及其他资源文件
     public void saveResource(String entryDir, boolean saveAsEntry) {
@@ -31,14 +39,14 @@ public class MavenUtil {
                 if (optionalJavaClass.isPresent()) {
                     JavaClass javaClass = optionalJavaClass.get();
                     String className = String.format("%s.%s", javaClass.getPackageName(), javaClass.getName());
-        
+    
                     // 缓存为资源文件
-                    commonCache.saveResource(className, filePath);
+                    resourceCache.setCache(className, filePath);
+
                     boolean hasEntryAnnotation = javaClass.getAnnotations().stream().anyMatch(an -> an.getType().getName().endsWith("Controller"));
                     // 缓存为入口
                     if (saveAsEntry && hasEntryAnnotation) {
-                        log.info("cache entry: {}", className);
-                        commonCache.saveEntry(className, filePath);
+                        entryCache.setCache(className, filePath);
                     }
                 }
             }
@@ -61,7 +69,7 @@ public class MavenUtil {
 
                         if (!entry.getName().contains("META-INF") && entry.getName().contains(".class")) {
                             String classPath = entry.getName().substring(0, entry.getName().length() - 6).replace("/", ".");
-                            commonCache.saveReflectClass(classPath, jarFilePath);
+                            reflectCache.setCache(classPath, jarFilePath);
                         }
                     }
                 } catch (Exception e) {
@@ -95,14 +103,14 @@ public class MavenUtil {
         List<String> reflectClassList = new ArrayList<>();
 
         // 尝试匹配 JAR 包中的 classPath
-        commonCache.getReflectClass().keySet().forEach(classPath -> {
+        reflectCache.getCache().forEach(classPath -> {
             if (classPath.startsWith(importPrefix)) {
                 reflectClassList.add(classPath);
             }
         });
 
         // 尝试从当前项目资源文件匹配
-        commonCache.getResource().keySet().forEach(classPath -> {
+        resourceCache.getCache().forEach(classPath -> {
             if (classPath.startsWith(importPrefix)) {
                 reflectClassList.add(classPath);
             }

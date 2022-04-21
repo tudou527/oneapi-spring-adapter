@@ -9,11 +9,12 @@ package com.etosun.godone.models;
 import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
-public class JavaFileModel {
+public class JavaFileModel implements Serializable {
     // 文件路径
     @JSONField(ordinal = 0)
     String filePath;

@@ -6,13 +6,12 @@
  */
 package com.etosun.godone.utils;
 
-import com.etosun.godone.analysis.TypeAnalysis;
+import com.etosun.godone.cache.ResourceCache;
 import com.etosun.godone.models.JavaActualType;
 import com.etosun.godone.models.JavaAnnotationModel;
 import com.etosun.godone.models.JavaDescriptionModel;
 import com.etosun.godone.models.JavaFileModel;
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 import com.thoughtworks.qdox.model.*;
 import com.thoughtworks.qdox.model.expression.AnnotationValue;
 import com.thoughtworks.qdox.model.expression.AnnotationValueList;
@@ -28,13 +27,9 @@ import java.util.stream.Collectors;
 @Singleton
 public class ClassUtil {
     @Inject
-    private RefUtil refUtil;
-    @Inject
     private MavenUtil mvnUtil;
     @Inject
-    Provider<TypeAnalysis> typeAnalysis;
-    @Inject
-    private CommonCache commonCache;
+    private ResourceCache resourceCache;
 
     // 注解
     public ArrayList<JavaAnnotationModel> getAnnotation(List<JavaAnnotation> annotations, JavaFileModel hostModel) {
@@ -73,7 +68,6 @@ public class ClassUtil {
                         // 值为引用类型Exp: @AppSwitch(level = Switch.Level.p2)
                         if (val instanceof FieldRef) {
                             FieldRef refValue = (FieldRef) val;
-                            refUtil.getRef(refValue.getName(), hostModel);
                             return null;
                         }
                         if (val instanceof DefaultJavaParameterizedType) {
@@ -146,8 +140,9 @@ public class ClassUtil {
         
         // 根据 java 的导入规则，当前目录下的文件可以不用手动 import，所以这里需要补全当前目录下的其他 class 作为默认导入
         String classDirPath = new File(javaClass.getSource().getURL().getPath()).getParent();
-        commonCache.getResource().forEach((classPath, filePath) -> {
-            String fileDirPath = new File(filePath).getParent();
+    
+        resourceCache.getCache().forEach((classPath) -> {
+            String fileDirPath = new File(resourceCache.getCache(classPath)).getParent();
             if (classDirPath.equals(fileDirPath)) {
                 importList.add(classPath);
             }

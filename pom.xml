@@ -48,6 +48,11 @@
             <artifactId>ehcache</artifactId>
             <version>2.10.9.2</version>
         </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.9</version>
+        </dependency>
 
 
         <!-- 文件编码探测  -->

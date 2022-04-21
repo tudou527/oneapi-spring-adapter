@@ -9,6 +9,7 @@ package com.etosun.godone.models;
 import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 
@@ -16,7 +17,7 @@ import java.util.List;
  * 注释
  */
 @Data
-public class JavaDescriptionModel {
+public class JavaDescriptionModel implements Serializable {
     // 注释内容
     @JSONField(ordinal = 0)
     String text;
