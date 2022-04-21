@@ -3,6 +3,7 @@ package com.etosun.godone.utils;
 import com.google.inject.Inject;
 import com.thoughtworks.qdox.JavaProjectBuilder;
 import com.thoughtworks.qdox.model.JavaClass;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Singleton;
 import java.lang.reflect.Field;
@@ -11,14 +12,12 @@ import java.net.URLClassLoader;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.jar.Manifest;
 
 @Singleton
+@Slf4j
 public class MavenUtil {
     @Inject
     private FileUtil fileUtil;
-    @Inject
-    private Logger logger;
     @Inject
     private CommonCache commonCache;
 
@@ -38,7 +37,7 @@ public class MavenUtil {
                     boolean hasEntryAnnotation = javaClass.getAnnotations().stream().anyMatch(an -> an.getType().getName().endsWith("Controller"));
                     // 缓存为入口
                     if (saveAsEntry && hasEntryAnnotation) {
-                        logger.message("cache entry: %s", className);
+                        log.info("cache entry: {}", className);
                         commonCache.saveEntry(className, filePath);
                     }
                 }
@@ -77,7 +76,13 @@ public class MavenUtil {
         List<Field> fieldList = new ArrayList<>();
 
         while (cls.getSuperclass() != null) {
-            fieldList.addAll(Arrays.asList(cls.getDeclaredFields()));
+            Arrays.stream(cls.getDeclaredFields()).forEach(f -> {
+                String fStr = f.toString();
+                // 不处理常量与非序列化字段
+                if (!fStr.contains(" final ") && !fStr.contains(" transient ")) {
+                    fieldList.add(f);
+                }
+            });
             cls = cls.getSuperclass();
         }
 

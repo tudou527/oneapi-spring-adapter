@@ -43,6 +43,12 @@
             <artifactId>guice</artifactId>
             <version>4.2.3</version>
         </dependency>
+        <dependency>
+            <groupId>net.sf.ehcache</groupId>
+            <artifactId>ehcache</artifactId>
+            <version>2.10.9.2</version>
+        </dependency>
+
 
         <!-- 文件编码探测  -->
         <dependency>
@@ -52,7 +58,6 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/src/main/resources/lib/cpdetector_1.0.10.jar</systemPath>
         </dependency>
-
         <dependency>
             <groupId>org.mozilla.intl</groupId>
             <artifactId>chardet</artifactId>

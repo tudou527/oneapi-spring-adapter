@@ -14,19 +14,20 @@ import com.etosun.godone.analysis.ReflectAnalysis;
 import com.etosun.godone.models.JavaFileModel;
 import com.etosun.godone.utils.CommonCache;
 import com.etosun.godone.utils.FileUtil;
-import com.etosun.godone.utils.Logger;
 import com.etosun.godone.utils.MavenUtil;
 import com.google.common.base.Stopwatch;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Provider;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.cli.*;
 
 import javax.inject.Singleton;
 import java.util.concurrent.TimeUnit;
 
 @Singleton
+@Slf4j
 public class Application {
     private String projectPath;
     private String outputFilePath;
@@ -39,8 +40,6 @@ public class Application {
     private MavenUtil mvnUtil;
     @Inject
     private FileUtil fileUtil;
-    @Inject
-    private Logger logger;
     @Inject
     Provider<EntryAnalysis> entryAnalysis;
     @Inject
@@ -80,7 +79,8 @@ public class Application {
     
             // 分析入口文件
             commonCache.getEntry().forEach(entry -> {
-                logger.message("analysis file: %s", entry);
+                log.info("analysis file: {}", entry);
+
                 JavaFileModel fileModel = entryAnalysis.get().analysis(entry);
                 if (fileModel != null) {
                     commonCache.saveModel(fileModel.getClassModel().getClassPath(), fileModel);
@@ -90,7 +90,7 @@ public class Application {
             // 待解析的资源
             analysisResource();
     
-            logger.message("execTime: %s", stopwatch.elapsed(TimeUnit.SECONDS));
+            log.info("execTime: {}", stopwatch.elapsed(TimeUnit.SECONDS));
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -116,10 +116,10 @@ public class Application {
         
         if (commonCache.getPaddingClassPath().size() > 0 && loopCount < 10) {
             loopCount++;
-            logger.message("loop: %s", loopCount);
+            log.info("loop: {}", loopCount);
             analysisResource();
         } else {
-            logger.message("timeout: %s", commonCache.getPaddingClassPath().size());
+            log.info("timeout: {}", commonCache.getPaddingClassPath().size());
         }
     
         String result = JSON.toJSONString(commonCache.getModel(), SerializerFeature.DisableCircularReferenceDetect);

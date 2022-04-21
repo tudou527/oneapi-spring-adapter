@@ -9,12 +9,12 @@ package com.etosun.godone.analysis;
 import com.etosun.godone.models.*;
 import com.etosun.godone.utils.ClassUtil;
 import com.etosun.godone.utils.FileUtil;
-import com.etosun.godone.utils.Logger;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.thoughtworks.qdox.JavaProjectBuilder;
 import com.thoughtworks.qdox.model.JavaClass;
 import com.thoughtworks.qdox.model.JavaType;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -26,6 +26,7 @@ import java.util.Optional;
 /**
  * 资源解析
  */
+@Slf4j
 public class BasicAnalysis {
     // 当前解析的 .java 文件
     String javaFilePath;
@@ -41,9 +42,11 @@ public class BasicAnalysis {
     @Inject
     ClassUtil classUtil;
     @Inject
-    Logger logger;
-    @Inject
     Provider<TypeAnalysis> typeAnalysis;
+    
+    public static List<String> superClassBlackList = new ArrayList<String>(){{
+        add("Object");
+    }};
     
     public JavaFileModel analysis(String filePath) {
         javaFilePath = filePath;
@@ -98,14 +101,14 @@ public class BasicAnalysis {
         classModel.setIsAbstract(javaClass.isAbstract());
         classModel.setIsInterface(javaClass.isInterface());
     
-        logger.message("analysis class: %s", javaClass.getName());
+        log.info("analysis class: {}", javaClass.getName());
 
         // class 字段
         ArrayList<JavaClassFieldModel> fieldList = new ArrayList<>();
         javaClass.getFields().forEach(f -> {
             JavaClassFieldModel field = new JavaClassFieldModel();
     
-            logger.message("  analysis field: %s", f.getName());
+            log.info("  analysis field: {}", f.getName());
     
             field.setName(f.getName());
             field.setDefaultValue(f.getInitializationExpression());
@@ -134,9 +137,6 @@ public class BasicAnalysis {
             return null;
         }
     
-        List<String> superClassBlackList = new ArrayList<String>(){{
-            add("Object");
-        }};
         String simpleSuperClassName = superClass.getBinaryName().substring(superClass.getBinaryName().lastIndexOf(".") + 1);
         if (superClassBlackList.contains(simpleSuperClassName)) {
             return null;

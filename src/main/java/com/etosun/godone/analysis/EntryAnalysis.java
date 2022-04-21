@@ -9,6 +9,7 @@ package com.etosun.godone.analysis;
 import com.etosun.godone.models.*;
 import com.thoughtworks.qdox.model.JavaMethod;
 import com.thoughtworks.qdox.model.JavaParameter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.List;
 /**
  * 入口文件解析，在 BasicAnalysis 的基础上多了 method 相关的逻辑
  */
+@Slf4j
 public class EntryAnalysis extends BasicAnalysis {
 
     // 入口函数
@@ -43,7 +45,7 @@ public class EntryAnalysis extends BasicAnalysis {
         // 入参及类型
         javaMethod.setParameters(getParameters(method));
     
-        logger.message("  analysis method: %s", method.getName());
+        log.info("  analysis method: {}", method.getName());
 
         // 返回值及类型
         JavaActualType methodReturnType = typeAnalysis.get().analysis(method.getReturnType(), fileModel);

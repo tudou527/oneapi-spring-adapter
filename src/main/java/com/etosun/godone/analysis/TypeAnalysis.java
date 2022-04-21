@@ -3,29 +3,35 @@ package com.etosun.godone.analysis;
 import com.etosun.godone.models.JavaActualType;
 import com.etosun.godone.models.JavaFileModel;
 import com.etosun.godone.utils.CommonCache;
-import com.etosun.godone.utils.Logger;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.thoughtworks.qdox.model.JavaType;
 import com.thoughtworks.qdox.model.impl.DefaultJavaParameterizedType;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 public class TypeAnalysis {
     private JavaType type;
     // type 所在的宿主文件
     private JavaFileModel hostModel;
 
     @Inject
-    private Logger logger;
-    @Inject
     private CommonCache commonCache;
     @Inject
     Provider<TypeAnalysis> typeAnalysis;
-    @Inject
-    Provider<BasicAnalysis> baseAnalysis;
+    
+    public static List<String> startsWithBlackList = new ArrayList<String>() {{
+        add("java.");
+        add("String");
+        add("javax.");
+        add("void");
+        add("org.springframework.");
+        add("org.slf4j.");
+    }};
     
     /**
      * @param type 待解析的类型
@@ -35,7 +41,7 @@ public class TypeAnalysis {
         this.type = type;
         this.hostModel = fileModel;
     
-        logger.message("      analysis type: %s", type.getBinaryName());
+        log.info("      analysis type: {}", type.getBinaryName());
 
         return getType();
     }
@@ -60,7 +66,7 @@ public class TypeAnalysis {
                     // 递归解析每个子类型
                     javaType.getItem().add(javaType);
                 } else {
-                    logger.message("      analysis child type: %s", ct.getBinaryName());
+                    log.info("      analysis child type: {}", ct.getBinaryName());
                     JavaActualType childActualType = typeAnalysis.get().analysis(ct, hostModel);
                     // 递归解析每个子类型
                     javaType.getItem().add(childActualType);
@@ -75,14 +81,7 @@ public class TypeAnalysis {
         String typeName = type.getBinaryName();
         // 取 typeName 最后一个 . 之后的部分
         String simpleTypeName = typeName.substring(typeName.lastIndexOf(".") + 1);
-        List<String> startsWithBlackList = new ArrayList<String>() {{
-            add("java.");
-            add("String");
-            add("javax.");
-            add("void");
-            add("org.springframework.");
-            add("org.slf4j.");
-        }};
+        
         if (startsWithBlackList.stream().anyMatch(typeName::startsWith) || simpleTypeName.length() == 1) {
             return typeName;
         }

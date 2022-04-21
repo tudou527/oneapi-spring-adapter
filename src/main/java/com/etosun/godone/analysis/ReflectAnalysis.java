@@ -1,24 +1,25 @@
 package com.etosun.godone.analysis;
 
+import com.etosun.godone.models.JavaActualType;
+import com.etosun.godone.models.JavaClassFieldModel;
 import com.etosun.godone.models.JavaClassModel;
 import com.etosun.godone.models.JavaFileModel;
 import com.etosun.godone.utils.*;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 /**
  * JAR 包资源解析
  */
+@Slf4j
 public class ReflectAnalysis {
     @Inject
-    private Logger logger;
-    @Inject
     private MavenUtil mvnUtil;
-    @Inject
-    private ClassUtil classUtil;
     @Inject
     private FileUtil fileUtil;
 
@@ -26,10 +27,7 @@ public class ReflectAnalysis {
     private CommonCache commonCache;
     @Inject
     private Provider<BasicAnalysis> basicAnalysis;
-    @Inject
-    private Provider<TypeAnalysis> typeAnalysis;
     
-
     public JavaFileModel analysis(String classPath) {
         // 判断 classPath 是否来自 JAR 包
         String jarFilePath = commonCache.getReflectClass().get(classPath);
@@ -52,6 +50,7 @@ public class ReflectAnalysis {
             }
         }
         
+        // 从 JAR 包中构建解析结果
         return builderFromReflectClass(classPath, jarFilePath);
     }
     
@@ -73,10 +72,75 @@ public class ReflectAnalysis {
             classModel.setName(simpleClassName);
             classModel.setClassPath(classPath);
             
-            // TODO: 处理字段
+            // 父类
+            classModel.setSuperClass(getParentClass(targetClass));
+            
+            // 字段
+            ArrayList<JavaClassFieldModel> fieldList = new ArrayList<>();
+            mvnUtil.getFieldList(targetClass).forEach(f -> {
+                JavaClassFieldModel field = new JavaClassFieldModel();
+        
+                log.info("  analysis field: {}", f.getName());
+        
+                field.setName(f.getName());
+                // 字段类型
+                field.setType(getReflectType(f, fileModel));
+                fieldList.add(field);
+            });
+            classModel.setFields(fieldList);
+    
+            fileModel.setClassModel(classModel);
         }
         
         return fileModel;
     }
     
+    // 解析反射获得的字段类型
+    public JavaActualType getReflectType(Field field, JavaFileModel fileModel) {
+        JavaActualType javaType = new JavaActualType();
+
+        String fullTypeName = field.getType().getTypeName();
+        String simpleTypeName = fullTypeName.substring(fullTypeName.lastIndexOf(".") + 1);
+        
+        if (simpleTypeName.contains("$")) {
+            simpleTypeName = simpleTypeName.split("\\$")[1];
+        }
+    
+        // 取 className 作为类型名称
+        javaType.setName(simpleTypeName);
+    
+        if (TypeAnalysis.startsWithBlackList.stream().anyMatch(fullTypeName::startsWith) || fullTypeName.length() == 1) {
+            javaType.setClassPath(fullTypeName);
+        } else {
+            System.out.printf(">>>>>> %s", field.toString());
+        }
+        
+        return javaType;
+    }
+    
+    // 父类
+    private JavaActualType getParentClass(Class<?> javaClass) {
+        Class<?> superClass = javaClass.getSuperclass();
+
+        if (superClass == null) {
+            return null;
+        }
+        
+        String superClassName = superClass.getName();
+        String simpleSuperClassName = superClassName.substring(superClassName.lastIndexOf(".") + 1);
+
+        if (BasicAnalysis.superClassBlackList.contains(simpleSuperClassName)) {
+            return null;
+        }
+    
+        JavaActualType actualType = new JavaActualType();
+        actualType.setName(simpleSuperClassName);
+        actualType.setClassPath(superClassName);
+    
+        if (TypeAnalysis.startsWithBlackList.stream().noneMatch(simpleSuperClassName::startsWith) && simpleSuperClassName.length() != 1) {
+            commonCache.savePaddingClassPath(superClassName);
+        }
+        
+        return actualType;
+    }
 }
