@@ -40,8 +40,16 @@ public class BaseCache<T> {
         cache.remove(classPath);
     }
     
-    public void clearAll() {
-        cacheManager.removeAllCaches();
+    public void clearCache(Boolean deleteAnalysisResult) {
+        String[] cacheNames = cacheManager.getCacheNames();
+        for (String cacheName : cacheNames) {
+            if (deleteAnalysisResult && !cacheName.equals("JavaModelCache")) {
+                removeCache(cacheName);
+            } else {
+                removeCache(cacheName);
+            }
+        }
+        
         System.out.println(":");
     }
 }

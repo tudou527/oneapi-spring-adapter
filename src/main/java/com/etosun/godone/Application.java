@@ -6,11 +6,14 @@
  */
 package com.etosun.godone;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.etosun.godone.analysis.BasicAnalysis;
 import com.etosun.godone.analysis.EntryAnalysis;
 import com.etosun.godone.analysis.ReflectAnalysis;
 import com.etosun.godone.cache.*;
 import com.etosun.godone.models.JavaFileModel;
+import com.etosun.godone.utils.FileUtil;
 import com.etosun.godone.utils.MavenUtil;
 import com.google.common.base.Stopwatch;
 import com.google.inject.Guice;
@@ -21,6 +24,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.cli.*;
 
 import javax.inject.Singleton;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 @Singleton
@@ -34,9 +40,13 @@ public class Application {
     @Inject
     private MavenUtil mvnUtil;
     @Inject
+    private FileUtil fileUtil;
+    @Inject
     private BaseCache baseCache;
     @Inject
     private EntryCache entryCache;
+    @Inject
+    private ResourceCache resourceCache;
     @Inject
     private FileModelCache modelCache;
     @Inject
@@ -78,7 +88,7 @@ public class Application {
             log.info("save reflect class cache");
             // 缓存 JAR 包中的 class
             mvnUtil.saveReflectClassCache(localRepository);
-    
+
             log.info("analysis entry");
             // 分析入口文件
             entryCache.getCache().forEach(classPath -> {
@@ -93,9 +103,18 @@ public class Application {
             // 待解析的资源
             log.info("analysis class reference");
             analysisClassReference();
-        
+    
+            baseCache.clearCache(false);
+    
+            HashMap<String, JavaFileModel> analysisResult = new HashMap<>();
+            modelCache.getCache().forEach((classPath) -> {
+                analysisResult.put(classPath, modelCache.getCache(classPath));
+            });
+            String analysisResultStr = JSON.toJSONString(analysisResult, SerializerFeature.DisableCircularReferenceDetect);
+            fileUtil.writeFile(analysisResultStr, outputFilePath+ "/result.json", Charset.defaultCharset());
+
             // 清空所有缓存
-            baseCache.clearAll();
+            baseCache.clearCache(true);
     
             log.info("exec time: {} second", stopwatch.elapsed(TimeUnit.SECONDS));
         } catch (ParseException e) {
@@ -105,13 +124,15 @@ public class Application {
 
     private void analysisClassReference() {
         // 所有待解析的资源
-        pendingCache.getCache().forEach(classPath -> {
+        pendingCache.getCache().forEach((classPath) -> {
             JavaFileModel fileModel;
-            String resourceFilePath = pendingCache.getCache(classPath);
+            String resourceFilePath = resourceCache.getCache(classPath);
 
             if (resourceFilePath != null) {
+                // 先从资源文件中查找
                 fileModel = basicAnalysis.get().analysis(resourceFilePath);
             } else {
+                // 找不到再从 jar 包中找
                 fileModel = reflectAnalysis.get().analysis(classPath);
             }
 
