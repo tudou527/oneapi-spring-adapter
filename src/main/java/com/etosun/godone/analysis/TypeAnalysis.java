@@ -27,6 +27,7 @@ public class TypeAnalysis {
     public static List<String> startsWithBlackList = new ArrayList<String>() {{
         add("java.");
         add("String");
+        add("boolean");
         add("javax.");
         add("void");
         add("org.springframework.");

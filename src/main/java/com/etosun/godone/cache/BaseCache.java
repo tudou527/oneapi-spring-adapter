@@ -43,8 +43,10 @@ public class BaseCache<T> {
     public void clearCache(Boolean deleteAnalysisResult) {
         String[] cacheNames = cacheManager.getCacheNames();
         for (String cacheName : cacheNames) {
-            if (deleteAnalysisResult && !cacheName.equals("JavaModelCache")) {
-                removeCache(cacheName);
+            if (cacheName.equals("JavaModelCache")) {
+               if (deleteAnalysisResult) {
+                   removeCache(cacheName);
+               }
             } else {
                 removeCache(cacheName);
             }

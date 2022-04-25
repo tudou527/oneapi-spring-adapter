@@ -116,11 +116,12 @@ public class ReflectAnalysis {
     
         // 取 className 作为类型名称
         javaType.setName(simpleTypeName);
-    
+        
         if (TypeAnalysis.startsWithBlackList.stream().anyMatch(fullTypeName::startsWith) || fullTypeName.length() == 1) {
+            // 不处理白名单中的引用
             javaType.setClassPath(fullTypeName);
         } else {
-            System.out.printf(">>>>>> %s", field.toString());
+            log.info(">>>>>> {}", field.toString());
         }
         
         return javaType;

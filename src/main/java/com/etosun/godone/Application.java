@@ -25,8 +25,7 @@ import org.apache.commons.cli.*;
 
 import javax.inject.Singleton;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Singleton
@@ -81,11 +80,11 @@ public class Application {
             outputFilePath = cmd.getOptionValue("o");
             localRepository = cmd.getOptionValue("r");
     
-            log.info("save resource");
+            log.info("add resource cache");
             // 缓存入口文件及其他资源文件
             mvnUtil.saveResource(projectPath, true);
 
-            log.info("save reflect class cache");
+            log.info("add reflect class cache");
             // 缓存 JAR 包中的 class
             mvnUtil.saveReflectClassCache(localRepository);
 
@@ -106,8 +105,8 @@ public class Application {
     
             baseCache.clearCache(false);
     
-            HashMap<String, JavaFileModel> analysisResult = new HashMap<>();
-            modelCache.getCache().forEach((classPath) -> {
+            LinkedHashMap<String, JavaFileModel> analysisResult = new LinkedHashMap<>();
+            modelCache.getCache().stream().sorted().forEach((classPath) -> {
                 analysisResult.put(classPath, modelCache.getCache(classPath));
             });
             String analysisResultStr = JSON.toJSONString(analysisResult, SerializerFeature.DisableCircularReferenceDetect);
@@ -117,6 +116,8 @@ public class Application {
             baseCache.clearCache(true);
     
             log.info("exec time: {} second", stopwatch.elapsed(TimeUnit.SECONDS));
+    
+            System.exit(0);
         } catch (ParseException e) {
             e.printStackTrace();
         }
