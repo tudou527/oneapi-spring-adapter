@@ -22,7 +22,7 @@ public class BaseCache<T> {
         try {
             return (ArrayList<String>) cache.getKeys();
         } catch (Exception e) {
-            return null;
+            return new ArrayList<>();
         }
     }
     

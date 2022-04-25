@@ -13,36 +13,47 @@ import com.etosun.godone.utils.FileUtil;
 import com.thoughtworks.qdox.JavaProjectBuilder;
 import com.thoughtworks.qdox.model.JavaClass;
 import org.junit.jupiter.api.*;
+import org.mockito.Mockito;
 
 import java.sql.Array;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.mockito.Mockito.when;
+
 @DisplayName("注解")
 public class AnnotationTest {
     private final ClassUtil classUtil = new ClassUtil();
-    private JavaProjectBuilder javaBuilder;
+    JavaFileModel mockFileModel = Mockito.mock(JavaFileModel.class);
 
     @BeforeEach
-    public void getBuilder() {
-        String filePath = Objects.requireNonNull(getClass().getClassLoader().getResource("java/resource/Annotation.java")).getFile();
-        FileUtil fileUtil = new FileUtil();
-        javaBuilder = fileUtil.getBuilder(filePath);
+    public void mockJavaFileModel() {
+        when(mockFileModel.getImports()).thenReturn(new ArrayList<String>(){{
+            add("org.springframework.ui.Model");
+            add("org.springframework.web.bind.annotation.RestController");
+            add("org.springframework.web.bind.annotation.RequestMapping");
+            add("org.springframework.web.bind.annotation.PostMapping");
+            add("org.springframework.web.bind.annotation.GetMapping");
+            add("org.springframework.web.bind.annotation.RequestBody");
+            add("org.springframework.web.bind.annotation.ResponseBody");
+            add("com.alibaba.brain.job.common.log.BizMonitorDefinition");
+        }});
     }
 
+    public JavaClass getJavaClass(String classPath) {
+        String filePath = Objects.requireNonNull(getClass().getClassLoader().getResource("java/resource/Annotation.java")).getFile();
+        FileUtil fileUtil = new FileUtil();
+        JavaProjectBuilder javaBuilder = fileUtil.getBuilder(filePath);
+    
+        return javaBuilder.getClassByName(classPath);
+    }
 
     @Test
     @DisplayName("class 注解")
     public void classAnnotation() {
-        JavaClass javaClass = javaBuilder.getClassByName("com.etosun.godone.test.Annotation");
+        JavaClass javaClass = getJavaClass("com.etosun.godone.test.Annotation");
 
-        Assertions.assertNotNull(javaClass);
-
-        Optional<JavaSource> optionalJavaSource = javaBuilder.getSources().stream().findFirst();
-        Assertions.assertTrue(optionalJavaSource.isPresent());
-
-        JavaFileModel hostModel = new JavaFileModel();
-        ArrayList<JavaAnnotationModel> annotations = classUtil.getAnnotation(javaClass.getAnnotations(), hostModel);
+        ArrayList<JavaAnnotationModel> annotations = classUtil.getAnnotation(javaClass.getAnnotations(), mockFileModel);
 
         // 应该解析到 2 个注解
         Assertions.assertEquals(annotations.size() , 2);
@@ -66,21 +77,13 @@ public class AnnotationTest {
     @Test
     @DisplayName("method 注解")
     public void methodAnnotation() {
-        JavaClass javaClass = javaBuilder.getClassByName("com.etosun.godone.test.Annotation");
-
-        Assertions.assertNotNull(javaClass);
-
-        Optional<JavaSource> optionalJavaSource = javaBuilder.getSources().stream().findFirst();
-        Assertions.assertTrue(optionalJavaSource.isPresent());
-
-        List<String> imports = optionalJavaSource.get().getImports();
+        JavaClass javaClass = getJavaClass("com.etosun.godone.test.Annotation");
         Optional<JavaMethod> optionalMethod = javaClass.getMethods().stream().filter(m -> m.getName().contains("index")).findFirst();
 
         Assertions.assertTrue(optionalMethod.isPresent());
         JavaMethod method = optionalMethod.get();
-    
-        JavaFileModel hostModel = new JavaFileModel();
-        ArrayList<JavaAnnotationModel> annotations = classUtil.getAnnotation(method.getAnnotations(), hostModel);
+
+        ArrayList<JavaAnnotationModel> annotations = classUtil.getAnnotation(method.getAnnotations(), mockFileModel);
 
         // 应该解析到 2 个注解
         Assertions.assertEquals(annotations.size() , 3);
@@ -110,18 +113,10 @@ public class AnnotationTest {
     @Test
     @DisplayName("field 注解")
     public void fieldAnnotation() {
-        JavaClass javaClass = javaBuilder.getClassByName("com.etosun.godone.test.Annotation");
+        JavaClass javaClass = getJavaClass("com.etosun.godone.test.Annotation");
 
-        Assertions.assertNotNull(javaClass);
-
-        Optional<JavaSource> optionalJavaSource = javaBuilder.getSources().stream().findFirst();
-        Assertions.assertTrue(optionalJavaSource.isPresent());
-    
-        JavaFileModel hostModel = new JavaFileModel();
-        List<JavaField> javaFields = javaClass.getFields();
-
-        List<ArrayList<JavaAnnotationModel>> fieldAns = javaFields.stream()
-                .map(field -> classUtil.getAnnotation(field.getAnnotations(), hostModel)).collect(Collectors.toList());
+        List<ArrayList<JavaAnnotationModel>> fieldAns = javaClass.getFields().stream()
+                .map(field -> classUtil.getAnnotation(field.getAnnotations(), mockFileModel)).collect(Collectors.toList());
 
         Assertions.assertEquals(fieldAns.size(),2);
         Assertions.assertNull(fieldAns.get(1));

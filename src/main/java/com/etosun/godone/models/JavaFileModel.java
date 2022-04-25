@@ -11,6 +11,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 @Data
@@ -33,7 +34,7 @@ public class JavaFileModel implements Serializable {
 
     // import 列表
     @JSONField(ordinal = 30)
-    List<String> imports;
+    List<String> imports = new LinkedList<>();
     
     // class 列表
     @JSONField(ordinal = 40)
