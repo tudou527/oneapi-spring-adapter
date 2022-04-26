@@ -83,7 +83,7 @@ public class TypeAnalysis {
         // 取 typeName 最后一个 . 之后的部分
         String simpleTypeName = typeName.substring(typeName.lastIndexOf(".") + 1);
         
-        if (startsWithBlackList.stream().anyMatch(typeName::startsWith) || simpleTypeName.length() == 1) {
+        if (pendingCache.blackListClassPrefix.stream().anyMatch(typeName::startsWith) || simpleTypeName.length() == 1) {
             return typeName;
         }
         

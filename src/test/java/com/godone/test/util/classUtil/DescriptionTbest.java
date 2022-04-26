@@ -1,4 +1,4 @@
-package com.etosun.godone.test.utils;
+package com.godone.test.util.classUtil;
 
 import com.etosun.godone.models.JavaDescriptionModel;
 import com.etosun.godone.utils.ClassUtil;
@@ -18,13 +18,13 @@ import java.util.Objects;
 import java.util.Optional;
 
 @DisplayName("注释")
-public class DescriptionTest {
+public class DescriptionTbest {
     private final ClassUtil classUtil = new ClassUtil();
     private List<String> fileLines;
     private JavaProjectBuilder javaBuilder;
 
     public JavaClass getJavaClass(String classPath) {
-        String filePath = Objects.requireNonNull(getClass().getClassLoader().getResource("java/resource/Description.java")).getFile();
+        String filePath = Objects.requireNonNull(getClass().getClassLoader().getResource("com/godone/test/testSuite/resource/Description.java")).getFile();
         FileUtil fileUtil = new FileUtil();
 
         try {

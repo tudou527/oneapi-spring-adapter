@@ -10,6 +10,7 @@ import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 @Data
@@ -24,5 +25,5 @@ public class JavaAnnotationModel implements Serializable {
 
     // 注解字段
     @JSONField(ordinal = 2)
-    HashMap<String, Object> fields = new HashMap<>();
+    ArrayList<JavaAnnotationField> fields = new ArrayList();
 }

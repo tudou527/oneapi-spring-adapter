@@ -1,4 +1,4 @@
-package com.etosun.godone.test;
+package com.godone.testSuite;
 
 /**
  * class
@@ -16,7 +16,7 @@ class Description {
      */
     public String fieldName2;
 
-    public SubClassDes fieldName2;
+    public SubClassDes fieldName3;
 
     /**
      * methodA

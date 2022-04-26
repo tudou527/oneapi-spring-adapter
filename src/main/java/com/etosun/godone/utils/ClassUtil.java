@@ -6,11 +6,9 @@
  */
 package com.etosun.godone.utils;
 
+import com.etosun.godone.cache.PendingCache;
 import com.etosun.godone.cache.ResourceCache;
-import com.etosun.godone.models.JavaActualType;
-import com.etosun.godone.models.JavaAnnotationModel;
-import com.etosun.godone.models.JavaDescriptionModel;
-import com.etosun.godone.models.JavaFileModel;
+import com.etosun.godone.models.*;
 import com.google.inject.Inject;
 import com.thoughtworks.qdox.model.*;
 import com.thoughtworks.qdox.model.expression.AnnotationValue;
@@ -21,6 +19,7 @@ import com.thoughtworks.qdox.model.impl.DefaultJavaParameterizedType;
 
 import javax.inject.Singleton;
 import java.io.File;
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -28,6 +27,8 @@ import java.util.stream.Collectors;
 public class ClassUtil {
     @Inject
     private MavenUtil mvnUtil;
+    @Inject
+    private PendingCache pendingCache;
     @Inject
     private ResourceCache resourceCache;
 
@@ -51,39 +52,68 @@ public class ClassUtil {
             optionalAnName.ifPresent(javaAn::setClassPath);
 
             Map<String, AnnotationValue> anMap = an.getPropertyMap();
+            
             if (anMap != null) {
-                HashMap<String, Object> anProperty = new HashMap<>();
+                // 保存注解字段
+                ArrayList<JavaAnnotationField> anFieldList = new ArrayList<>();
+                
                 an.getPropertyMap().forEach((k, v) -> {
-                    boolean isArray = false;
+                    boolean valueIsArray = false;
                     ArrayList<AnnotationValue> value = new ArrayList<>();
                     // 注解值为数组的情况: @Autowired(name={"a", "b", "c"})
                     if (v instanceof AnnotationValueList) {
-                        isArray = true;
+                        valueIsArray = true;
                         value.addAll(((AnnotationValueList) v).getValueList());
                     } else {
                         value.add(v);
                     }
-
-                    List<Object> valueList = value.stream().map(val -> {
+    
+                    JavaAnnotationField anField = new JavaAnnotationField();
+                    anField.setName(k);
+        
+                    // 先把注解值定义为 hashMap
+                    ArrayList<Object> anPropertyValue = new ArrayList<>();
+                    value.forEach(val -> {
                         // 值为引用类型Exp: @AppSwitch(level = Switch.Level.p2)
                         if (val instanceof FieldRef) {
                             FieldRef refValue = (FieldRef) val;
-                            return null;
+                            String refClassName = refValue.getName().split("\\.")[0];
+                            Optional<String> optionalFullTypeName = hostModel.getImports().stream().filter(str -> str.endsWith(refClassName)).findFirst();
+    
+                            if (optionalFullTypeName.isPresent()) {
+                                // 保存类型
+                                anField.setType(optionalFullTypeName.get());
+                                // 把引用类型加入到待解析队列
+                                pendingCache.setCache(optionalFullTypeName.get());
+                            }
+    
+                            anPropertyValue.add(refValue.getName());
                         }
+                        
                         if (val instanceof DefaultJavaParameterizedType) {
                             System.out.println("DefaultJavaParameterizedType: " + val);
                         }
 
-                        if (val instanceof  Constant) {
+                        if (val instanceof Constant) {
+                            // 保存类型
+                            anField.setType("Constant");
                             // 其他情况保持值类型不变: @Autowired(value="name", required=false, index=2) 类型应该分别是 string/boolean/int
-                            return ((Constant) val).getValue();
+                            anPropertyValue.add(((Constant) val).getValue());
                         }
+                    });
 
-                        return null;
-                    }).collect(Collectors.toList());
-                    anProperty.put(k, isArray ? valueList : valueList.get(0));
+                    if (!valueIsArray) {
+                        anField.setArray(false);
+                        // 原始属性不是数组，并且属性值不是引用类型
+                        anField.setValue(anPropertyValue.get(0));
+                    } else {
+                        anField.setArray(true);
+                        anField.setValue(anPropertyValue);
+                    }
+    
+                    anFieldList.add(anField);
                 });
-                javaAn.setFields(anProperty);
+                javaAn.setFields(anFieldList);
             }
             ans.add(javaAn);
         });

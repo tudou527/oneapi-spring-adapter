@@ -117,13 +117,13 @@ public class ReflectAnalysis {
         // 取 className 作为类型名称
         javaType.setName(simpleTypeName);
         
-        if (TypeAnalysis.startsWithBlackList.stream().anyMatch(fullTypeName::startsWith) || fullTypeName.length() == 1) {
+        if (pendingCache.blackListClassPrefix.stream().anyMatch(fullTypeName::startsWith) || fullTypeName.length() == 1) {
             // 不处理白名单中的引用
             javaType.setClassPath(fullTypeName);
         } else {
             log.info(">>>>>> {}", field.toString());
         }
-        
+
         return javaType;
     }
     
@@ -146,10 +146,8 @@ public class ReflectAnalysis {
         actualType.setName(simpleSuperClassName);
         actualType.setClassPath(superClassName);
     
-        if (TypeAnalysis.startsWithBlackList.stream().noneMatch(simpleSuperClassName::startsWith) && simpleSuperClassName.length() != 1) {
-            pendingCache.setCache(superClassName);
-        }
-        
+        pendingCache.setCache(superClassName);
+
         return actualType;
     }
 }
