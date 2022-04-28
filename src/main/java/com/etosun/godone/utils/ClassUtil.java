@@ -19,9 +19,7 @@ import com.thoughtworks.qdox.model.impl.DefaultJavaParameterizedType;
 
 import javax.inject.Singleton;
 import java.io.File;
-import java.lang.reflect.Array;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Singleton
 public class ClassUtil {

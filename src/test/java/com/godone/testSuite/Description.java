@@ -6,18 +6,9 @@ package com.godone.testSuite;
  * @author authorName
  * @date 2022-04-08
  */
-class Description {
-    // fieldName1 单行注释
-    public String fieldName1;
-    /**
-     * fieldName2
-     * 多行注释
-     * @author author1
-     */
-    public String fieldName2;
-
-    public SubClassDes fieldName3;
-
+class Description<T, U> {
+    String T;
+    int U;
     /**
      * methodA
      * 多行注释
@@ -28,9 +19,14 @@ class Description {
 
     // methodB 单行注释
     public void methodB() {}
-
-    // class 单行注释
-    private class SubClassDes {
-        private String name;
+    
+    /**
+     * methodC 方法注释
+     * @param a 参数 A
+     * @param b 参数 B
+     * @param c 参数
+     * @return void
+     */
+    public void methodC(String a, int b, boolean c) {
     }
 }

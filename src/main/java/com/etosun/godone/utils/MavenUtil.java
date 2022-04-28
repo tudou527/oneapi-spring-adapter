@@ -27,7 +27,6 @@ public class MavenUtil {
     private ReflectCache reflectCache;
     @Inject
     private ResourceCache resourceCache;
-    
 
     // 缓存入口文件及其他资源文件
     public void saveResource(String entryDir, boolean saveAsEntry) {
@@ -72,8 +71,7 @@ public class MavenUtil {
                             reflectCache.setCache(classPath, jarFilePath);
                         }
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
+                } catch (Exception ignore) {
                 }
             }
         });

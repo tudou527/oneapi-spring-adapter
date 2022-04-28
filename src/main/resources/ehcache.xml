@@ -85,5 +85,14 @@
            memoryStoreEvictionPolicy="LRU"
     />
 
+    <!-- 测试节点-->
+    <cache name="TestCaseCache"
+           maxElementsInMemory="200"
+           eternal="false"
+           overflowToDisk="false"
+           diskPersistent="false"
+           memoryStoreEvictionPolicy="LRU"
+    />
+
 
 </ehcache>

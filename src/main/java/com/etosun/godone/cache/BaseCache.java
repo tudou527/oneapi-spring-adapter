@@ -13,9 +13,11 @@ public class BaseCache<T> {
     public BaseCache() {
         cache = cacheManager.getCache("ResourceCache");
     }
-
-    public void setCache(String classPath, String filePath) {
+    
+    // 为了 mock 这里强行设置返回值
+    public String setCache(String classPath, String filePath) {
         cache.put(new Element(classPath, filePath));
+        return classPath;
     }
     
     public ArrayList<String> getCache() {

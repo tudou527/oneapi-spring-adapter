@@ -1,69 +1,53 @@
 package com.godone.test.util.classUtil;
 
 import com.etosun.godone.cache.PendingCache;
-import com.etosun.godone.cache.ResourceCache;
 import com.etosun.godone.models.JavaAnnotationField;
 import com.etosun.godone.models.JavaAnnotationModel;
 import com.etosun.godone.models.JavaFileModel;
-import com.etosun.godone.utils.MavenUtil;
+import com.etosun.godone.utils.ClassUtil;
+import com.godone.test.TestUtil;
+import com.thoughtworks.qdox.model.JavaClass;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-
-import com.etosun.godone.utils.ClassUtil;
-import com.etosun.godone.utils.FileUtil;
-import com.thoughtworks.qdox.JavaProjectBuilder;
-import com.thoughtworks.qdox.model.JavaClass;
 import org.junit.jupiter.api.Test;
-import java.nio.file.Paths;
-import org.mockito.*;
-import java.util.*;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
+import java.util.ArrayList;
 
-@DisplayName("注解")
+@DisplayName("classUtil.getAnnotation")
 public class AnnotationTest {
-    @Mock MavenUtil mvnUtil;
     @Mock PendingCache pendingCache;
-    @Mock ResourceCache resourceCache;
     @InjectMocks ClassUtil classUtil;
 
     JavaFileModel mockFileModel = Mockito.mock(JavaFileModel.class);
 
     @BeforeEach
-    public void mockJavaFileModel() {
-        MockitoAnnotations.initMocks(this);
-        
-        when(mockFileModel.getImports()).thenReturn(new ArrayList<String>(){{
+    public void mockBeforeEach() {
+        MockitoAnnotations.openMocks(this);
+    
+        Mockito.when(mockFileModel.getImports()).thenReturn(new ArrayList<String>(){{
             add("com.godone.testSuite.CustomAn");
             add("com.google.inject.Singleton");
             add("com.godone.testSuite.AuthOperationEnum");
         }});
     }
     
-    public JavaClass getJavaClass(String classPath) {
-        String currentDir = Paths.get("").toAbsolutePath().toString();
-        
-        String filePath = currentDir + "/src/test/java/"+ classPath.replaceAll("\\.", "/") +".java";
-        FileUtil fileUtil = new FileUtil();
-        JavaProjectBuilder javaBuilder = fileUtil.getBuilder(filePath);
-    
-        return javaBuilder.getClassByName(classPath);
-    }
-
     @Test
     @DisplayName("正常注解属性")
     public void classAnnotation() {
-        JavaClass javaClass = getJavaClass("com.godone.testSuite.TestController");
+        JavaClass javaClass = TestUtil.getJavaClass("com.godone.testSuite.TestController");
     
         // Mock pendingCache.setCache 方法
-        Mockito.doNothing().when(pendingCache).setCache(anyString());
+        Mockito.doNothing().when(pendingCache).setCache(Mockito.anyString());
 
         ArrayList<JavaAnnotationModel> annotations = classUtil.getAnnotation(javaClass.getAnnotations(), mockFileModel);
 
         // 解析到 3 个注解
-        Assertions.assertEquals(annotations.size() , 2);
+        Assertions.assertEquals(annotations.size() , 3);
 
         // @Singleton 注解
         JavaAnnotationModel restAnnotation = annotations.get(0);
