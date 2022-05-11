@@ -1,6 +1,7 @@
 package com.etosun.godone.cache;
 
 import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheException;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
@@ -29,31 +30,29 @@ public class BaseCache<T> {
     }
     
     public T getCache(String key) {
-        Element value = cache.get(key);
-        
-        if (value != null) {
-            return (T) value.getObjectValue();
+        try {
+            Element value = cache.get(key);
+    
+            if (value != null) {
+                return (T) value.getObjectValue();
+            }
+            
+            return null;
+        } catch (IllegalStateException ignore) {
+            return null;
         }
-        
-        return null;
     }
     
-    public void removeCache(String classPath) {
-        cache.remove(classPath);
+    public void removeCache(String cacheKey) {
+        cache.remove(cacheKey);
     }
     
     public void clearCache(Boolean deleteAnalysisResult) {
         String[] cacheNames = cacheManager.getCacheNames();
         for (String cacheName : cacheNames) {
-            if (cacheName.equals("JavaModelCache")) {
-               if (deleteAnalysisResult) {
-                   removeCache(cacheName);
-               }
-            } else {
-                removeCache(cacheName);
+            if (!cacheName.equals("JavaModelCache") || deleteAnalysisResult) {
+                cacheManager.removeCache(cacheName);
             }
         }
-        
-        System.out.println(":");
     }
 }

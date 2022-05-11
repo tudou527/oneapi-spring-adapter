@@ -117,6 +117,9 @@
                     <includes>
                         <include>com/etosun/**/*</include>
                     </includes>
+                    <excludes>
+                        <exclude>com/etosun/godone/models/**/*</exclude>
+                    </excludes>
                 </configuration>
                 <executions>
                     <execution>
