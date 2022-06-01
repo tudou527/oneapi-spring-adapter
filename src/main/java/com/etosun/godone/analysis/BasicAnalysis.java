@@ -103,16 +103,24 @@ public class BasicAnalysis {
     
         log.info("analysis class: {}", javaClass.getName());
 
-        // class 字段
+        classModel.setFields(getFieldList(javaClass));
+
+        return classModel;
+    }
+    
+    // 字段列表
+    private ArrayList<JavaClassFieldModel> getFieldList(JavaClass javaClass) {
         ArrayList<JavaClassFieldModel> fieldList = new ArrayList<>();
+    
+        // class 字段
         javaClass.getFields().forEach(f -> {
             JavaClassFieldModel field = new JavaClassFieldModel();
-    
+        
             log.info("  analysis field: {}", f.getName());
-    
+        
             field.setName(f.getName());
             field.setDefaultValue(f.getInitializationExpression());
-
+        
             field.setIsPublic(f.isPublic());
             field.setIsPrivate(f.isPrivate());
             field.setIsProtected(f.isProtected());
@@ -121,12 +129,11 @@ public class BasicAnalysis {
             // 描述&注解
             field.setDescription(classUtil.getDescription(f, fileLines));
             field.setAnnotation(classUtil.getAnnotation(f.getAnnotations(), fileModel));
-    
+        
             fieldList.add(field);
         });
-        classModel.setFields(fieldList);
 
-        return classModel;
+        return fieldList;
     }
     
     // 父类

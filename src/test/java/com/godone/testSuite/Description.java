@@ -6,7 +6,7 @@ package com.godone.testSuite;
  * @author authorName
  * @date 2022-04-08
  */
-class Description<T, U> {
+public class Description<T, U> {
     String T;
     int U;
     /**

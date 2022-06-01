@@ -3,8 +3,6 @@ package com.godone.test.util.mavenUtil;
 import com.etosun.godone.cache.ReflectCache;
 import com.etosun.godone.cache.ResourceCache;
 import com.etosun.godone.utils.MavenUtil;
-import com.godone.test.TestUtil;
-import com.google.inject.Inject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -14,7 +12,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 

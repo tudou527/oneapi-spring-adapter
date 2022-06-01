@@ -3,9 +3,11 @@ package com.godone.test.cache;
 import com.etosun.godone.cache.*;
 import com.etosun.godone.models.JavaClassModel;
 import com.etosun.godone.models.JavaFileModel;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 @DisplayName("clearCache")

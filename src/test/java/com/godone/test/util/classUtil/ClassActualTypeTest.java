@@ -14,7 +14,7 @@ import org.mockito.MockitoAnnotations;
 import java.util.ArrayList;
 
 @DisplayName("classUtil.getActualTypeParameters")
-public class ActualTypeParametersTest {
+public class ClassActualTypeTest {
     @InjectMocks ClassUtil classUtil;
     
     @BeforeEach

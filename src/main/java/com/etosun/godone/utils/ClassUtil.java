@@ -125,7 +125,12 @@ public class ClassUtil {
 
         if (comment == null && javaElement.getLineNumber() > 1) {
             // 尝试按行读取单行注释
-            String prevLineStr = fileLines.get(javaElement.getLineNumber() - 2);
+            String prevLineStr = "";
+            int commentLine = javaElement.getLineNumber() - 2;
+            if (fileLines.size() - 1 >= commentLine ) {
+                prevLineStr = fileLines.get(commentLine);
+            }
+            
             if (prevLineStr.trim().startsWith("//")) {
                 comment = prevLineStr.trim().replaceFirst("//", "").trim();
             }
