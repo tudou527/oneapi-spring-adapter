@@ -23,8 +23,9 @@ public class ComplexField<T> {
     private String strField;
     private Boolean boolField;
     private FieldWithDefaultValue result2;
-    private Description<T, T> genericProperty;
     
+    
+    private Description<T, T> genericProperty;
     private List<Description<String, Description<T, T>>> complexGenericProperty1;
     private HashMap<Description<AuthOperationEnum, Long>, String> complexGenericProperty2;
     private Map<Description<AuthOperationEnum, Long>, String> complexGenericProperty3;
