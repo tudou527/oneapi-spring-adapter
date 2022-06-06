@@ -2,18 +2,13 @@ package com.godone.test.analysis.base;
 
 import com.etosun.godone.analysis.BasicAnalysis;
 import com.etosun.godone.analysis.TypeAnalysis;
-import com.etosun.godone.cache.PendingCache;
-import com.etosun.godone.models.*;
+import com.etosun.godone.models.JavaClassFieldModel;
+import com.etosun.godone.models.JavaClassModel;
+import com.etosun.godone.models.JavaFileModel;
 import com.etosun.godone.utils.ClassUtil;
-import com.etosun.godone.utils.FileUtil;
 import com.godone.test.TestUtil;
-import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.thoughtworks.qdox.JavaProjectBuilder;
-import com.thoughtworks.qdox.model.JavaAnnotation;
 import com.thoughtworks.qdox.model.JavaClass;
-import com.thoughtworks.qdox.model.JavaType;
-import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -24,13 +19,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.List;
 
 @DisplayName("basic.analysis")
 public class AnalysisClassTest {

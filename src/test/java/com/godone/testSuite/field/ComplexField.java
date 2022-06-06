@@ -8,9 +8,20 @@ import com.godone.testSuite.AuthOperationEnum;
 import com.godone.testSuite.Description;
 
 public class ComplexField<T> {
-    private boolean success;
-    private T result;
-    private String errorMsg;
+    // 内置类型
+    private boolean biBool;
+    private byte biByte;
+    private short biShort;
+    private int biInt;
+    private long biLong;
+    private float biFloat;
+    private double biDouble;
+    private char biChar;
+    
+    
+    private T genericField;
+    private String strField;
+    private Boolean boolField;
     private FieldWithDefaultValue result2;
     private Description<T, T> genericProperty;
     

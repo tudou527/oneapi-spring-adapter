@@ -9,14 +9,22 @@ import java.util.List;
 
 @Singleton
 public class PendingCache extends BaseCache<String> {
-    public List<String> blackListClassPrefix = new ArrayList<String>() {{
+    public static List<String> blackListClassPrefix = new ArrayList<String>() {{
         add("java.");
-        add("String");
-        add("boolean");
         add("javax.");
         add("void");
         add("org.springframework.");
         add("org.slf4j.");
+        
+        // 内置类型
+        add("byte");
+        add("short");
+        add("int");
+        add("long");
+        add("float");
+        add("double");
+        add("boolean");
+        add("char");
     }};
     
     public PendingCache() {

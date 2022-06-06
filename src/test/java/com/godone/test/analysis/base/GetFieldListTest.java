@@ -3,7 +3,6 @@ package com.godone.test.analysis.base;
 import com.etosun.godone.analysis.BasicAnalysis;
 import com.etosun.godone.analysis.TypeAnalysis;
 import com.etosun.godone.models.JavaClassFieldModel;
-import com.etosun.godone.models.JavaClassModel;
 import com.etosun.godone.models.JavaFileModel;
 import com.etosun.godone.utils.ClassUtil;
 import com.godone.test.TestUtil;
@@ -75,7 +74,7 @@ public class GetFieldListTest {
             Assertions.assertTrue(fields.size() > 1);
     
             JavaClassFieldModel errorMsg = getField(fields, "errorMsg");
-            Assertions.assertNotNull(errorMsg);
+            Assertions.assertNull(errorMsg);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -24,16 +24,6 @@ public class TypeAnalysis {
     @Inject
     Provider<TypeAnalysis> typeAnalysis;
     
-    public static List<String> startsWithBlackList = new ArrayList<String>() {{
-        add("java.");
-        add("String");
-        add("boolean");
-        add("javax.");
-        add("void");
-        add("org.springframework.");
-        add("org.slf4j.");
-    }};
-    
     /**
      * @param type 待解析的类型
      * @param fileModel 宿主对象
@@ -83,7 +73,7 @@ public class TypeAnalysis {
         // 取 typeName 最后一个 . 之后的部分
         String simpleTypeName = typeName.substring(typeName.lastIndexOf(".") + 1);
         
-        if (pendingCache.blackListClassPrefix.stream().anyMatch(typeName::startsWith) || simpleTypeName.length() == 1) {
+        if (PendingCache.blackListClassPrefix.stream().anyMatch(typeName::startsWith) || simpleTypeName.length() == 1) {
             return typeName;
         }
         
