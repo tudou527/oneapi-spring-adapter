@@ -18,26 +18,20 @@ public class ComplexField<T> {
     private double biDouble;
     private char biChar;
     
-    
+    // 简单类型
     private T genericField;
     private String strField;
     private Boolean boolField;
     private FieldWithDefaultValue result2;
     
-    
-    private Description<T, T> genericProperty;
-    private List<Description<String, Description<T, T>>> complexGenericProperty1;
-    private HashMap<Description<AuthOperationEnum, Long>, String> complexGenericProperty2;
-    private Map<Description<AuthOperationEnum, Long>, String> complexGenericProperty3;
-    private Map<Description<AuthOperationEnum, Long>, T> complexGenericProperty4;
-    private Map<Description<AuthOperationEnum[], Long>, T> complexGenericProperty5;
-    private Map<Description<String[], Long>, T> complexGenericProperty6;
-    private Map<Description<String, Long>, T[]> complexGenericProperty7;
-    
-    private List<T> genericList;
-    private HashMap<T, Long> genericHashMap;
- 
+    // 集合
     private T[] genericArr;
     private List<T[]> genericArrList;
-    private HashMap<T[], Long> genericArrHashMap;
+    private Description<String, String>[] customGenericArr;
+    private Description<String, String>[][] customGenericArrOfArr;
+    
+    // 各种组合情况
+    private Description<T, T> genericProperty;
+    private List<Description<String, Description<T, T>>> complexGenericProperty1;
+    private HashMap<Description<AuthOperationEnum[], Long>, String> complexGenericProperty2;
 }

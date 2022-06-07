@@ -38,19 +38,54 @@ public class BasicTypeTest {
     }
     
     @Test
-    @DisplayName("basic type")
-    public void noParentClass() {
+    @DisplayName("java build-in type")
+    public void buildInType() {
+        JavaActualType boolType = getActualType("biBool");
+        Assertions.assertEquals(boolType.getName(), "boolean");
+        Assertions.assertEquals(boolType.getClassPath(), "boolean");
+        
+        JavaActualType biByte = getActualType("biByte");
+        Assertions.assertEquals(biByte.getName(), "byte");
+        Assertions.assertEquals(biByte.getClassPath(), "byte");
+        
+        JavaActualType biShort = getActualType("biShort");
+        Assertions.assertEquals(biShort.getName(), "short");
+        Assertions.assertEquals(biShort.getClassPath(), "short");
+        
+        JavaActualType biInt = getActualType("biInt");
+        Assertions.assertEquals(biInt.getName(), "int");
+        Assertions.assertEquals(biInt.getClassPath(), "int");
+        
+        JavaActualType biLong = getActualType("biLong");
+        Assertions.assertEquals(biLong.getName(), "long");
+        Assertions.assertEquals(biLong.getClassPath(), "long");
+        
+        JavaActualType biFloat = getActualType("biFloat");
+        Assertions.assertEquals(biFloat.getName(), "float");
+        Assertions.assertEquals(biFloat.getClassPath(), "float");
+        
+        JavaActualType biDouble = getActualType("biDouble");
+        Assertions.assertEquals(biDouble.getName(), "double");
+        Assertions.assertEquals(biDouble.getClassPath(), "double");
+        
+        JavaActualType biChar = getActualType("biChar");
+        Assertions.assertEquals(biChar.getName(), "char");
+        Assertions.assertEquals(biChar.getClassPath(), "char");
+    }
+    
+    @Test
+    @DisplayName("simple type")
+    public void simpleType() {
         JavaActualType genericType = getActualType("genericField");
         Assertions.assertEquals(genericType.getName(), "T");
         Assertions.assertEquals(genericType.getClassPath(), "T");
-    
+        
         JavaActualType strType = getActualType("strField");
         Assertions.assertEquals(strType.getName(), "String");
         Assertions.assertEquals(strType.getClassPath(), "java.lang.String");
-    
+        
         JavaActualType boolType = getActualType("boolField");
         Assertions.assertEquals(boolType.getName(), "Boolean");
         Assertions.assertEquals(boolType.getClassPath(), "java.lang.Boolean");
     }
-    
 }

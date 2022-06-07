@@ -70,6 +70,9 @@ public class BasicAnalysis {
         fileModel.setFilePath(javaFilePath);
         fileModel.setImports(classUtil.getImports(targetClass));
         fileModel.setPackageName(targetClass.getPackageName());
+        
+        // 暂存 source 用于后续解析类型
+        fileModel.setJavaSource(targetClass.getSource());
 
         // 文件注释
         JavaDescriptionModel description = classUtil.getDescription(targetClass, fileLines);

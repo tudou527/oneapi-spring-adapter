@@ -7,6 +7,7 @@
 package com.etosun.godone.models;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.thoughtworks.qdox.model.JavaSource;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -39,4 +40,7 @@ public class JavaFileModel implements Serializable {
     // class 列表
     @JSONField(ordinal = 40)
     JavaClassModel classModel;
+    
+    // 暂存 source
+    JavaSource javaSource;
 }

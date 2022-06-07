@@ -7,8 +7,11 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.thoughtworks.qdox.model.JavaType;
 import com.thoughtworks.qdox.model.impl.DefaultJavaParameterizedType;
+import com.thoughtworks.qdox.type.TypeResolver;
+import jdk.nashorn.internal.runtime.regexp.RegExp;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.annotation.RegEx;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -36,32 +39,56 @@ public class TypeAnalysis {
 
         return getType();
     }
-    
+
     private JavaActualType getType() {
         JavaActualType javaType = new JavaActualType();
         String fullTypeName = type.getFullyQualifiedName();
-        // 取 className 作为类型名称
-        javaType.setName(fullTypeName.substring(fullTypeName.lastIndexOf(".") + 1));
-        javaType.setClassPath(completeTypeClassPath(type, hostModel));
 
-        // 包含子类型，Exp: HashMap<String, List<String>>
         if (type instanceof DefaultJavaParameterizedType) {
-            // 子类型
-            List<JavaType> childTypeList = ((DefaultJavaParameterizedType) type).getActualTypeArguments();
+            DefaultJavaParameterizedType paramType = (DefaultJavaParameterizedType) type;
+
+            String typeName = fullTypeName.substring(fullTypeName.lastIndexOf(".") + 1);
+            String typeClassPath = completeTypeClassPath(type, hostModel);
+            List<JavaType> childTypeList = paramType.getActualTypeArguments();
+            
+            // 把 [] 表示的集合转换为 list
+            if (paramType.getDimensions() > 0) {
+                typeName = "List";
+                typeClassPath = "java.util.List";
+    
+                TypeResolver typeResolver = TypeResolver.byPackageName(
+                    hostModel.getJavaSource().getPackageName(),
+                    hostModel.getJavaSource().getJavaClassLibrary(),
+                    hostModel.getJavaSource().getImports()
+                );
+    
+                DefaultJavaParameterizedType childParamType = new DefaultJavaParameterizedType(
+                    paramType.getFullyQualifiedName().replaceAll("\\[\\]", ""),
+                    paramType.getName(),
+                    paramType.getDimensions() - 1,
+                    typeResolver
+                );
+                childParamType.setActualArgumentTypes(paramType.getActualTypeArguments());
+
+                childTypeList = new ArrayList<JavaType>(){{
+                    add(childParamType);
+                }};
+            }
+            
+            // 取 className 作为类型名称
+            javaType.setName(typeName);
+            javaType.setClassPath(typeClassPath);
+    
+            // 包含子类型，Exp: HashMap<String, List<String>>
             for (JavaType ct: childTypeList) {
                 if (javaType.getItem() == null) {
                     javaType.setItem(new ArrayList<>());
                 }
                 
-                if (ct.getFullyQualifiedName().endsWith(javaType.getName())) {
-                    // 递归解析每个子类型
-                    javaType.getItem().add(javaType);
-                } else {
-                    log.info("      analysis child type: {}", ct.getBinaryName());
-                    JavaActualType childActualType = typeAnalysis.get().analysis(ct, hostModel);
-                    // 递归解析每个子类型
-                    javaType.getItem().add(childActualType);
-                }
+                log.info("      analysis child type: {}", ct.getBinaryName());
+                JavaActualType childActualType = typeAnalysis.get().analysis(ct, hostModel);
+                // 递归解析每个子类型
+                javaType.getItem().add(childActualType);
             }
         }
         
