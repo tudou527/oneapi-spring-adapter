@@ -25,7 +25,9 @@ public class EntryAnalysis extends BasicAnalysis {
         fileModel.setFileType(ClassTypeEnum.ENTRY);
         // 补全方法（只考虑配 public 方法）
         targetClass.getMethods().forEach(method -> {
-            fileModel.getClassModel().getMethods().add(analysisMethod(method));
+            if (method.isPublic()) {
+                fileModel.getClassModel().getMethods().add(analysisMethod(method));
+            }
         });
 
         return fileModel;
@@ -42,9 +44,6 @@ public class EntryAnalysis extends BasicAnalysis {
 
         // 入参及类型
         javaMethod.setParameters(getParameters(method));
-    
-//        log.info("  analysis method: {}", method.getName());
-
         // 返回值及类型
         JavaActualType methodReturnType = typeAnalysis.get().analysis(method.getReturnType(), fileModel);
         javaMethod.setReturns(methodReturnType);

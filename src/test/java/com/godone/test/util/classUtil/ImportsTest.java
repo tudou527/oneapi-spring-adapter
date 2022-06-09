@@ -50,6 +50,7 @@ public class ImportsTest {
         List<String> importList = classUtil.getImports(javaClass);
         
         ArrayList<String> expectResult = new ArrayList<String>(){{
+            add("com.godone.testSuite.field.FieldWithDefaultValue");
             add("com.google.inject.Singleton");
         }};
         expectResult.addAll(mockImportPkg);

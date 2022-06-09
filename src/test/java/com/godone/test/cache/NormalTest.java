@@ -3,17 +3,22 @@ package com.godone.test.cache;
 import com.etosun.godone.cache.*;
 import com.etosun.godone.models.JavaClassModel;
 import com.etosun.godone.models.JavaFileModel;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.Element;
+import net.sf.ehcache.management.CacheManager;
+import org.junit.jupiter.api.*;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 @DisplayName("cache.set")
-public class SetCacheTest {
+public class NormalTest {
+    @InjectMocks
+    BaseCache baseCache;
     @InjectMocks
     PendingCache pendingCache;
     @InjectMocks
@@ -24,14 +29,14 @@ public class SetCacheTest {
     ResourceCache resourceCache;
     @InjectMocks
     ReflectCache reflectCache;
-
+    
     @BeforeEach
     public void mockBeforeEach() {
         MockitoAnnotations.openMocks(this);
     }
     
     @Test
-    @DisplayName("pendingCache")
+    @DisplayName("get pendingCache")
     public void pendingCache() {
         pendingCache.setCache("java.util.String");
         pendingCache.setCache("String");
@@ -48,7 +53,7 @@ public class SetCacheTest {
     }
     
     @Test
-    @DisplayName("fileModeCache")
+    @DisplayName("get fileModeCache")
     public void fileModeCache() {
         JavaClassModel classModel = new JavaClassModel();
         classModel.setClassPath("com.godone.test.a");
@@ -67,7 +72,7 @@ public class SetCacheTest {
     }
     
     @Test
-    @DisplayName("entryCache")
+    @DisplayName("get entryCache")
     public void entryCache() {
         entryCache.setCache("com.godone.test.a", "file://a/b");
         entryCache.setCache("com.godone.test.b.c", "file://b/c");
@@ -78,9 +83,9 @@ public class SetCacheTest {
             add("com.godone.test.a");
         }});
     }
-    
+
     @Test
-    @DisplayName("resourceCache")
+    @DisplayName("get resourceCache")
     public void resourceCache() {
         resourceCache.setCache("com.godone.test.a", "file://filepath");
         
@@ -89,7 +94,7 @@ public class SetCacheTest {
     }
     
     @Test
-    @DisplayName("reflectCache")
+    @DisplayName("get reflectCache")
     public void reflectCache() {
         reflectCache.setCache("com.godone.test.a", "file://filepath");
         

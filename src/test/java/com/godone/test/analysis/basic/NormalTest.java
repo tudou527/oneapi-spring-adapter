@@ -1,4 +1,4 @@
-package com.godone.test.analysis.base;
+package com.godone.test.analysis.basic;
 
 import com.etosun.godone.analysis.BasicAnalysis;
 import com.etosun.godone.analysis.TypeAnalysis;
@@ -27,12 +27,12 @@ public class NormalTest {
     FileUtil fileUtil;
     @Mock
     ClassUtil classUtil;
-    @InjectMocks
-    BasicAnalysis basicAnalysis;
     @Mock
     TypeAnalysis typeAnalysis;
     @Mock
     Provider<TypeAnalysis> typeAnalysisProvider;
+    @InjectMocks
+    BasicAnalysis basicAnalysis;
 
     @BeforeEach
     public void mockBeforeEach() {

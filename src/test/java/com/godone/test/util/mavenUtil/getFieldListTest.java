@@ -25,29 +25,27 @@ public class getFieldListTest {
     @Test
     @DisplayName("normal")
     public void getFieldList() {
-        String classPath = TestUtil.getBaseDir() + "com/godone/testSuite/icu4j-2.6.1.jar";
-        Class<?> targetClass = mvnUtil.getMatchReflectClass( "com.ibm.icu.util.EasterRule", classPath);
+        String classPath = TestUtil.getBaseDir() + "com/godone/testSuite/guice-4.2.3.jar";
+        Class<?> targetClass = mvnUtil.getMatchReflectClass( "com.google.inject.spi.ElementSource", classPath);
         Assertions.assertNotNull(targetClass);
     
         List<Field> fieldList = mvnUtil.getFieldList(targetClass);
         Assertions.assertNotNull(fieldList);
         
-        Assertions.assertEquals(fieldList.size(), 5);
+        Assertions.assertEquals(fieldList.size(), 4);
         
-        Assertions.assertEquals(fieldList.get(0).getType().getName(), "com.ibm.icu.util.GregorianCalendar");
-        Assertions.assertEquals(fieldList.get(0).getName(), "gregorian");
+        Assertions.assertEquals(fieldList.get(0).getType().getName(), "com.google.inject.spi.ElementSource");
+        Assertions.assertEquals(fieldList.get(0).getName(), "originalElementSource");
 
-        Assertions.assertEquals(fieldList.get(1).getType().getName(), "com.ibm.icu.util.GregorianCalendar");
-        Assertions.assertEquals(fieldList.get(1).getName(), "orthodox");
+        Assertions.assertEquals(fieldList.get(1).getType().getName(), "com.google.inject.spi.ModuleSource");
+        Assertions.assertEquals(fieldList.get(1).getName(), "moduleSource");
         
-        Assertions.assertEquals(fieldList.get(2).getType().getName(), "int");
-        Assertions.assertEquals(fieldList.get(2).getName(), "daysAfterEaster");
+        // TODO: 需要考虑类型为子类的情况
+        Assertions.assertEquals(fieldList.get(2).getType().getName(), "[Lcom.google.inject.internal.util.StackTraceElements$InMemoryStackTraceElement;");
+        Assertions.assertEquals(fieldList.get(2).getName(), "partialCallStack");
         
-        Assertions.assertEquals(fieldList.get(3).getType().getName(), "java.util.Date");
-        Assertions.assertEquals(fieldList.get(3).getName(), "startDate");
-        
-        Assertions.assertEquals(fieldList.get(4).getType().getName(), "com.ibm.icu.util.GregorianCalendar");
-        Assertions.assertEquals(fieldList.get(4).getName(), "calendar");
+        Assertions.assertEquals(fieldList.get(3).getType().getName(), "java.lang.Object");
+        Assertions.assertEquals(fieldList.get(3).getName(), "declaringSource");
     }
     
 }

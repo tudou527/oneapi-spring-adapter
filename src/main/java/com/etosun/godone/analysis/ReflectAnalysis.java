@@ -107,28 +107,40 @@ public class ReflectAnalysis {
     public JavaActualType getReflectType(Field field, JavaFileModel fileModel) {
         JavaActualType javaType = new JavaActualType();
 
-        String fullTypeName = field.getType().getTypeName();
-        String simpleTypeName = fullTypeName.substring(fullTypeName.lastIndexOf(".") + 1);
-        
-        if (simpleTypeName.contains("$")) {
-            simpleTypeName = simpleTypeName.split("\\$")[1];
+        String typeClassPath = field.getType().getTypeName();
+        String typeName = typeClassPath.substring(typeClassPath.lastIndexOf(".") + 1);
+
+        if (typeName.contains("$")) {
+            typeName = typeName.split("\\$")[1];
         }
     
-        // 取 className 作为类型名称
-        javaType.setName(simpleTypeName);
-        
-        if (pendingCache.blackListClassPrefix.stream().anyMatch(fullTypeName::startsWith) || fullTypeName.length() == 1) {
-            // 不处理白名单中的引用
-            javaType.setClassPath(fullTypeName);
+        if (typeClassPath.endsWith("[]")) {
+            javaType = getCollectType(typeClassPath);
         } else {
-            log.info(">>>>>> {}", field.toString());
+            // 取 className 作为类型名称
+            javaType.setName(typeName);
+    
+            if (PendingCache.blackListClassPrefix.stream().noneMatch(typeClassPath::startsWith) && typeClassPath.length() == 1) {
+                pendingCache.setCache(typeClassPath);
+                // 不处理白名单中的引用
+                javaType.setClassPath(typeClassPath);
+            }
         }
 
         return javaType;
     }
     
+    private JavaActualType getCollectType(String type) {
+        JavaActualType javaType = new JavaActualType();
+
+        String typeName = "List";
+        String typeClassPath = "java.util.List";
+        
+        return null;
+    }
+    
     // 父类
-    private JavaActualType getParentClass(Class<?> javaClass) {
+    public JavaActualType getParentClass(Class<?> javaClass) {
         Class<?> superClass = javaClass.getSuperclass();
 
         if (superClass == null) {
@@ -145,7 +157,7 @@ public class ReflectAnalysis {
         JavaActualType actualType = new JavaActualType();
         actualType.setName(simpleSuperClassName);
         actualType.setClassPath(superClassName);
-    
+
         pendingCache.setCache(superClassName);
 
         return actualType;

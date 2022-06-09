@@ -42,7 +42,7 @@ public class ReflectClassTest {
     @DisplayName("normal")
     public void saveReflectClass() {
         List<String> jarList = new ArrayList<String>() {{
-            add(TestUtil.getBaseDir() + "com/godone/testSuite/icu4j-2.6.1.jar");
+            add(TestUtil.getBaseDir() + "com/godone/testSuite/guice-4.2.3.jar");
         }};
         Mockito.when(fileUtil.findFileList(Mockito.anyString(), Mockito.anyString())).thenReturn(jarList);
     
@@ -56,14 +56,14 @@ public class ReflectClassTest {
     
         mvnUtil.saveReflectClassCache("");
     
-        Assertions.assertEquals(reflectCacheData.size(), 649);
+        Assertions.assertEquals(reflectCacheData.size(), 585);
     }
     
     @Test
     @DisplayName("throw error")
     public void throwError() {
         List<String> jarList = new ArrayList<String>() {{
-            add(TestUtil.getBaseDir() + "com/godone/testSuite/icu4j-2.6.1.jar");
+            add(TestUtil.getBaseDir() + "com/godone/testSuite/guice-4.2.3.jar");
         }};
         Mockito.when(fileUtil.findFileList(Mockito.anyString(), Mockito.anyString())).thenReturn(jarList);
         

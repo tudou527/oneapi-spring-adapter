@@ -1,4 +1,4 @@
-package com.godone.test.analysis.base;
+package com.godone.test.analysis.basic;
 
 import com.etosun.godone.analysis.BasicAnalysis;
 import com.etosun.godone.analysis.TypeAnalysis;

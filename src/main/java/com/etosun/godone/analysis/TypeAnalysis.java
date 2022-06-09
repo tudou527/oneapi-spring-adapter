@@ -8,10 +8,8 @@ import com.google.inject.Provider;
 import com.thoughtworks.qdox.model.JavaType;
 import com.thoughtworks.qdox.model.impl.DefaultJavaParameterizedType;
 import com.thoughtworks.qdox.type.TypeResolver;
-import jdk.nashorn.internal.runtime.regexp.RegExp;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.annotation.RegEx;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

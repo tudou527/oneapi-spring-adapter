@@ -25,8 +25,8 @@ public class ZipJarTest {
     @Test
     @DisplayName("normal")
     public void normal() {
-        String jarFilePath = TestUtil.getBaseDir() +"com/godone/testSuite/icu4j-2.6.1.jar";
-        String zipDir = TestUtil.getBaseDir() +"com/godone/testSuite/icu4j";
+        String jarFilePath = TestUtil.getBaseDir() +"com/godone/testSuite/guice-4.2.3.jar";
+        String zipDir = TestUtil.getBaseDir() +"com/godone/testSuite/guice-4.2.3";
         
         fileUtil.unzipJar(new File(jarFilePath), zipDir);
         
