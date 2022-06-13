@@ -22,7 +22,7 @@ public class EntryAnalysis extends BasicAnalysis {
     public JavaFileModel analysis(String filePath) {
         super.analysis(filePath);
     
-        fileModel.setFileType(ClassTypeEnum.ENTRY);
+         fileModel.setFileType(ClassTypeEnum.ENTRY);
         // 补全方法（只考虑配 public 方法）
         targetClass.getMethods().forEach(method -> {
             if (method.isPublic()) {

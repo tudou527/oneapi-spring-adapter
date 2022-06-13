@@ -10,7 +10,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.etosun.godone.analysis.BasicAnalysis;
 import com.etosun.godone.analysis.EntryAnalysis;
-import com.etosun.godone.analysis.ReflectAnalysis;
 import com.etosun.godone.cache.*;
 import com.etosun.godone.models.JavaFileModel;
 import com.etosun.godone.utils.FileUtil;
@@ -31,8 +30,8 @@ import java.util.concurrent.TimeUnit;
 @Singleton
 @Slf4j
 public class Application {
-    private String projectPath;
-    private String outputFilePath;
+    private String projectDir;
+    private String outputFileDir;
     private String localRepository;
     private Integer loopCount = 0;
 
@@ -47,7 +46,7 @@ public class Application {
     @Inject
     private ResourceCache resourceCache;
     @Inject
-    private FileModelCache modelCache;
+    private FileModelCache fileModelCache;
     @Inject
     private PendingCache pendingCache;
     
@@ -55,8 +54,6 @@ public class Application {
     Provider<EntryAnalysis> entryAnalysis;
     @Inject
     Provider<BasicAnalysis> basicAnalysis;
-    @Inject
-    Provider<ReflectAnalysis> reflectAnalysis;
 
     // 记录执行时间
     static final Stopwatch stopwatch = Stopwatch.createStarted();
@@ -75,18 +72,18 @@ public class Application {
                 System.out.println("参数不完整");
                 System.exit(-1);
             }
-
-            projectPath = cmd.getOptionValue("p");
-            outputFilePath = cmd.getOptionValue("o");
+    
+            projectDir = cmd.getOptionValue("p");
+            outputFileDir = cmd.getOptionValue("o");
             localRepository = cmd.getOptionValue("r");
+    
+            log.info("add reflect class cache");
+            // 反编译本地 mvn 缓存目录中的 .jar
+            mvnUtil.saveReflectClassCache(localRepository);
     
             log.info("add resource cache");
             // 缓存入口文件及其他资源文件
-            mvnUtil.saveResource(projectPath, true);
-
-            log.info("add reflect class cache");
-            // 缓存 JAR 包中的 class
-            mvnUtil.saveReflectClassCache(localRepository);
+            mvnUtil.saveResource(projectDir, true);
 
             log.info("analysis entry");
             // 分析入口文件
@@ -95,7 +92,7 @@ public class Application {
                 log.info("analysis file: {}", filePath);
                 JavaFileModel fileModel = entryAnalysis.get().analysis(filePath);
                 if (fileModel != null) {
-                    modelCache.setCache(fileModel);
+                    fileModelCache.setCache(fileModel);
                 }
             });
             
@@ -104,13 +101,14 @@ public class Application {
             analysisClassReference();
     
             baseCache.clearCache(false);
-    
+        
+            // 解析结果排序
             LinkedHashMap<String, JavaFileModel> analysisResult = new LinkedHashMap<>();
-            modelCache.getCache().stream().sorted().forEach((classPath) -> {
-                analysisResult.put(classPath, modelCache.getCache(classPath));
+            fileModelCache.getCache().stream().sorted().forEach((classPath) -> {
+                analysisResult.put(classPath, fileModelCache.getCache(classPath));
             });
             String analysisResultStr = JSON.toJSONString(analysisResult, SerializerFeature.DisableCircularReferenceDetect);
-            fileUtil.writeFile(analysisResultStr, outputFilePath+ "/result.json", Charset.defaultCharset());
+            fileUtil.writeFile(analysisResultStr, outputFileDir+ "/result.json", Charset.defaultCharset());
 
             // 清空所有缓存
             baseCache.clearCache(true);
@@ -126,20 +124,13 @@ public class Application {
     private void analysisClassReference() {
         // 所有待解析的资源
         pendingCache.getCache().forEach((classPath) -> {
-            JavaFileModel fileModel;
-            String resourceFilePath = resourceCache.getCache(classPath);
+            JavaFileModel fileModel = basicAnalysis.get().analysis(classPath);
 
-            if (resourceFilePath != null) {
-                // 先从资源文件中查找
-                fileModel = basicAnalysis.get().analysis(resourceFilePath);
-            } else {
-                // 找不到再从 jar 包中找
-                fileModel = reflectAnalysis.get().analysis(classPath);
+            if (fileModel != null) {
+                fileModelCache.setCache(fileModel);
             }
-
-            if (fileModel != null && fileModel.getClassModel() != null) {
-                modelCache.setCache(fileModel);
-            }
+            
+            // 分析一次后无论是否有结果都从队列中删除
             pendingCache.removeCache(classPath);
         });
         

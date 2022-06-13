@@ -41,11 +41,13 @@ public class MavenUtil {
     
                     // 缓存为资源文件
                     resourceCache.setCache(className, filePath);
-
-                    boolean hasEntryAnnotation = javaClass.getAnnotations().stream().anyMatch(an -> an.getType().getName().endsWith("Controller"));
+                    
                     // 缓存为入口
-                    if (saveAsEntry && hasEntryAnnotation) {
-                        entryCache.setCache(className, filePath);
+                    if (saveAsEntry) {
+                        boolean hasEntryAnnotation = javaClass.getAnnotations().stream().anyMatch(an -> an.getType().getName().endsWith("Controller"));
+                        if (hasEntryAnnotation) {
+                            entryCache.setCache(className, filePath);
+                        }
                     }
                 }
             }

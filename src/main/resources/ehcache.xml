@@ -2,7 +2,7 @@
 <ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd">
 
     <!-- 磁盘缓存位置 -->
-    <diskStore path="/Users/xiaoyun/ehcache" />
+    <diskStore path="user.home/ehcache" />
 
     <!--
         Doc: https://www.cnblogs.com/myseries/p/11370109.html
@@ -38,7 +38,7 @@
         内存最多缓存 500 条数据，超过时写入磁盘（磁盘上限 30w)
     -->
     <cache name="ResourceCache"
-           maxElementsInMemory="200"
+           maxElementsInMemory="500"
            maxEntriesLocalDisk="300000"
            eternal="true"
            overflowToDisk="true"
@@ -48,7 +48,7 @@
 
     <!--
         解析结果缓存
-        内存最多缓存 100 条数据，超过时写入磁盘（磁盘上限 30w)
+        内存最多缓存 10 条数据，超过时写入磁盘（磁盘上限 30w)
     -->
     <cache name="JavaModelCache"
            maxElementsInMemory="10"
@@ -64,7 +64,7 @@
         内存最多缓存 500 条数据，超过时写入磁盘（磁盘上限 30w)
     -->
     <cache name="PendingClassCache"
-           maxElementsInMemory="200"
+           maxElementsInMemory="500"
            maxEntriesLocalDisk="300000"
            eternal="true"
            overflowToDisk="true"
@@ -77,7 +77,7 @@
         内存最多缓存 500 条数据，超过时写入磁盘（磁盘上限 30w)
     -->
     <cache name="ReflectClassCache"
-           maxElementsInMemory="200"
+           maxElementsInMemory="500"
            maxEntriesLocalDisk="300000"
            eternal="true"
            overflowToDisk="true"

@@ -41,6 +41,6 @@ public class JavaFileModel implements Serializable {
     @JSONField(ordinal = 40)
     JavaClassModel classModel;
     
-    // 暂存 source
+    // 暂存 source 用于执行过程中解析类型（缓存时候会被删掉）
     JavaSource javaSource;
 }

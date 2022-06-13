@@ -11,6 +11,7 @@ import info.monitorenter.cpdetector.io.ASCIIDetector;
 import info.monitorenter.cpdetector.io.CodepageDetectorProxy;
 import info.monitorenter.cpdetector.io.JChardetFacade;
 import info.monitorenter.cpdetector.io.UnicodeDetector;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Singleton;
 import java.io.*;
@@ -23,7 +24,9 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.regex.Pattern;
 
+@Slf4j
 @Singleton
 public class FileUtil {
     /**
@@ -159,7 +162,7 @@ public class FileUtil {
         }
 
         try {
-            JarFile jar = new java.util.jar.JarFile(jarFile);
+            JarFile jar = new JarFile(jarFile);
             Enumeration<JarEntry> enumEntries = jar.entries();
 
             File targetFile = new File(target);
@@ -204,6 +207,39 @@ public class FileUtil {
             // 退出时删除解压目录
             targetFile.deleteOnExit();
         } catch (IOException ignore) {
+        }
+    }
+    
+    /**
+     * 执行命令行
+     * @param cmd string[] 待执行的命令
+     * @param workDir string 执行目录
+     */
+    public void exec(String[] cmd, String workDir) {
+        try {
+            log.info(String.format("Run command: %s", String.join(" ", cmd)));
+            ProcessBuilder pb = new ProcessBuilder(cmd);
+            pb.directory(new File(workDir));
+            Process process = pb.start();
+            BufferedReader inputBuffer = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            BufferedReader errorBuffer = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+            String inputLine;
+            String errLine;
+            // 过滤掉下载过程的日志输出
+            Pattern pattern = Pattern.compile("\\s(KB|MB|kB|mB)+");
+            // 直到读完为止
+            // while((inputLine = inputBuffer.readLine()) != null) {
+            //   if (!pattern.matcher(inputLine).find() && !inputLine.trim().isEmpty()) {
+            //      System.out.println(inputLine);
+            //   }
+            // }
+            while((errLine = errorBuffer.readLine()) !=null){
+                System.out.println(errLine);
+            }
+            process.waitFor();
+            log.info("Run command done.");
+        } catch (Exception e) {
+            log.info(String.format("Run Command: %s in %s error: ", String.join(" ", cmd), workDir));
         }
     }
 }

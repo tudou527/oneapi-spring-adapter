@@ -17,7 +17,9 @@ public class BaseCache<T> {
 
     // 为了 mock 这里强行设置返回值
     public String setCache(String classPath, String filePath) {
-        cache.put(new Element(classPath, filePath));
+        if (getCache(classPath) == null) {
+            cache.put(new Element(classPath, filePath));
+        }
         return classPath;
     }
 

@@ -6,9 +6,12 @@
  */
 package com.etosun.godone.analysis;
 
+import com.etosun.godone.cache.ReflectCache;
+import com.etosun.godone.cache.ResourceCache;
 import com.etosun.godone.models.*;
 import com.etosun.godone.utils.ClassUtil;
 import com.etosun.godone.utils.FileUtil;
+import com.etosun.godone.utils.MavenUtil;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.thoughtworks.qdox.JavaProjectBuilder;
@@ -16,6 +19,7 @@ import com.thoughtworks.qdox.model.JavaClass;
 import com.thoughtworks.qdox.model.JavaType;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -28,8 +32,6 @@ import java.util.Optional;
  */
 @Slf4j
 public class BasicAnalysis {
-    // 当前解析的 .java 文件
-    String javaFilePath;
     // 按行读取的文件内容
     List<String> fileLines = new ArrayList<>();
     // 解析结果
@@ -40,7 +42,13 @@ public class BasicAnalysis {
     @Inject
     FileUtil fileUtil;
     @Inject
+    MavenUtil mvnUtil;
+    @Inject
     ClassUtil classUtil;
+    @Inject
+    ResourceCache resourceCache;
+    @Inject
+    private ReflectCache reflectCache;
     @Inject
     Provider<TypeAnalysis> typeAnalysis;
     
@@ -48,12 +56,26 @@ public class BasicAnalysis {
         add("Object");
     }};
     
-    public JavaFileModel analysis(String filePath) {
-        javaFilePath = filePath;
+    public JavaFileModel analysis(String classPath) {
+        fileModel = getModelFromResource(resourceCache.getCache(classPath));
+
+        if (fileModel != null) {
+            return fileModel;
+        }
+    
+        // 判断 classPath 是否来自 JAR 包
+        return getModelFromReflect(classPath);
+    }
+    
+    // 从本项目的资源文件中获得解析结果
+    public JavaFileModel getModelFromResource(String javaFilePath) {
+        if (javaFilePath == null) {
+            return null;
+        }
 
         JavaProjectBuilder builder = fileUtil.getBuilder(javaFilePath);
         if (builder == null) {
-            return fileModel;
+            return null;
         }
 
         try {
@@ -63,7 +85,7 @@ public class BasicAnalysis {
 
         Optional<JavaClass> optionalClass = builder.getClasses().stream().filter(JavaClass::isPublic).findFirst();
         if (!optionalClass.isPresent()) {
-            return fileModel;
+            return null;
         }
         targetClass = optionalClass.get();
 
@@ -81,6 +103,48 @@ public class BasicAnalysis {
         fileModel.setClassModel(analysisClass(targetClass));
 
         return fileModel;
+    }
+    
+    // 从反编译的 jar 包中获取解析结果
+    public JavaFileModel getModelFromReflect(String classPath) {
+        String jarFilePath = reflectCache.getCache(classPath);
+        if (jarFilePath == null) {
+            return null;
+        }
+        
+        // 判断源码 JAR 是否存在
+        File sourceJar = new File(jarFilePath.replace(".jar", "-sources.jar"));
+        if (sourceJar.exists()) {
+            String zipDir = sourceJar.getParent() + "/source";
+            // 解压源码JAR
+            fileUtil.unzipJar(sourceJar, zipDir);
+            // 缓存解压的资源文件
+            mvnUtil.saveResource(zipDir, false);
+        } else {
+            File jarFile = new File(jarFilePath);
+            // 反编译后的文件保存目录
+            File deCompileFile = new File(jarFile.getParent() + "/deCompile");
+            
+            if (deCompileFile.exists()) {
+                deCompileFile.delete();
+            }
+
+            // 反编译 jar 包
+            fileUtil.exec(new String[]{
+                "java",
+                "-jar",
+                "/Users/xiaoyun/github/godone/src/main/resources/lib/procyon-decompiler.jar",
+                "-jar",
+                jarFilePath,
+                "-o",
+                deCompileFile.getPath(),
+            }, jarFile.getParent());
+            
+            // 把编反编译结果作为资源缓存起来
+            mvnUtil.saveResource(deCompileFile.getPath(), false);
+        }
+    
+        return getModelFromResource(resourceCache.getCache(classPath));
     }
     
     // 分析 class
@@ -115,15 +179,15 @@ public class BasicAnalysis {
     private ArrayList<JavaClassFieldModel> getFieldList(JavaClass javaClass) {
         ArrayList<JavaClassFieldModel> fieldList = new ArrayList<>();
     
-        // class 字段
-        javaClass.getFields().forEach(f -> {
+        // 过滤掉 static 字段
+        javaClass.getFields().stream().filter(f -> !f.isStatic()).forEach(f -> {
             JavaClassFieldModel field = new JavaClassFieldModel();
         
             log.info("  analysis field: {}", f.getName());
         
             field.setName(f.getName());
             field.setDefaultValue(f.getInitializationExpression());
-        
+            
             field.setIsPublic(f.isPublic());
             field.setIsPrivate(f.isPrivate());
             field.setIsProtected(f.isProtected());
