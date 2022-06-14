@@ -16,14 +16,13 @@ import java.io.File;
 public class ZipJarTest {
     @InjectMocks
     FileUtil fileUtil;
-    
     @BeforeEach
     public void mockBeforeEach() {
         MockitoAnnotations.openMocks(this);
     }
     
     @Test
-    @DisplayName("normal")
+    @DisplayName("解压 zip 包")
     public void normal() {
         String jarFilePath = TestUtil.getBaseDir() +"com/godone/testSuite/guice-4.2.3.jar";
         String zipDir = TestUtil.getBaseDir() +"com/godone/testSuite/guice-4.2.3";

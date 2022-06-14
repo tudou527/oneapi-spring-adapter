@@ -37,7 +37,7 @@ public class AnnotationTest {
     }
     
     @Test
-    @DisplayName("正常注解属性")
+    @DisplayName("解析注解属性")
     public void classAnnotation() {
         JavaClass javaClass = TestUtil.getJavaClass("com.godone.testSuite.TestController");
     
@@ -96,14 +96,14 @@ public class AnnotationTest {
     }
     
     @Test
-    @DisplayName("注解入参为 null")
+    @DisplayName("入参为 null")
     public void annotationNull() {
         ArrayList<JavaAnnotationModel> annotations = classUtil.getAnnotation(null, mockFileModel);
         Assertions.assertNull(annotations);
     }
     
     @Test
-    @DisplayName("注解不存在")
+    @DisplayName("入参为空数组")
     public void annotationEmpty() {
         ArrayList<JavaAnnotationModel> annotations = classUtil.getAnnotation(new ArrayList<>(), mockFileModel);
         Assertions.assertNull(annotations);

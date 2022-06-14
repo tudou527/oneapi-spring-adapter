@@ -21,7 +21,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
 
-@DisplayName("basic.analysis")
+@DisplayName("basic.analysis.analysisClass")
 public class AnalysisClassTest {
     @Mock
     ClassUtil classUtil;
@@ -51,64 +51,52 @@ public class AnalysisClassTest {
     }
 
     @Test
-    @DisplayName("normal")
+    @DisplayName("解析 class 基础信息")
     public void normal() {
         JavaClass javaClass = TestUtil.getJavaClass("com.godone.testSuite.Description");
+    
+        JavaClassModel classModel = ReflectionTestUtils.invokeMethod(basicAnalysis, "analysisClass", javaClass);
         
-        try {
-            JavaClassModel classModel = ReflectionTestUtils.invokeMethod(basicAnalysis, "analysisClass", javaClass);
-            
-            Assertions.assertNotNull(classModel);
-            
-            Assertions.assertEquals(classModel.getName(), "Description");
-            Assertions.assertEquals(classModel.getClassPath(), "com.godone.testSuite.Description");
-            Assertions.assertEquals(classModel.getActualType().size(), 2);
-            Assertions.assertNull(classModel.getSuperClass());
+        Assertions.assertNotNull(classModel);
+        
+        Assertions.assertEquals(classModel.getName(), "Description");
+        Assertions.assertEquals(classModel.getClassPath(), "com.godone.testSuite.Description");
+        Assertions.assertEquals(classModel.getActualType().size(), 2);
+        Assertions.assertNull(classModel.getSuperClass());
 
-            // getDescription、getAnnotation 的单测已经写过了，这里简单的判断
-            Assertions.assertNotNull(classModel.getDescription());
-            Assertions.assertNull(classModel.getAnnotation());
-            
-            Assertions.assertFalse(classModel.getIsEnum());
-            Assertions.assertFalse(classModel.getIsPrivate());
-            Assertions.assertTrue(classModel.getIsPublic());
-            Assertions.assertFalse(classModel.getIsAbstract());
-            Assertions.assertFalse(classModel.getIsInterface());
-    
-            ArrayList<JavaClassFieldModel> fields = classModel.getFields();
-            Assertions.assertEquals(fields.size(), 2);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        // getDescription、getAnnotation 的单测已经写过了，这里简单的判断
+        Assertions.assertNotNull(classModel.getDescription());
+        Assertions.assertNull(classModel.getAnnotation());
+        
+        Assertions.assertFalse(classModel.getIsEnum());
+        Assertions.assertFalse(classModel.getIsPrivate());
+        Assertions.assertTrue(classModel.getIsPublic());
+        Assertions.assertFalse(classModel.getIsAbstract());
+        Assertions.assertFalse(classModel.getIsInterface());
+
+        ArrayList<JavaClassFieldModel> fields = classModel.getFields();
+        Assertions.assertEquals(fields.size(), 2);
     }
-    
+
     @Test
-    @DisplayName("enum class")
+    @DisplayName("枚举类")
     public void enumClass() {
         JavaClass javaClass = TestUtil.getJavaClass("com.godone.testSuite.AuthOperationEnum");
     
-        try {
-            JavaClassModel classModel = ReflectionTestUtils.invokeMethod(basicAnalysis, "analysisClass", javaClass);
-        
-            Assertions.assertNotNull(classModel);
-            Assertions.assertTrue(classModel.getIsEnum());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        JavaClassModel classModel = ReflectionTestUtils.invokeMethod(basicAnalysis, "analysisClass", javaClass);
+    
+        Assertions.assertNotNull(classModel);
+        Assertions.assertTrue(classModel.getIsEnum());
     }
     
     @Test
-    @DisplayName("interface")
+    @DisplayName("接口类")
     public void interfaceClass() {
         JavaClass javaClass = TestUtil.getJavaClass("com.godone.testSuite.UserInterface");
         
-        try {
-            JavaClassModel classModel = ReflectionTestUtils.invokeMethod(basicAnalysis, "analysisClass", javaClass);
-            
-            Assertions.assertNotNull(classModel);
-            Assertions.assertTrue(classModel.getIsInterface());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        JavaClassModel classModel = ReflectionTestUtils.invokeMethod(basicAnalysis, "analysisClass", javaClass);
+        
+        Assertions.assertNotNull(classModel);
+        Assertions.assertTrue(classModel.getIsInterface());
     }
 }

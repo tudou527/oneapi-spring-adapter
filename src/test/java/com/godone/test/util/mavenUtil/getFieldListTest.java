@@ -23,7 +23,7 @@ public class getFieldListTest {
     }
     
     @Test
-    @DisplayName("normal")
+    @DisplayName("返回字段及其类型")
     public void getFieldList() {
         String classPath = TestUtil.getBaseDir() + "com/godone/testSuite/guice-4.2.3.jar";
         Class<?> targetClass = mvnUtil.getMatchReflectClass( "com.google.inject.spi.ElementSource", classPath);

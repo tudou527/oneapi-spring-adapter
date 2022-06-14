@@ -2,6 +2,7 @@ package com.godone.test.analysis.entry;
 
 import com.etosun.godone.analysis.EntryAnalysis;
 import com.etosun.godone.analysis.TypeAnalysis;
+import com.etosun.godone.cache.ResourceCache;
 import com.etosun.godone.models.*;
 import com.etosun.godone.utils.ClassUtil;
 import com.etosun.godone.utils.FileUtil;
@@ -29,6 +30,8 @@ public class EntryAnalysisTest {
     @Mock
     TypeAnalysis typeAnalysis;
     @Mock
+    ResourceCache resourceCache;
+    @Mock
     Provider<TypeAnalysis> typeAnalysisProvider;
     @InjectMocks
     EntryAnalysis entryAnalysis;;
@@ -51,12 +54,13 @@ public class EntryAnalysisTest {
             setName("CustomJavaType");
         }});
         Mockito.when(typeAnalysisProvider.get()).thenReturn(typeAnalysis);
+        Mockito.when(resourceCache.getCache(Mockito.anyString())).thenReturn(TestUtil.getFileByClassPath("com.godone.testSuite.TestController"));
     }
 
     @Test
     @DisplayName("normal")
     public void normal() {
-        JavaFileModel javaModel = entryAnalysis.analysis(TestUtil.getFileByClassPath("com.godone.testSuite.TestController"));
+        JavaFileModel javaModel = entryAnalysis.analysis("com.godone.testSuite.TestController");
         Assertions.assertNotNull(javaModel);
         
         // 存在 public method
@@ -96,7 +100,7 @@ public class EntryAnalysisTest {
     @Test
     @DisplayName("no params")
     public void noArguments() {
-        JavaFileModel javaModel = entryAnalysis.analysis(TestUtil.getFileByClassPath("com.godone.testSuite.TestController"));
+        JavaFileModel javaModel = entryAnalysis.analysis("com.godone.testSuite.TestController");
         Assertions.assertNotNull(javaModel);
         
         // 存在 public method

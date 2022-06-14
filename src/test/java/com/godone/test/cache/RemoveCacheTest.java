@@ -19,7 +19,7 @@ public class RemoveCacheTest {
     }
 
     @Test
-    @DisplayName("remove cache by key")
+    @DisplayName("按 key 删除缓存")
     public void removeCacheByKey() {
         reflectCache.setCache("com.godone.test.a", "file://filepath");
         String filePath = reflectCache.getCache("com.godone.test.a");

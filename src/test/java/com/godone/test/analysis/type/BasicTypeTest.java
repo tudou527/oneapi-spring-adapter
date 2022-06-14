@@ -38,7 +38,7 @@ public class BasicTypeTest {
     }
     
     @Test
-    @DisplayName("java build-in type")
+    @DisplayName("java 内置类型")
     public void buildInType() {
         JavaActualType boolType = getActualType("biBool");
         Assertions.assertEquals(boolType.getName(), "boolean");
@@ -74,7 +74,7 @@ public class BasicTypeTest {
     }
     
     @Test
-    @DisplayName("simple type")
+    @DisplayName("简单类型")
     public void simpleType() {
         JavaActualType genericType = getActualType("genericField");
         Assertions.assertEquals(genericType.getName(), "T");

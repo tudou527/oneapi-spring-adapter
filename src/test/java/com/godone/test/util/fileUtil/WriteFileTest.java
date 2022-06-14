@@ -26,7 +26,7 @@ public class WriteFileTest {
     }
     
     @Test
-    @DisplayName("normal")
+    @DisplayName("正常写文件")
     public void normal() {
         String saveFilePath = TestUtil.getBaseDir() +"com/godone/testSuite/test/WriteTest.json";
 
@@ -42,7 +42,7 @@ public class WriteFileTest {
     }
     
     @Test
-    @DisplayName("file exist")
+    @DisplayName("文件已存在时先删除再创建")
     public void overwrite() {
         String saveFilePath = TestUtil.getBaseDir() +"com/godone/testSuite/test/WriteTest.json";
         

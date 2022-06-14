@@ -19,8 +19,8 @@ import java.util.List;
  */
 public class EntryAnalysis extends BasicAnalysis {
     // 入口函数
-    public JavaFileModel analysis(String filePath) {
-        super.analysis(filePath);
+    public JavaFileModel analysis(String classPath) {
+        super.analysis(classPath);
     
          fileModel.setFileType(ClassTypeEnum.ENTRY);
         // 补全方法（只考虑配 public 方法）

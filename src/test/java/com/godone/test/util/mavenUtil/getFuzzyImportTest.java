@@ -30,7 +30,7 @@ public class getFuzzyImportTest {
     }
     
     @Test
-    @DisplayName("match resource")
+    @DisplayName("匹配同项目中导入的 class")
     public void matchResource() {
         Mockito.when(reflectCache.getCache()).thenReturn(new ArrayList<>());
         Mockito.when(resourceCache.getCache()).thenReturn(new ArrayList<String>(){{
@@ -49,7 +49,7 @@ public class getFuzzyImportTest {
     }
     
     @Test
-    @DisplayName("match reflect class")
+    @DisplayName("匹配 jar 包中导入的 class")
     public void matchReflectClass() {
         Mockito.when(reflectCache.getCache()).thenReturn(new ArrayList<String>(){{
             add("com.ibm.icu.util.a");

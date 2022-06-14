@@ -57,18 +57,18 @@ public class BasicAnalysis {
     }};
     
     public JavaFileModel analysis(String classPath) {
-        fileModel = getModelFromResource(resourceCache.getCache(classPath));
+        fileModel = analysisFromResource(resourceCache.getCache(classPath));
 
         if (fileModel != null) {
             return fileModel;
         }
     
         // 判断 classPath 是否来自 JAR 包
-        return getModelFromReflect(classPath);
+        return analysisFromReflect(classPath);
     }
     
     // 从本项目的资源文件中获得解析结果
-    public JavaFileModel getModelFromResource(String javaFilePath) {
+    private JavaFileModel analysisFromResource(String javaFilePath) {
         if (javaFilePath == null) {
             return null;
         }
@@ -106,12 +106,12 @@ public class BasicAnalysis {
     }
     
     // 从反编译的 jar 包中获取解析结果
-    public JavaFileModel getModelFromReflect(String classPath) {
+    private JavaFileModel analysisFromReflect(String classPath) {
         String jarFilePath = reflectCache.getCache(classPath);
         if (jarFilePath == null) {
             return null;
         }
-        
+
         // 判断源码 JAR 是否存在
         File sourceJar = new File(jarFilePath.replace(".jar", "-sources.jar"));
         if (sourceJar.exists()) {
@@ -143,10 +143,10 @@ public class BasicAnalysis {
             // 把编反编译结果作为资源缓存起来
             mvnUtil.saveResource(deCompileFile.getPath(), false);
         }
-    
-        return getModelFromResource(resourceCache.getCache(classPath));
+
+        return analysisFromResource(resourceCache.getCache(classPath));
     }
-    
+
     // 分析 class
     private JavaClassModel analysisClass(JavaClass javaClass) {
         JavaClassModel classModel = new JavaClassModel();

@@ -18,6 +18,7 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
 
+@DisplayName("typeAnalysis.analysis")
 public class CollectTypeTest {
     @Mock
     private PendingCache pendingCache;
@@ -51,7 +52,7 @@ public class CollectTypeTest {
     }
     
     @Test
-    @DisplayName("generic of collect: T[]")
+    @DisplayName("泛型集合: T[]")
     public void collectGenericType() {
         JavaActualType genericType = getActualType("genericArr");
         Assertions.assertEquals(genericType.getName(),  "List");
@@ -64,7 +65,7 @@ public class CollectTypeTest {
     }
     
     @Test
-    @DisplayName("list child of collect: List<T[]>")
+    @DisplayName("列表+泛型+集合: List<T[]>")
     public void listCollectGenericType() {
         JavaActualType genericType = getActualType("genericArrList");
         
@@ -85,7 +86,7 @@ public class CollectTypeTest {
     }
     
     @Test
-    @DisplayName("generic class of collect: CustomClass<T, U>[]")
+    @DisplayName("多泛型集合: CustomClass<T, U>[]")
     public void collectGenericClass() {
         JavaActualType genericType = getActualType("customGenericArr");
         
@@ -111,7 +112,7 @@ public class CollectTypeTest {
     }
     
     @Test
-    @DisplayName("double collect: CustomClass<T, U>[][]")
+    @DisplayName("集合嵌套: CustomClass<T, U>[][]")
     public void doubleDimensionality() {
         JavaActualType genericType = getActualType("customGenericArrOfArr");
         

@@ -36,7 +36,7 @@ public class NormalTest {
     }
     
     @Test
-    @DisplayName("get pendingCache")
+    @DisplayName("缓存待解析的 class")
     public void pendingCache() {
         pendingCache.setCache("java.util.String");
         pendingCache.setCache("String");
@@ -53,7 +53,7 @@ public class NormalTest {
     }
     
     @Test
-    @DisplayName("get fileModeCache")
+    @DisplayName("缓存解析结果")
     public void fileModeCache() {
         JavaClassModel classModel = new JavaClassModel();
         classModel.setClassPath("com.godone.test.a");
@@ -66,13 +66,16 @@ public class NormalTest {
     
         JavaFileModel model = fileModeCache.getCache("com.godone.test.a");
         
+        // 不缓存 javaSource
+        Assertions.assertNull(model.getJavaSource());
+
         Assertions.assertNotNull(model);
         Assertions.assertNotNull(model.getClassModel());
         Assertions.assertEquals(model.getClassModel().getName(), "TestFileModel");
     }
     
     @Test
-    @DisplayName("get entryCache")
+    @DisplayName("缓存入口 class")
     public void entryCache() {
         entryCache.setCache("com.godone.test.a", "file://a/b");
         entryCache.setCache("com.godone.test.b.c", "file://b/c");
@@ -85,7 +88,7 @@ public class NormalTest {
     }
 
     @Test
-    @DisplayName("get resourceCache")
+    @DisplayName("缓存资源 class")
     public void resourceCache() {
         resourceCache.setCache("com.godone.test.a", "file://filepath");
         
@@ -94,7 +97,7 @@ public class NormalTest {
     }
     
     @Test
-    @DisplayName("get reflectCache")
+    @DisplayName("缓存通过反射获取到的 class")
     public void reflectCache() {
         reflectCache.setCache("com.godone.test.a", "file://filepath");
         

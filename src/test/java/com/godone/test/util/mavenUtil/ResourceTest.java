@@ -42,7 +42,7 @@ public class ResourceTest {
     }
     
     @Test
-    @DisplayName("resource 缓存")
+    @DisplayName("缓存为资源")
     public void saveResource() {
         Mockito.when(fileUtil.findFileList(Mockito.anyString(), Mockito.anyString())).thenReturn(fileList);
         Mockito.when(fileUtil.getBuilder(Mockito.anyString())).thenAnswer((Answer<JavaProjectBuilder>) invocation -> {
@@ -86,7 +86,7 @@ public class ResourceTest {
     }
     
     @Test
-    @DisplayName("entry 缓存")
+    @DisplayName("缓存为入口")
     public void saveEntry() {
         Mockito.when(fileUtil.findFileList(Mockito.anyString(), Mockito.anyString())).thenReturn(fileList);
         Mockito.when(fileUtil.getBuilder(Mockito.anyString())).thenAnswer((Answer<JavaProjectBuilder>) invocation -> {

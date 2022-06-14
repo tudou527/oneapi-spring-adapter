@@ -44,7 +44,7 @@ public class ClearCacheTest {
     }
 
     @Test
-    @DisplayName("clear")
+    @DisplayName("清空缓存")
     public void clear() {
         pendingCache.clearCache(false);
 

@@ -88,9 +88,8 @@ public class Application {
             log.info("analysis entry");
             // 分析入口文件
             entryCache.getCache().forEach(classPath -> {
-                String filePath = entryCache.getCache(classPath);
-                log.info("analysis file: {}", filePath);
-                JavaFileModel fileModel = entryAnalysis.get().analysis(filePath);
+                log.info("analysis class: {}", classPath);
+                JavaFileModel fileModel = entryAnalysis.get().analysis(classPath);
                 if (fileModel != null) {
                     fileModelCache.setCache(fileModel);
                 }

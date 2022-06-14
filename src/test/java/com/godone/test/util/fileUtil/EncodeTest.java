@@ -22,7 +22,7 @@ public class EncodeTest {
     }
     
     @Test
-    @DisplayName("UTF-8")
+    @DisplayName("UTF-8 编码")
     public void utf8() {
         String filePath = TestUtil.getFileByClassPath("com.godone.testSuite.TestController");
         Charset encode = fileUtil.getFileOrIOEncode(filePath);
@@ -31,7 +31,7 @@ public class EncodeTest {
     }
     
     @Test
-    @DisplayName("GB2312")
+    @DisplayName("GB2312 编码")
     public void gbk() {
         String filePath = TestUtil.getFileByClassPath("com.godone.testSuite.TestClassOfGBK");
         Charset encode = fileUtil.getFileOrIOEncode(filePath);
@@ -41,7 +41,7 @@ public class EncodeTest {
     }
     
     @Test
-    @DisplayName("return UTF-8 when fail")
+    @DisplayName("失败时返回 UTF-8")
     public void fail() {
         String filePath = TestUtil.getFileByClassPath("com.godone.testSuite.fail");
         Charset encode = fileUtil.getFileOrIOEncode(filePath);

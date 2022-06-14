@@ -20,7 +20,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
 
-@DisplayName("basic.analysis")
+@DisplayName("basic.analysis.getFieldList")
 public class GetFieldListTest {
     @Mock
     ClassUtil classUtil;
@@ -53,30 +53,26 @@ public class GetFieldListTest {
     }
 
     @Test
-    @DisplayName("normal")
+    @DisplayName("返回 class 所有字段")
     public void normal() {
         JavaClass javaClass = TestUtil.getJavaClass("com.godone.testSuite.field.ComplexField");
 
-        try {
-            ArrayList<JavaClassFieldModel> fields = ReflectionTestUtils.invokeMethod(basicAnalysis, "getFieldList", javaClass);
+        ArrayList<JavaClassFieldModel> fields = ReflectionTestUtils.invokeMethod(basicAnalysis, "getFieldList", javaClass);
 
-            Assertions.assertNotNull(fields);
-    
-            JavaClassFieldModel result2 = getField(fields, "result2");
-            Assertions.assertNotNull(result2);
-            Assertions.assertEquals(result2.getName(), "result2");
-            Assertions.assertEquals(result2.getDefaultValue(), "");
+        Assertions.assertNotNull(fields);
 
-            Assertions.assertTrue(result2.getIsPrivate());
-            Assertions.assertFalse(result2.getIsPublic());
-            Assertions.assertFalse(result2.getIsProtected());
-            
-            Assertions.assertTrue(fields.size() > 1);
-    
-            JavaClassFieldModel errorMsg = getField(fields, "errorMsg");
-            Assertions.assertNull(errorMsg);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        JavaClassFieldModel result2 = getField(fields, "result2");
+        Assertions.assertNotNull(result2);
+        Assertions.assertEquals(result2.getName(), "result2");
+        Assertions.assertEquals(result2.getDefaultValue(), "");
+
+        Assertions.assertTrue(result2.getIsPrivate());
+        Assertions.assertFalse(result2.getIsPublic());
+        Assertions.assertFalse(result2.getIsProtected());
+        
+        Assertions.assertTrue(fields.size() > 1);
+
+        JavaClassFieldModel errorMsg = getField(fields, "errorMsg");
+        Assertions.assertNull(errorMsg);
     }
 }

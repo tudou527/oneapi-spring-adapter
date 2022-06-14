@@ -19,7 +19,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
 
-@DisplayName("basic.getParentClass")
+@DisplayName("basic.analysis.getParentClass")
 public class GetParentClassTest {
     @Mock
     TypeAnalysis typeAnalysis;
@@ -41,23 +41,19 @@ public class GetParentClassTest {
     }
 
     @Test
-    @DisplayName("no parent class")
+    @DisplayName("不存在父类")
     public void noParentClass() {
         Mockito.when(typeAnalysisProvider.get()).thenReturn(typeAnalysis);
 
         JavaClass javaClass = TestUtil.getJavaClass("com.godone.testSuite.field.ComplexField");
 
-        try {
-            JavaActualType parentClass = ReflectionTestUtils.invokeMethod(basicAnalysis, "getParentClass", javaClass);
+        JavaActualType parentClass = ReflectionTestUtils.invokeMethod(basicAnalysis, "getParentClass", javaClass);
 
-            Assertions.assertNull(parentClass);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Assertions.assertNull(parentClass);
     }
     
     @Test
-    @DisplayName("generic parent class")
+    @DisplayName("父类为泛型")
     public void genericParent() {
         Mockito.when(typeAnalysis.analysis(Mockito.any(), Mockito.any())).thenReturn(new JavaActualType() {{
             setName("testJavaActualTypeName");
@@ -66,12 +62,8 @@ public class GetParentClassTest {
         
         JavaClass javaClass = TestUtil.getJavaClass("com.godone.testSuite.ExtendGenericClazz");
         
-        try {
-            JavaActualType parentClass = ReflectionTestUtils.invokeMethod(basicAnalysis, "getParentClass", javaClass);
-            Assertions.assertNotNull(parentClass);
-            Assertions.assertEquals(parentClass.getName(), "testJavaActualTypeName");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        JavaActualType parentClass = ReflectionTestUtils.invokeMethod(basicAnalysis, "getParentClass", javaClass);
+        Assertions.assertNotNull(parentClass);
+        Assertions.assertEquals(parentClass.getName(), "testJavaActualTypeName");
     }
 }

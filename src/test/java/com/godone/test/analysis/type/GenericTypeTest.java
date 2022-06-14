@@ -52,7 +52,7 @@ public class GenericTypeTest {
     }
     
     @Test
-    @DisplayName("simple generic: CustomClass<T, T>")
+    @DisplayName("简单泛型: CustomClass<T, T>")
     public void basicGenericType() {
         JavaActualType genericType = getActualType("genericProperty");
         Assertions.assertEquals(genericType.getName(),  "Description");
@@ -67,7 +67,7 @@ public class GenericTypeTest {
     }
     
     @Test
-    @DisplayName("generic type in list: List<CustomClass<String, CustomClass<T, T>>>")
+    @DisplayName("数组嵌套的泛型: List<CustomClass<String, CustomClass<T, T>>>")
     public void listGenericType() {
         JavaActualType genericType = getActualType("complexGenericProperty1");
         
@@ -108,7 +108,7 @@ public class GenericTypeTest {
     }
     
     @Test
-    @DisplayName("generic type in hashMap: HashMap<CustomClass<CustomClass[], Long>, String>")
+    @DisplayName("Map 中包含泛型: HashMap<CustomClass<CustomClass[], Long>, String>")
     public void mapGenericType() {
         JavaActualType genericType = getActualType("complexGenericProperty2");
         

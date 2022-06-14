@@ -19,7 +19,6 @@ public class TypeAnalysis {
     private JavaType type;
     // type 所在的宿主文件
     private JavaFileModel hostModel;
-
     @Inject
     private PendingCache pendingCache;
     @Inject

@@ -22,7 +22,7 @@ public class ClassBuilderTest {
     }
     
     @Test
-    @DisplayName("return JavaProjectBuilder")
+    @DisplayName("返回 JavaProjectBuilder")
     public void utf8() {
         String filePath = TestUtil.getFileByClassPath("com.godone.testSuite.TestController");
         JavaProjectBuilder builder = fileUtil.getBuilder(filePath);
@@ -31,7 +31,7 @@ public class ClassBuilderTest {
     }
     
     @Test
-    @DisplayName("return null when file not exist")
+    @DisplayName("文件不存在时返回  null")
     public void fail() {
         String filePath = TestUtil.getFileByClassPath("com.godone.testSuite.fail");
         JavaProjectBuilder builder = fileUtil.getBuilder(filePath);
