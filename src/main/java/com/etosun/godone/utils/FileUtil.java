@@ -118,9 +118,12 @@ public class FileUtil {
 
         return targetFile;
     }
-
-    // 写文件
-    public void writeFile(String content, String targetPath, Charset encode) {
+    
+    /**
+     * 写文件
+     * 为了方便 mock 这里返回目标文件路径
+     */
+    public String writeFile(String content, String targetPath, Charset encode) {
         try {
             // 生成json格式文件
             File file = new File(targetPath);
@@ -142,8 +145,12 @@ public class FileUtil {
             write.write(content);
             write.flush();
             write.close();
+            
+            return targetPath;
         } catch (IOException ignore) {
         }
+        
+        return null;
     }
 
     /**

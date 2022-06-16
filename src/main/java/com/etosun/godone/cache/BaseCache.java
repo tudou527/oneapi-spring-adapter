@@ -1,7 +1,6 @@
 package com.etosun.godone.cache;
 
 import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheException;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
@@ -49,12 +48,9 @@ public class BaseCache<T> {
         cache.remove(cacheKey);
     }
 
-    public void clearCache(Boolean deleteAnalysisResult) {
-        String[] cacheNames = cacheManager.getCacheNames();
-        for (String cacheName : cacheNames) {
-            if (!cacheName.equals("JavaModelCache") || deleteAnalysisResult) {
-                cacheManager.removeCache(cacheName);
-            }
-        }
+    public void clear() {
+        getCache().forEach((String key) -> {
+            cache.remove(key);
+        });
     }
 }

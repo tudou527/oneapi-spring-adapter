@@ -20,8 +20,10 @@ import java.util.ArrayList;
 
 @DisplayName("classUtil.getAnnotation")
 public class AnnotationTest {
-    @Mock PendingCache pendingCache;
-    @InjectMocks ClassUtil classUtil;
+    @Mock
+    PendingCache pendingCache;
+    @InjectMocks
+    ClassUtil classUtil;
 
     JavaFileModel mockFileModel = Mockito.mock(JavaFileModel.class);
 

@@ -40,16 +40,15 @@ public class Application {
     @Inject
     private FileUtil fileUtil;
     @Inject
-    private BaseCache baseCache;
-    @Inject
     private EntryCache entryCache;
+    @Inject
+    private ReflectCache reflectCache;
     @Inject
     private ResourceCache resourceCache;
     @Inject
     private FileModelCache fileModelCache;
     @Inject
     private PendingCache pendingCache;
-    
     @Inject
     Provider<EntryAnalysis> entryAnalysis;
     @Inject
@@ -69,8 +68,8 @@ public class Application {
             CommandLine cmd = parser.parse(options, args);
 
             if (!cmd.hasOption("p") || !cmd.hasOption("o") || !cmd.hasOption("r")) {
-                System.out.println("参数不完整");
-                System.exit(-1);
+                log.error("参数不完整");
+                return;
             }
     
             projectDir = cmd.getOptionValue("p");
@@ -99,7 +98,10 @@ public class Application {
             log.info("analysis class reference");
             analysisClassReference();
     
-            baseCache.clearCache(false);
+            entryCache.clear();
+            resourceCache.clear();
+            pendingCache.clear();
+            reflectCache.clear();
         
             // 解析结果排序
             LinkedHashMap<String, JavaFileModel> analysisResult = new LinkedHashMap<>();
@@ -110,11 +112,9 @@ public class Application {
             fileUtil.writeFile(analysisResultStr, outputFileDir+ "/result.json", Charset.defaultCharset());
 
             // 清空所有缓存
-            baseCache.clearCache(true);
+            fileModelCache.clear();
     
             log.info("exec time: {} second", stopwatch.elapsed(TimeUnit.SECONDS));
-    
-            System.exit(0);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -133,7 +133,7 @@ public class Application {
             pendingCache.removeCache(classPath);
         });
         
-        if (pendingCache.getCache().size() > 0 && loopCount < 10) {
+        if (pendingCache.getCache().size() > 0 && loopCount < 9) {
             loopCount++;
             analysisClassReference();
         } else {
