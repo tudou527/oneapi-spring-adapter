@@ -35,7 +35,7 @@ public class BasicAnalysis {
     // 按行读取的文件内容
     List<String> fileLines = new ArrayList<>();
     // 解析结果
-    JavaFileModel fileModel = new JavaFileModel();
+    JavaFileModel fileModel;
     // 被解析的 class
     JavaClass targetClass;
 
@@ -57,10 +57,10 @@ public class BasicAnalysis {
     }};
     
     public JavaFileModel analysis(String classPath) {
-        fileModel = analysisFromResource(resourceCache.getCache(classPath));
+        JavaFileModel model = analysisFromResource(resourceCache.getCache(classPath));
 
-        if (fileModel != null) {
-            return fileModel;
+        if (model != null) {
+            return model;
         }
     
         // 判断 classPath 是否来自 JAR 包
@@ -87,6 +87,8 @@ public class BasicAnalysis {
         if (!optionalClass.isPresent()) {
             return null;
         }
+
+        fileModel = new JavaFileModel();;
         targetClass = optionalClass.get();
 
         fileModel.setFilePath(javaFilePath);
@@ -130,15 +132,15 @@ public class BasicAnalysis {
             }
 
             // 反编译 jar 包
-            fileUtil.exec(new String[]{
-                "java",
-                "-jar",
-                "/Users/xiaoyun/github/godone/src/main/resources/lib/procyon-decompiler.jar",
-                "-jar",
-                jarFilePath,
-                "-o",
-                deCompileFile.getPath(),
-            }, jarFile.getParent());
+            fileUtil.exec(String.join(" ", new ArrayList<String>(){{
+                add("java");
+                add("-jar");
+                add("/Users/xiaoyun/github/godone/src/main/resources/lib/procyon-decompiler.jar");
+                add("-jar");
+                add(jarFilePath);
+                add("-o");
+                add(deCompileFile.getPath());
+            }}), jarFile.getParent());
             
             // 把编反编译结果作为资源缓存起来
             mvnUtil.saveResource(deCompileFile.getPath(), false);

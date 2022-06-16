@@ -107,10 +107,10 @@ public class AnalysisFromReflectTest {
         }).when(mvnUtil).saveResource(Mockito.anyString(), Mockito.anyBoolean());
         
         // mock 解压文件
-        HashMap<String, String[]> unzipArgs = new HashMap<>();
+        HashMap<String, String> unzipArgs = new HashMap<>();
         Mockito.doAnswer((Answer<String>) invocation -> {
             Object[] args = invocation.getArguments();
-            unzipArgs.put((String) args[1], (String[]) args[0]);
+            unzipArgs.put((String) args[1], (String) args[0]);
             return null;
         }).when(fileUtil).exec(Mockito.any(), Mockito.any());
 
@@ -136,6 +136,9 @@ public class AnalysisFromReflectTest {
         Assertions.assertFalse(resourceMap.get(deCompileDir.getAbsolutePath()));
         // 断言解压参数
         String unzipKey = TestUtil.getBaseDir() + "com/godone/testSuite";
-        Assertions.assertEquals(String.join(" ", unzipArgs.get(unzipKey)), String.join("", "java -jar /Users/xiaoyun/github/godone/src/main/resources/lib/procyon-decompiler.jar -jar " + TestUtil.getBaseDir() + "com/godone/testSuite/guice-4.2.3.jar -o "+ TestUtil.getBaseDir() + "com/godone/testSuite/deCompile"));
+        Assertions.assertEquals(
+            unzipArgs.get(unzipKey),
+            "java -jar /Users/xiaoyun/github/godone/src/main/resources/lib/procyon-decompiler.jar -jar " + TestUtil.getBaseDir() + "com/godone/testSuite/guice-4.2.3.jar -o "+ TestUtil.getBaseDir() + "com/godone/testSuite/deCompile"
+        );
     }
 }

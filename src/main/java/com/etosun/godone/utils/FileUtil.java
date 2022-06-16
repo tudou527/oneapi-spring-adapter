@@ -24,7 +24,6 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.regex.Pattern;
 
 @Slf4j
 @Singleton
@@ -215,31 +214,27 @@ public class FileUtil {
      * @param cmd string[] 待执行的命令
      * @param workDir string 执行目录
      */
-    public void exec(String[] cmd, String workDir) {
+    public void exec(String cmd, String workDir) {
         try {
             log.info(String.format("Run command: %s", String.join(" ", cmd)));
-            ProcessBuilder pb = new ProcessBuilder(cmd);
+            ProcessBuilder pb = new ProcessBuilder("/bin/sh", "-c", cmd);
             pb.directory(new File(workDir));
             Process process = pb.start();
-            BufferedReader inputBuffer = new BufferedReader(new InputStreamReader(process.getInputStream()));
             BufferedReader errorBuffer = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+            BufferedReader inputBuffer = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String inputLine;
             String errLine;
-            // 过滤掉下载过程的日志输出
-            Pattern pattern = Pattern.compile("\\s(KB|MB|kB|mB)+");
-            // 直到读完为止
-            // while((inputLine = inputBuffer.readLine()) != null) {
-            //   if (!pattern.matcher(inputLine).find() && !inputLine.trim().isEmpty()) {
-            //      System.out.println(inputLine);
-            //   }
-            // }
+            while((inputLine = inputBuffer.readLine()) != null) {
+                log.info(inputLine);
+            }
             while((errLine = errorBuffer.readLine()) !=null){
-                System.out.println(errLine);
+                log.error(errLine);
             }
             process.waitFor();
             log.info("Run command done.");
         } catch (Exception e) {
-            log.info(String.format("Run Command: %s in %s error: ", String.join(" ", cmd), workDir));
+            e.printStackTrace();
+            log.info(String.format("Run Command Error: %s in %s", String.join(" ", cmd), workDir));
         }
     }
 }
