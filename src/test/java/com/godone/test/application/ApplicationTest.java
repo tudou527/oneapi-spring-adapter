@@ -49,7 +49,7 @@ public class ApplicationTest {
     public void setUp() {
         final SecurityManager securityManager = new SecurityManager() {
             public void checkPermission(Permission permission) {
-            if (permission.getName().startsWith("exitVM.-")) {
+            if (permission.getName().startsWith("exitVM.-200")) {
                 throw new AccessControlException("");
             }
             }

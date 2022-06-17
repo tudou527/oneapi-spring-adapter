@@ -68,7 +68,7 @@ public class Application {
 
             if (!cmd.hasOption("p") || !cmd.hasOption("o") || !cmd.hasOption("r")) {
                 log.error("参数不完整");
-                System.exit(-3);
+                System.exit(-200);
             }
     
             projectDir = cmd.getOptionValue("p");
@@ -114,7 +114,7 @@ public class Application {
             fileModelCache.clear();
     
             log.info("exec time: {} second", stopwatch.elapsed(TimeUnit.SECONDS));
-            System.exit(-2);
+            System.exit(-200);
         } catch (ParseException e) {
             e.printStackTrace();
         }

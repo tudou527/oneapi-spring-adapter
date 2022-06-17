@@ -128,10 +128,10 @@
                 <version>0.8.8</version>
                 <configuration>
                     <includes>
-                        <include>com/etosun/**/*</include>
+                        <include>com/godone/**/*</include>
                     </includes>
                     <excludes>
-                        <exclude>com/etosun/godone/models/**/*</exclude>
+                        <exclude>com/godone/meta/models/**/*</exclude>
                     </excludes>
                 </configuration>
                 <executions>
