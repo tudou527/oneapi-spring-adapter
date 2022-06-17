@@ -13,7 +13,7 @@ API 生产端目前在跑的解析器语言是 Java 代码，前端维护起来�
   "filePath": "/Users/xiaoyun/workspace/sofaboot3-demo/app/web/src/main/java/com/oneapi/demo/web/home/common/WebConstants.java",
   "packageName": "com.oneapi.demo.web.home.common",
   "description": {
-    "text": "Alipay.com Inc. Copyright (c) 2004-2020 All Rights Reserved."
+    "text": "Copyright (c) 2004-2020 All Rights Reserved."
   },
   "imports": [],
   "classList": [{

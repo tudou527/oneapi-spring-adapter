@@ -1,6 +1,6 @@
 package com.godone.test.cache;
 
-import com.etosun.godone.cache.ReflectCache;
+import com.godone.meta.cache.ReflectCache;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

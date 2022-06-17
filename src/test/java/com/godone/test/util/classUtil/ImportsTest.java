@@ -1,8 +1,8 @@
 package com.godone.test.util.classUtil;
 
-import com.etosun.godone.cache.ResourceCache;
-import com.etosun.godone.utils.ClassUtil;
-import com.etosun.godone.utils.MavenUtil;
+import com.godone.meta.cache.ResourceCache;
+import com.godone.meta.utils.ClassUtil;
+import com.godone.meta.utils.MavenUtil;
 import com.godone.test.TestUtil;
 import com.thoughtworks.qdox.model.JavaClass;
 import org.junit.jupiter.api.Assertions;
@@ -39,10 +39,10 @@ public class ImportsTest {
         Mockito.when(resourceCache.getCache(Mockito.anyString())).thenReturn(TestUtil.getFileByClassPath(mockImport));
     
         ArrayList<String> mockImportPkg = new ArrayList<String>(){{
-            add("com.etosun.godone.models.ClassTypeEnum");
-            add("com.etosun.godone.models.JavaActualType");
-            add("com.etosun.godone.models.JavaAnnotationField");
-            add("com.etosun.godone.models.JavaAnnotationModel");
+            add("com.godone.models.ClassTypeEnum");
+            add("com.godone.models.JavaActualType");
+            add("com.godone.models.JavaAnnotationField");
+            add("com.godone.models.JavaAnnotationModel");
         }};
         Mockito.when(mvnUtil.getFuzzyImportPackage(Mockito.anyString())).thenReturn(mockImportPkg);
 
@@ -52,9 +52,8 @@ public class ImportsTest {
         ArrayList<String> expectResult = new ArrayList<String>(){{
             add("com.godone.testSuite.field.FieldWithDefaultValue");
             add("com.google.inject.Singleton");
+            add("com.godone.testSuite.b");
         }};
-        expectResult.addAll(mockImportPkg);
-        expectResult.add(mockImport);
 
         Assertions.assertEquals(importList, expectResult);
     }

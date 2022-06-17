@@ -1,19 +1,13 @@
 package com.godone.test.cache;
 
-import com.etosun.godone.cache.*;
-import com.etosun.godone.models.JavaClassModel;
-import com.etosun.godone.models.JavaFileModel;
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.Element;
-import net.sf.ehcache.management.CacheManager;
+import com.godone.meta.cache.*;
+import com.godone.meta.models.JavaClassModel;
+import com.godone.meta.models.JavaFileModel;
 import org.junit.jupiter.api.*;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 @DisplayName("cache.set")
 public class NormalTest {

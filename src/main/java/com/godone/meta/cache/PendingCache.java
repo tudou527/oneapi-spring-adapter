@@ -1,6 +1,5 @@
-package com.etosun.godone.cache;
+package com.godone.meta.cache;
 
-import com.etosun.godone.analysis.TypeAnalysis;
 import com.google.inject.Singleton;
 import net.sf.ehcache.Element;
 

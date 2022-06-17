@@ -1,8 +1,8 @@
 package com.godone.test.analysis.type;
 
-import com.etosun.godone.analysis.TypeAnalysis;
-import com.etosun.godone.models.JavaActualType;
-import com.etosun.godone.models.JavaFileModel;
+import com.godone.meta.analysis.TypeAnalysis;
+import com.godone.meta.models.JavaActualType;
+import com.godone.meta.models.JavaFileModel;
 import com.godone.test.TestUtil;
 import com.thoughtworks.qdox.model.JavaClass;
 import org.junit.jupiter.api.Assertions;

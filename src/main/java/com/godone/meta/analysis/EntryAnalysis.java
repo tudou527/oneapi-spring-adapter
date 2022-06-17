@@ -1,15 +1,13 @@
 /**
- * Alipay.com Inc. Copyright (c) 2004-2021 All Rights Reserved.
  *
  * @auther xiaoyun
  * @create 2021-02-22 下午8:50
  */
-package com.etosun.godone.analysis;
+package com.godone.meta.analysis;
 
-import com.etosun.godone.models.*;
+import com.godone.meta.models.*;
 import com.thoughtworks.qdox.model.JavaMethod;
 import com.thoughtworks.qdox.model.JavaParameter;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;

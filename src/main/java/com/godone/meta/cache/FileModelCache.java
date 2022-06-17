@@ -1,6 +1,6 @@
-package com.etosun.godone.cache;
+package com.godone.meta.cache;
 
-import com.etosun.godone.models.JavaFileModel;
+import com.godone.meta.models.JavaFileModel;
 import net.sf.ehcache.Element;
 
 public class FileModelCache extends BaseCache<JavaFileModel> {

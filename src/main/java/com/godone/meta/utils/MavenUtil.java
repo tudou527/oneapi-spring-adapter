@@ -1,8 +1,8 @@
-package com.etosun.godone.utils;
+package com.godone.meta.utils;
 
-import com.etosun.godone.cache.EntryCache;
-import com.etosun.godone.cache.ReflectCache;
-import com.etosun.godone.cache.ResourceCache;
+import com.godone.meta.cache.EntryCache;
+import com.godone.meta.cache.ReflectCache;
+import com.godone.meta.cache.ResourceCache;
 import com.google.inject.Inject;
 import com.thoughtworks.qdox.JavaProjectBuilder;
 import com.thoughtworks.qdox.model.JavaClass;

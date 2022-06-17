@@ -1,17 +1,13 @@
 package com.godone.test.analysis.basic;
 
-import com.etosun.godone.analysis.BasicAnalysis;
-import com.etosun.godone.analysis.TypeAnalysis;
-import com.etosun.godone.models.JavaActualType;
-import com.etosun.godone.models.JavaClassFieldModel;
-import com.etosun.godone.models.JavaClassModel;
-import com.etosun.godone.models.JavaFileModel;
-import com.etosun.godone.utils.ClassUtil;
-import com.etosun.godone.utils.FileUtil;
+import com.godone.meta.analysis.BasicAnalysis;
+import com.godone.meta.analysis.TypeAnalysis;
+import com.godone.meta.models.JavaActualType;
+import com.godone.meta.models.JavaFileModel;
+import com.godone.meta.utils.ClassUtil;
+import com.godone.meta.utils.FileUtil;
 import com.godone.test.TestUtil;
-import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.thoughtworks.qdox.model.JavaClass;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

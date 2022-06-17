@@ -2,7 +2,6 @@ package com.godone.testSuite;
 
 import com.godone.testSuite.field.FieldWithDefaultValue;
 import com.google.inject.Singleton;
-import com.etosun.godone.models.*;
 
 /**
  * Spring Mvc的根路径、健康检查等。

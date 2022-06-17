@@ -1,8 +1,8 @@
 package com.godone.test.util.mavenUtil;
 
-import com.etosun.godone.cache.ReflectCache;
-import com.etosun.godone.utils.FileUtil;
-import com.etosun.godone.utils.MavenUtil;
+import com.godone.meta.cache.ReflectCache;
+import com.godone.meta.utils.FileUtil;
+import com.godone.meta.utils.MavenUtil;
 import com.godone.test.TestUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,7 +17,6 @@ import org.mockito.stubbing.Answer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.jar.JarFile;
 
 @DisplayName("mavenUtil.saveReflectClassCache")
 public class ReflectClassTest {

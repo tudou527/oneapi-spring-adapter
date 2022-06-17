@@ -1,10 +1,9 @@
 /**
- * Alipay.com Inc. Copyright (c) 2004-2021 All Rights Reserved.
  *
  * @auther xiaoyun
  * @create 2021-01-18 下午10:33
  */
-package com.etosun.godone.utils;
+package com.godone.meta.utils;
 
 import com.thoughtworks.qdox.JavaProjectBuilder;
 import info.monitorenter.cpdetector.io.ASCIIDetector;

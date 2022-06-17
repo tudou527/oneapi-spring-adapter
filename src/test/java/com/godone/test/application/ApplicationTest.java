@@ -1,12 +1,11 @@
 package com.godone.test.application;
 
-import com.etosun.godone.Application;
-import com.etosun.godone.analysis.BasicAnalysis;
-import com.etosun.godone.cache.FileModelCache;
-import com.etosun.godone.cache.PendingCache;
-import com.etosun.godone.models.JavaFileModel;
-import com.etosun.godone.utils.FileUtil;
-import com.etosun.godone.utils.MavenUtil;
+import com.godone.meta.Application;
+import com.godone.meta.analysis.BasicAnalysis;
+import com.godone.meta.cache.FileModelCache;
+import com.godone.meta.cache.PendingCache;
+import com.godone.meta.models.JavaFileModel;
+import com.godone.meta.utils.MavenUtil;
 import com.godone.test.TestUtil;
 import com.google.inject.Provider;
 import org.junit.jupiter.api.Assertions;
@@ -20,7 +19,11 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.stubbing.Answer;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.PrintStream;
+import java.security.AccessControlException;
+import java.security.Permission;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +41,25 @@ public class ApplicationTest {
     Provider<BasicAnalysis> basicAnalysis;
     @InjectMocks
     Application app;
+    
+    private PrintStream console = null;
+    private ByteArrayOutputStream bytes = null;
+
+    @BeforeEach
+    public void setUp() {
+        final SecurityManager securityManager = new SecurityManager() {
+            public void checkPermission(Permission permission) {
+            if (permission.getName().startsWith("exitVM.-")) {
+                throw new AccessControlException("");
+            }
+            }
+        };
+    
+        System.setSecurityManager(securityManager);
+        bytes = new ByteArrayOutputStream();
+        console = System.out;
+        System.setOut(new PrintStream(bytes));
+    }
     
     @BeforeEach
     public void mockBeforeEach() {
@@ -73,7 +95,10 @@ public class ApplicationTest {
         }});
         Mockito.when(basicAnalysis.get()).thenReturn(basicAnalysisReal);
         
-        ReflectionTestUtils.invokeMethod(app, "analysisClassReference");
+        try {
+            ReflectionTestUtils.invokeMethod(app, "analysisClassReference");
+        } catch (RuntimeException ignore){}
+        
         Assertions.assertEquals(removeCacheKey.size(), 20);
         Assertions.assertEquals(removeCacheKey.get(0), "com.godone.a.b.c");
         Assertions.assertEquals(removeCacheKey.get(1), "com.godone.a.d.f");
@@ -87,7 +112,9 @@ public class ApplicationTest {
     @Test
     @DisplayName("参数不完整")
     public void paramsError() {
-        Application.main(new String[] {});
+        try {
+            Application.main(new String[] {});
+        } catch (Exception ignore){}
         
         Mockito.verify(mvnUtil, Mockito.times(0)).saveResource(Mockito.anyString(), Mockito.anyBoolean());
     }
@@ -96,15 +123,17 @@ public class ApplicationTest {
     @DisplayName("有完整的解析结果")
     public void analysisResult() {
         File result = new File(TestUtil.getBaseDir()+ "com/godone/testSuite/result.json");
-
-        Application.main(new String[] {
-            "-p",
-            TestUtil.getBaseDir()+ "com/godone/testSuite",
-            "-o",
-            TestUtil.getBaseDir()+ "com/godone/testSuite",
-            "-r",
-            TestUtil.getBaseDir()+ "com/godone/testSuite/field",
-        });
+    
+        try {
+            Application.main(new String[] {
+                "-p",
+                TestUtil.getBaseDir()+ "com/godone/testSuite",
+                "-o",
+                TestUtil.getBaseDir()+ "com/godone/testSuite",
+                "-r",
+                TestUtil.getBaseDir()+ "com/godone/testSuite/field",
+            });
+        } catch (RuntimeException ignore){}
         
         Assertions.assertTrue(result.exists());
         result.delete();

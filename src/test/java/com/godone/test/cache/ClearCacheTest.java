@@ -1,8 +1,8 @@
 package com.godone.test.cache;
 
-import com.etosun.godone.cache.*;
-import com.etosun.godone.models.JavaClassModel;
-import com.etosun.godone.models.JavaFileModel;
+import com.godone.meta.cache.*;
+import com.godone.meta.models.JavaClassModel;
+import com.godone.meta.models.JavaFileModel;
 import net.sf.ehcache.CacheManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

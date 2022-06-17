@@ -1,8 +1,8 @@
 package com.godone.test.util.classUtil;
 
-import com.etosun.godone.models.JavaDescriptionModel;
-import com.etosun.godone.utils.ClassUtil;
-import com.etosun.godone.utils.FileUtil;
+import com.godone.meta.models.JavaDescriptionModel;
+import com.godone.meta.utils.ClassUtil;
+import com.godone.meta.utils.FileUtil;
 import com.godone.test.TestUtil;
 import com.thoughtworks.qdox.model.JavaClass;
 import com.thoughtworks.qdox.model.JavaMethod;

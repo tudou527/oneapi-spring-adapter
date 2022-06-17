@@ -1,7 +1,7 @@
 package com.godone.test.util.classUtil;
 
-import com.etosun.godone.models.JavaActualType;
-import com.etosun.godone.utils.ClassUtil;
+import com.godone.meta.models.JavaActualType;
+import com.godone.meta.utils.ClassUtil;
 import com.godone.test.TestUtil;
 import com.thoughtworks.qdox.model.JavaClass;
 import org.junit.jupiter.api.Assertions;

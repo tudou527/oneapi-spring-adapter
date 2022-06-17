@@ -1,6 +1,6 @@
 package com.godone.test;
 
-import com.etosun.godone.utils.FileUtil;
+import com.godone.meta.utils.FileUtil;
 import com.thoughtworks.qdox.JavaProjectBuilder;
 import com.thoughtworks.qdox.model.JavaClass;
 

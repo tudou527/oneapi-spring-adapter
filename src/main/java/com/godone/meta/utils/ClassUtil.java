@@ -1,14 +1,13 @@
 /**
- * Alipay.com Inc. Copyright (c) 2004-2021 All Rights Reserved.
  *
  * @auther xiaoyun
  * @create 2021-02-22 下午8:44
  */
-package com.etosun.godone.utils;
+package com.godone.meta.utils;
 
-import com.etosun.godone.cache.PendingCache;
-import com.etosun.godone.cache.ResourceCache;
-import com.etosun.godone.models.*;
+import com.godone.meta.cache.PendingCache;
+import com.godone.meta.cache.ResourceCache;
+import com.godone.meta.models.*;
 import com.google.inject.Inject;
 import com.thoughtworks.qdox.model.*;
 import com.thoughtworks.qdox.model.expression.AnnotationValue;

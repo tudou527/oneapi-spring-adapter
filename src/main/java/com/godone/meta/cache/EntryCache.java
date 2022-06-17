@@ -1,4 +1,4 @@
-package com.etosun.godone.cache;
+package com.godone.meta.cache;
 
 import com.google.inject.Singleton;
 

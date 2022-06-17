@@ -1,8 +1,8 @@
 package com.godone.test.util.mavenUtil;
 
-import com.etosun.godone.cache.ReflectCache;
-import com.etosun.godone.cache.ResourceCache;
-import com.etosun.godone.utils.MavenUtil;
+import com.godone.meta.cache.ReflectCache;
+import com.godone.meta.cache.ResourceCache;
+import com.godone.meta.utils.MavenUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

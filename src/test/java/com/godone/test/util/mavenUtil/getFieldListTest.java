@@ -1,6 +1,6 @@
 package com.godone.test.util.mavenUtil;
 
-import com.etosun.godone.utils.MavenUtil;
+import com.godone.meta.utils.MavenUtil;
 import com.godone.test.TestUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

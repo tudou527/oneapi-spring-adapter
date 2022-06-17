@@ -1,17 +1,16 @@
 /**
- * Alipay.com Inc. Copyright (c) 2004-2021 All Rights Reserved.
  *
  * @auther xiaoyun
  * @create 2021-02-22 下午8:50
  */
-package com.etosun.godone.analysis;
+package com.godone.meta.analysis;
 
-import com.etosun.godone.cache.ReflectCache;
-import com.etosun.godone.cache.ResourceCache;
-import com.etosun.godone.models.*;
-import com.etosun.godone.utils.ClassUtil;
-import com.etosun.godone.utils.FileUtil;
-import com.etosun.godone.utils.MavenUtil;
+import com.godone.meta.cache.ReflectCache;
+import com.godone.meta.cache.ResourceCache;
+import com.godone.meta.models.*;
+import com.godone.meta.utils.ClassUtil;
+import com.godone.meta.utils.FileUtil;
+import com.godone.meta.utils.MavenUtil;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.thoughtworks.qdox.JavaProjectBuilder;

@@ -9,7 +9,7 @@
 
     <properties>
         <java.version>1.8</java.version>
-        <start-class>com.etosun.godone.Application</start-class>
+        <start-class>com.godone.meta.Application</start-class>
     </properties>
 
     <dependencies>

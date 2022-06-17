@@ -1,19 +1,18 @@
 /**
- * Alipay.com Inc. Copyright (c) 2004-2021 All Rights Reserved.
  *
  * @auther xiaoyun
  * @create 2021-06-02 下午7:40
  */
-package com.etosun.godone;
+package com.godone.meta;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.etosun.godone.analysis.BasicAnalysis;
-import com.etosun.godone.analysis.EntryAnalysis;
-import com.etosun.godone.cache.*;
-import com.etosun.godone.models.JavaFileModel;
-import com.etosun.godone.utils.FileUtil;
-import com.etosun.godone.utils.MavenUtil;
+import com.godone.meta.analysis.BasicAnalysis;
+import com.godone.meta.analysis.EntryAnalysis;
+import com.godone.meta.models.JavaFileModel;
+import com.godone.meta.utils.FileUtil;
+import com.godone.meta.utils.MavenUtil;
+import com.godone.meta.cache.*;
 import com.google.common.base.Stopwatch;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
@@ -69,7 +68,7 @@ public class Application {
 
             if (!cmd.hasOption("p") || !cmd.hasOption("o") || !cmd.hasOption("r")) {
                 log.error("参数不完整");
-                return;
+                System.exit(-3);
             }
     
             projectDir = cmd.getOptionValue("p");
@@ -115,6 +114,7 @@ public class Application {
             fileModelCache.clear();
     
             log.info("exec time: {} second", stopwatch.elapsed(TimeUnit.SECONDS));
+            System.exit(-2);
         } catch (ParseException e) {
             e.printStackTrace();
         }

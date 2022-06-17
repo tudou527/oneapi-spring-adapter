@@ -1,10 +1,10 @@
 package com.godone.test.analysis.basic;
 
-import com.etosun.godone.analysis.BasicAnalysis;
-import com.etosun.godone.analysis.TypeAnalysis;
-import com.etosun.godone.models.JavaClassFieldModel;
-import com.etosun.godone.models.JavaFileModel;
-import com.etosun.godone.utils.ClassUtil;
+import com.godone.meta.analysis.BasicAnalysis;
+import com.godone.meta.analysis.TypeAnalysis;
+import com.godone.meta.models.JavaClassFieldModel;
+import com.godone.meta.models.JavaFileModel;
+import com.godone.meta.utils.ClassUtil;
 import com.godone.test.TestUtil;
 import com.google.inject.Provider;
 import com.thoughtworks.qdox.model.JavaClass;

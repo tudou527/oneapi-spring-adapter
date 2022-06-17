@@ -1,29 +1,21 @@
 package com.godone.test.analysis.basic;
 
-import com.etosun.godone.analysis.BasicAnalysis;
-import com.etosun.godone.analysis.TypeAnalysis;
-import com.etosun.godone.cache.ReflectCache;
-import com.etosun.godone.cache.ResourceCache;
-import com.etosun.godone.models.JavaActualType;
-import com.etosun.godone.models.JavaDescriptionModel;
-import com.etosun.godone.models.JavaFileModel;
-import com.etosun.godone.utils.ClassUtil;
-import com.etosun.godone.utils.FileUtil;
-import com.etosun.godone.utils.MavenUtil;
-import com.godone.test.TestUtil;
+import com.godone.meta.analysis.BasicAnalysis;
+import com.godone.meta.analysis.TypeAnalysis;
+import com.godone.meta.cache.ReflectCache;
+import com.godone.meta.cache.ResourceCache;
+import com.godone.meta.models.JavaFileModel;
+import com.godone.meta.utils.ClassUtil;
+import com.godone.meta.utils.FileUtil;
+import com.godone.meta.utils.MavenUtil;
 import com.google.inject.Provider;
-import com.thoughtworks.qdox.JavaProjectBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-
-import java.nio.charset.Charset;
-import java.util.ArrayList;
 
 @DisplayName("basic.analysis")
 public class AnalysisTest {

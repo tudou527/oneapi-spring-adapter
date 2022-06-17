@@ -1,6 +1,6 @@
 package com.godone.test.util.fileUtil;
 
-import com.etosun.godone.utils.FileUtil;
+import com.godone.meta.utils.FileUtil;
 import com.godone.test.TestUtil;
 import org.codehaus.plexus.util.FileUtils;
 import org.junit.jupiter.api.Assertions;

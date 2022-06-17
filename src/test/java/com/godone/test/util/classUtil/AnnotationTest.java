@@ -1,10 +1,10 @@
 package com.godone.test.util.classUtil;
 
-import com.etosun.godone.cache.PendingCache;
-import com.etosun.godone.models.JavaAnnotationField;
-import com.etosun.godone.models.JavaAnnotationModel;
-import com.etosun.godone.models.JavaFileModel;
-import com.etosun.godone.utils.ClassUtil;
+import com.godone.meta.cache.PendingCache;
+import com.godone.meta.models.JavaAnnotationField;
+import com.godone.meta.models.JavaAnnotationModel;
+import com.godone.meta.models.JavaFileModel;
+import com.godone.meta.utils.ClassUtil;
 import com.godone.test.TestUtil;
 import com.thoughtworks.qdox.model.JavaClass;
 import org.junit.jupiter.api.Assertions;

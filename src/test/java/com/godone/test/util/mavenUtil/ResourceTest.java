@@ -1,9 +1,9 @@
 package com.godone.test.util.mavenUtil;
 
-import com.etosun.godone.cache.EntryCache;
-import com.etosun.godone.cache.ResourceCache;
-import com.etosun.godone.utils.FileUtil;
-import com.etosun.godone.utils.MavenUtil;
+import com.godone.meta.cache.EntryCache;
+import com.godone.meta.cache.ResourceCache;
+import com.godone.meta.utils.FileUtil;
+import com.godone.meta.utils.MavenUtil;
 import com.godone.test.TestUtil;
 import com.thoughtworks.qdox.JavaProjectBuilder;
 import org.junit.jupiter.api.Assertions;

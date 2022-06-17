@@ -1,4 +1,4 @@
-package com.etosun.godone.cache;
+package com.godone.meta.cache;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;

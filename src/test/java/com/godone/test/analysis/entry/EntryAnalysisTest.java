@@ -1,11 +1,11 @@
 package com.godone.test.analysis.entry;
 
-import com.etosun.godone.analysis.EntryAnalysis;
-import com.etosun.godone.analysis.TypeAnalysis;
-import com.etosun.godone.cache.ResourceCache;
-import com.etosun.godone.models.*;
-import com.etosun.godone.utils.ClassUtil;
-import com.etosun.godone.utils.FileUtil;
+import com.godone.meta.analysis.EntryAnalysis;
+import com.godone.meta.analysis.TypeAnalysis;
+import com.godone.meta.cache.ResourceCache;
+import com.godone.meta.models.*;
+import com.godone.meta.utils.ClassUtil;
+import com.godone.meta.utils.FileUtil;
 import com.godone.test.TestUtil;
 import com.google.inject.Provider;
 import org.junit.jupiter.api.Assertions;
