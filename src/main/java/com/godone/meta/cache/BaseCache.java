@@ -49,8 +49,8 @@ public class BaseCache<T> {
     }
 
     public void clear() {
-        getCache().forEach((String key) -> {
+        for (String key : getCache()) {
             cache.remove(key);
-        });
+        }
     }
 }

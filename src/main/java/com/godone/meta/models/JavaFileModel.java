@@ -34,8 +34,8 @@ public class JavaFileModel implements Serializable {
     // import 列表
     @JSONField(ordinal = 30)
     List<String> imports = new LinkedList<>();
-    
-    // class 列表
+
+    // 唯一的 public Class
     @JSONField(ordinal = 40)
     JavaClassModel classModel;
     

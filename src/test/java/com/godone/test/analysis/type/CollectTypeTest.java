@@ -57,11 +57,11 @@ public class CollectTypeTest {
         JavaActualType genericType = getActualType("genericArr");
         Assertions.assertEquals(genericType.getName(),  "List");
         Assertions.assertEquals(genericType.getClassPath(), "java.util.List");
-        Assertions.assertEquals(genericType.getItem().size(), 1);
+        Assertions.assertEquals(genericType.getItems().size(), 1);
         
-        Assertions.assertEquals(genericType.getItem().get(0).getName(), "T");
-        Assertions.assertEquals(genericType.getItem().get(0).getClassPath(), "T");
-        Assertions.assertNull(genericType.getItem().get(0).getItem());
+        Assertions.assertEquals(genericType.getItems().get(0).getName(), "T");
+        Assertions.assertEquals(genericType.getItems().get(0).getClassPath(), "T");
+        Assertions.assertNull(genericType.getItems().get(0).getItems());
     }
     
     @Test
@@ -71,18 +71,18 @@ public class CollectTypeTest {
         
         Assertions.assertEquals(genericType.getName(),  "List");
         Assertions.assertEquals(genericType.getClassPath(),  "java.util.List");
-        Assertions.assertEquals(genericType.getItem().size(),  1);
+        Assertions.assertEquals(genericType.getItems().size(),  1);
         
         // 子节点仍然是被转换之后的 list
-        JavaActualType itemType = genericType.getItem().get(0);
+        JavaActualType itemType = genericType.getItems().get(0);
         Assertions.assertEquals(itemType.getName(), "List");
         Assertions.assertEquals(itemType.getClassPath(), "java.util.List");
-        Assertions.assertEquals(itemType.getItem().size(),  1);
+        Assertions.assertEquals(itemType.getItems().size(),  1);
     
-        JavaActualType childType = itemType.getItem().get(0);
+        JavaActualType childType = itemType.getItems().get(0);
         Assertions.assertEquals(childType.getName(), "T");
         Assertions.assertEquals(childType.getClassPath(), "T");
-        Assertions.assertNull(childType.getItem());
+        Assertions.assertNull(childType.getItems());
     }
     
     @Test
@@ -93,22 +93,22 @@ public class CollectTypeTest {
         // 集合转换为 list
         Assertions.assertEquals(genericType.getName(),  "List");
         Assertions.assertEquals(genericType.getClassPath(), "java.util.List");
-        Assertions.assertEquals(genericType.getItem().size(), 1);
+        Assertions.assertEquals(genericType.getItems().size(), 1);
         
         // 子节点为原来的类型
-        Assertions.assertEquals(genericType.getItem().get(0).getName(), "Description");
-        Assertions.assertEquals(genericType.getItem().get(0).getClassPath(), "com.godone.testSuite.Description");
+        Assertions.assertEquals(genericType.getItems().get(0).getName(), "Description");
+        Assertions.assertEquals(genericType.getItems().get(0).getClassPath(), "com.godone.testSuite.Description");
         
-        ArrayList<JavaActualType> itemActualType = genericType.getItem().get(0).getItem();
+        ArrayList<JavaActualType> itemActualType = genericType.getItems().get(0).getItems();
         Assertions.assertEquals(itemActualType.size(), 2);
         
         Assertions.assertEquals(itemActualType.get(0).getName(),  "String");
         Assertions.assertEquals(itemActualType.get(0).getClassPath(), "java.lang.String");
-        Assertions.assertNull(itemActualType.get(0).getItem());
+        Assertions.assertNull(itemActualType.get(0).getItems());
         
         Assertions.assertEquals(itemActualType.get(1).getName(),  "String");
         Assertions.assertEquals(itemActualType.get(1).getClassPath(), "java.lang.String");
-        Assertions.assertNull(itemActualType.get(1).getItem());
+        Assertions.assertNull(itemActualType.get(1).getItems());
     }
     
     @Test
@@ -119,25 +119,25 @@ public class CollectTypeTest {
         // 前 2 级都应该是 list
         Assertions.assertEquals(genericType.getName(),  "List");
         Assertions.assertEquals(genericType.getClassPath(),  "java.util.List");
-        Assertions.assertEquals(genericType.getItem().size(),  1);
+        Assertions.assertEquals(genericType.getItems().size(),  1);
         
-        JavaActualType childType = genericType.getItem().get(0);
+        JavaActualType childType = genericType.getItems().get(0);
         Assertions.assertEquals(childType.getName(),  "List");
         Assertions.assertEquals(childType.getClassPath(),  "java.util.List");
-        Assertions.assertEquals(childType.getItem().size(),  1);
+        Assertions.assertEquals(childType.getItems().size(),  1);
         
         // item 类型
-        JavaActualType itemType = childType.getItem().get(0);
+        JavaActualType itemType = childType.getItems().get(0);
         Assertions.assertEquals(itemType.getName(),  "Description");
         Assertions.assertEquals(itemType.getClassPath(),  "com.godone.testSuite.Description");
-        Assertions.assertEquals(itemType.getItem().size(),  2);
+        Assertions.assertEquals(itemType.getItems().size(),  2);
     
-        Assertions.assertEquals(itemType.getItem().get(0).getName(),  "String");
-        Assertions.assertEquals(itemType.getItem().get(0).getClassPath(),  "java.lang.String");
-        Assertions.assertNull(itemType.getItem().get(0).getItem());
+        Assertions.assertEquals(itemType.getItems().get(0).getName(),  "String");
+        Assertions.assertEquals(itemType.getItems().get(0).getClassPath(),  "java.lang.String");
+        Assertions.assertNull(itemType.getItems().get(0).getItems());
     
-        Assertions.assertEquals(itemType.getItem().get(1).getName(),  "String");
-        Assertions.assertEquals(itemType.getItem().get(1).getClassPath(),  "java.lang.String");
-        Assertions.assertNull(itemType.getItem().get(1).getItem());
+        Assertions.assertEquals(itemType.getItems().get(1).getName(),  "String");
+        Assertions.assertEquals(itemType.getItems().get(1).getClassPath(),  "java.lang.String");
+        Assertions.assertNull(itemType.getItems().get(1).getItems());
     }
 }

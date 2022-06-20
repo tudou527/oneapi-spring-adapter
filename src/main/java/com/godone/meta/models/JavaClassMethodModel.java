@@ -26,13 +26,13 @@ public class JavaClassMethodModel implements Serializable {
 
     // 方法注解
     @JSONField(ordinal = 3)
-    ArrayList<JavaAnnotationModel> annotation = new ArrayList<>();
+    ArrayList<JavaAnnotationModel> annotations = new ArrayList<>();
 
     // 入参
     @JSONField(ordinal = 4)
     ArrayList<JavaMethodParameter> parameters = new ArrayList<>();
 
     // 返回值
-    @JSONField(ordinal = 5)
-    JavaActualType returns;
+    @JSONField(ordinal = 5, name="return")
+    JavaActualType returnType;
 }

@@ -78,14 +78,14 @@ public class TypeAnalysis {
     
             // 包含子类型，Exp: HashMap<String, List<String>>
             for (JavaType ct: childTypeList) {
-                if (javaType.getItem() == null) {
-                    javaType.setItem(new ArrayList<>());
+                if (javaType.getItems() == null) {
+                    javaType.setItems(new ArrayList<>());
                 }
                 
                 log.info("      analysis child type: {}", ct.getBinaryName());
                 JavaActualType childActualType = typeAnalysis.get().analysis(ct, hostModel);
                 // 递归解析每个子类型
-                javaType.getItem().add(childActualType);
+                javaType.getItems().add(childActualType);
             }
         }
         

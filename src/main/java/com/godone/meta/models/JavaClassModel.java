@@ -34,7 +34,7 @@ public class JavaClassModel implements Serializable {
 
     // 注解
     @JSONField(ordinal = 30)
-    ArrayList<JavaAnnotationModel> annotation = new ArrayList<>();
+    ArrayList<JavaAnnotationModel> annotations = new ArrayList<>();
 
     // 是否枚举
     @JSONField(ordinal = 40)

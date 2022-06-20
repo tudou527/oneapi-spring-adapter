@@ -161,7 +161,7 @@ public class BasicAnalysis {
         
         // 描述&注解
         classModel.setDescription(classUtil.getDescription(javaClass, fileLines));
-        classModel.setAnnotation(classUtil.getAnnotation(javaClass.getAnnotations(), fileModel));
+        classModel.setAnnotations(classUtil.getAnnotation(javaClass.getAnnotations(), fileModel));
 
         classModel.setIsEnum(javaClass.isEnum());
         classModel.setIsPublic(javaClass.isPublic());
@@ -196,7 +196,7 @@ public class BasicAnalysis {
             field.setType(typeAnalysis.get().analysis(f.getType(), fileModel));
             // 描述&注解
             field.setDescription(classUtil.getDescription(f, fileLines));
-            field.setAnnotation(classUtil.getAnnotation(f.getAnnotations(), fileModel));
+            field.setAnnotations(classUtil.getAnnotation(f.getAnnotations(), fileModel));
         
             fieldList.add(field);
         });

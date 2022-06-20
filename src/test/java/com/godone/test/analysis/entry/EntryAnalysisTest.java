@@ -78,7 +78,7 @@ public class EntryAnalysisTest {
         Assertions.assertEquals(methodDesc.getTag().size(), 1);
         
         // 注解
-        ArrayList<JavaAnnotationModel> methodAn = contentTypeXml.getAnnotation();
+        ArrayList<JavaAnnotationModel> methodAn = contentTypeXml.getAnnotations();
         Assertions.assertTrue(methodAn.size() > 0);
         Assertions.assertEquals(methodAn.get(0).getName(), "GetMapping");
         Assertions.assertEquals(methodAn.get(0).getFields().size(), 3);
@@ -93,7 +93,7 @@ public class EntryAnalysisTest {
         Assertions.assertTrue(params.get(0).getAnnotations().size() > 0);
         
         // 返回值
-        JavaActualType returnType = contentTypeXml.getReturns();
+        JavaActualType returnType = contentTypeXml.getReturnType();
         Assertions.assertEquals(returnType.getName(), "CustomJavaType");
     }
     

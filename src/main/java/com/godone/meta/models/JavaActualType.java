@@ -26,7 +26,7 @@ public class JavaActualType implements Serializable {
 
     // 子类型
     @JSONField(ordinal = 20)
-    ArrayList<JavaActualType> item;
+    ArrayList<JavaActualType> items;
     
     @Override
     public String toString() {

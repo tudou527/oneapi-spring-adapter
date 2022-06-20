@@ -58,7 +58,7 @@ public class GenericTypeTest {
         Assertions.assertEquals(genericType.getName(),  "Description");
         Assertions.assertEquals(genericType.getClassPath(), "com.godone.testSuite.Description");
         
-        ArrayList<JavaActualType> genItem = genericType.getItem();
+        ArrayList<JavaActualType> genItem = genericType.getItems();
         Assertions.assertEquals(genItem.size(), 2);
         Assertions.assertEquals(genItem.get(0).getName(), "T");
         Assertions.assertEquals(genItem.get(0).getClassPath(), "T");
@@ -75,36 +75,36 @@ public class GenericTypeTest {
         Assertions.assertEquals(genericType.getName(),  "List");
         Assertions.assertEquals(genericType.getClassPath(),  "java.util.List");
         // 包含 1 个子节点
-        Assertions.assertEquals(genericType.getItem().size(), 1);
+        Assertions.assertEquals(genericType.getItems().size(), 1);
         
-        JavaActualType firstItem = genericType.getItem().get(0);
+        JavaActualType firstItem = genericType.getItems().get(0);
         // 子节点为 Description<>
         Assertions.assertEquals(firstItem.getName(), "Description");
         Assertions.assertEquals(firstItem.getClassPath(), "com.godone.testSuite.Description");
         // 包含 2 个节点
-        Assertions.assertEquals(firstItem.getItem().size(), 2);
+        Assertions.assertEquals(firstItem.getItems().size(), 2);
         
         // 第一个节点是 String
-        Assertions.assertEquals(firstItem.getItem().get(0).getName(), "String");
-        Assertions.assertEquals(firstItem.getItem().get(0).getClassPath(), "java.lang.String");
-        Assertions.assertNull(firstItem.getItem().get(0).getItem());
+        Assertions.assertEquals(firstItem.getItems().get(0).getName(), "String");
+        Assertions.assertEquals(firstItem.getItems().get(0).getClassPath(), "java.lang.String");
+        Assertions.assertNull(firstItem.getItems().get(0).getItems());
         
         // 第二个节点依然是 Description
-        Assertions.assertEquals(firstItem.getItem().get(1).getName(), "Description");
-        Assertions.assertEquals(firstItem.getItem().get(1).getClassPath(), "com.godone.testSuite.Description");
+        Assertions.assertEquals(firstItem.getItems().get(1).getName(), "Description");
+        Assertions.assertEquals(firstItem.getItems().get(1).getClassPath(), "com.godone.testSuite.Description");
         // 因为 Description 是泛型，所以依然有 2 个节点
-        Assertions.assertEquals(firstItem.getItem().get(1).getItem().size(), 2);
+        Assertions.assertEquals(firstItem.getItems().get(1).getItems().size(), 2);
         
         // 每个节点的子类型都是 T
-        ArrayList<JavaActualType> childItem = firstItem.getItem().get(1).getItem();
+        ArrayList<JavaActualType> childItem = firstItem.getItems().get(1).getItems();
         Assertions.assertEquals(childItem.size(), 2);
         Assertions.assertEquals(childItem.get(0).getName(), "T");
         Assertions.assertEquals(childItem.get(0).getClassPath(), "T");
-        Assertions.assertNull(childItem.get(0).getItem());
+        Assertions.assertNull(childItem.get(0).getItems());
     
         Assertions.assertEquals(childItem.get(1).getName(), "T");
         Assertions.assertEquals(childItem.get(1).getClassPath(), "T");
-        Assertions.assertNull(childItem.get(1).getItem());
+        Assertions.assertNull(childItem.get(1).getItems());
     }
     
     @Test
@@ -114,36 +114,36 @@ public class GenericTypeTest {
         
         Assertions.assertEquals(genericType.getName(), "HashMap");
         Assertions.assertEquals(genericType.getClassPath(), "java.util.HashMap");
-        Assertions.assertEquals(genericType.getItem().size(), 2);
+        Assertions.assertEquals(genericType.getItems().size(), 2);
         
         // 第一个节点是 Description
-        JavaActualType firstItem = genericType.getItem().get(0);
+        JavaActualType firstItem = genericType.getItems().get(0);
         Assertions.assertEquals(firstItem.getName(), "Description");
         Assertions.assertEquals(firstItem.getClassPath(), "com.godone.testSuite.Description");
-        Assertions.assertEquals(firstItem.getItem().size(), 2);
+        Assertions.assertEquals(firstItem.getItems().size(), 2);
         
         // Description 第一个子节点为集合转换而来的 list
-        JavaActualType collectItem = firstItem.getItem().get(0);
+        JavaActualType collectItem = firstItem.getItems().get(0);
         Assertions.assertEquals(collectItem.getName(), "List");
         Assertions.assertEquals(collectItem.getClassPath(), "java.util.List");
-        Assertions.assertEquals(collectItem.getItem().size(), 1);
+        Assertions.assertEquals(collectItem.getItems().size(), 1);
         
         // List 子节点为 AuthOperationEnum
-        JavaActualType enumItem = collectItem.getItem().get(0);
+        JavaActualType enumItem = collectItem.getItems().get(0);
         Assertions.assertEquals(enumItem.getName(), "AuthOperationEnum");
         Assertions.assertEquals(enumItem.getClassPath(), "com.godone.testSuite.AuthOperationEnum");
-        Assertions.assertNull(enumItem.getItem());
+        Assertions.assertNull(enumItem.getItems());
     
         // Description 第二个子节点为 Long
-        JavaActualType longItem = firstItem.getItem().get(1);
+        JavaActualType longItem = firstItem.getItems().get(1);
         Assertions.assertEquals(longItem.getName(), "Long");
         Assertions.assertEquals(longItem.getClassPath(), "java.lang.Long");
-        Assertions.assertNull(longItem.getItem());
+        Assertions.assertNull(longItem.getItems());
         
         // 第二个节点是 String
-        JavaActualType secondItem = genericType.getItem().get(1);
+        JavaActualType secondItem = genericType.getItems().get(1);
         Assertions.assertEquals(secondItem.getName(), "String");
         Assertions.assertEquals(secondItem.getClassPath(), "java.lang.String");
-        Assertions.assertNull(secondItem.getItem());
+        Assertions.assertNull(secondItem.getItems());
     }
 }

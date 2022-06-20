@@ -66,7 +66,7 @@ public class AnalysisClassTest {
 
         // getDescription、getAnnotation 的单测已经写过了，这里简单的判断
         Assertions.assertNotNull(classModel.getDescription());
-        Assertions.assertNull(classModel.getAnnotation());
+        Assertions.assertNull(classModel.getAnnotations());
         
         Assertions.assertFalse(classModel.getIsEnum());
         Assertions.assertFalse(classModel.getIsPrivate());

@@ -39,13 +39,13 @@ public class EntryAnalysis extends BasicAnalysis {
         javaMethod.setName(method.getName());
         // 描述&注解
         javaMethod.setDescription(classUtil.getDescription(method, fileLines));
-        javaMethod.setAnnotation(classUtil.getAnnotation(method.getAnnotations(), fileModel));
+        javaMethod.setAnnotations(classUtil.getAnnotation(method.getAnnotations(), fileModel));
 
         // 入参及类型
         javaMethod.setParameters(getParameters(method));
         // 返回值及类型
         JavaActualType methodReturnType = typeAnalysis.get().analysis(method.getReturnType(), fileModel);
-        javaMethod.setReturns(methodReturnType);
+        javaMethod.setReturnType(methodReturnType);
 
         return javaMethod;
     }
