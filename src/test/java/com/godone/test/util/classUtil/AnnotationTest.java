@@ -101,13 +101,13 @@ public class AnnotationTest {
     @DisplayName("入参为 null")
     public void annotationNull() {
         ArrayList<JavaAnnotationModel> annotations = classUtil.getAnnotation(null, mockFileModel);
-        Assertions.assertNull(annotations);
+        Assertions.assertEquals(annotations.size(), 0);
     }
     
     @Test
     @DisplayName("入参为空数组")
     public void annotationEmpty() {
         ArrayList<JavaAnnotationModel> annotations = classUtil.getAnnotation(new ArrayList<>(), mockFileModel);
-        Assertions.assertNull(annotations);
+        Assertions.assertEquals(annotations.size(), 0);
     }
 }

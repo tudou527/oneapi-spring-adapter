@@ -34,7 +34,7 @@ public class ClassUtil {
         ArrayList<JavaAnnotationModel> ans = new ArrayList<>();
 
         if (annotations == null || annotations.isEmpty()) {
-            return null;
+            return ans;
         }
 
         // 遍历所有注解

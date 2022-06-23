@@ -56,7 +56,7 @@ public class BasicAnalysis {
     }};
     
     public JavaFileModel analysis(String classPath) {
-        JavaFileModel model = analysisFromResource(resourceCache.getCache(classPath));
+        JavaFileModel model = analysisFromResource(classPath);
 
         if (model != null) {
             return model;
@@ -67,9 +67,18 @@ public class BasicAnalysis {
     }
     
     // 从本项目的资源文件中获得解析结果
-    private JavaFileModel analysisFromResource(String javaFilePath) {
+    private JavaFileModel analysisFromResource(String classPath) {
+        String childClassName = "";
+        String javaFilePath = resourceCache.getCache(classPath);
+        
         if (javaFilePath == null) {
             return null;
+        }
+    
+        // 兼容子类的情况
+        if (classPath.contains("$")) {
+            childClassName = classPath.split("\\$")[1];
+            javaFilePath = resourceCache.getCache(classPath.split("\\$")[0]);
         }
 
         JavaProjectBuilder builder = fileUtil.getBuilder(javaFilePath);
@@ -83,6 +92,12 @@ public class BasicAnalysis {
         } catch (IOException ignored) {}
 
         Optional<JavaClass> optionalClass = builder.getClasses().stream().filter(JavaClass::isPublic).findFirst();
+        // 处理子类
+        if (!childClassName.isEmpty()) {
+            String finalChildClassName = childClassName;
+            optionalClass = builder.getClasses().stream().filter(cls -> cls.getName().equals(finalChildClassName)).findFirst();
+        }
+        
         if (!optionalClass.isPresent()) {
             return null;
         }
@@ -100,8 +115,13 @@ public class BasicAnalysis {
         // 文件注释
         JavaDescriptionModel description = classUtil.getDescription(targetClass, fileLines);
         fileModel.setDescription(description);
-
-        fileModel.setClassModel(analysisClass(targetClass));
+    
+        JavaClassModel classModel = analysisClass(targetClass);
+        // 需要特殊处理子类，避免覆盖父类解析结果
+        if (!childClassName.isEmpty()) {
+            classModel.setClassPath(classPath);
+        }
+        fileModel.setClassModel(classModel);
 
         return fileModel;
     }

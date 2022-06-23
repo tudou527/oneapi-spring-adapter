@@ -101,6 +101,13 @@ public class TypeAnalysis {
             return typeName;
         }
         
+        // class 中的子类
+        if (typeName.contains("$")) {
+            pendingCache.setCache(typeName);
+            return typeName;
+        }
+    
+        // 从 import 列表中找到匹配的 class 并加入到待解析队列
         Optional<String> optionalFullTypeName = hostModel.getImports().stream().filter(str -> str.endsWith(simpleTypeName)).findFirst();
         optionalFullTypeName.ifPresent(s -> pendingCache.setCache(s));
 

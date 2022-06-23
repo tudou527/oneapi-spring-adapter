@@ -36,7 +36,7 @@ public class JavaFileModel implements Serializable {
     List<String> imports = new LinkedList<>();
 
     // 唯一的 public Class
-    @JSONField(ordinal = 40)
+    @JSONField(ordinal = 40, name="class")
     JavaClassModel classModel;
     
     // 暂存 source 用于执行过程中解析类型（缓存时候会被删掉）

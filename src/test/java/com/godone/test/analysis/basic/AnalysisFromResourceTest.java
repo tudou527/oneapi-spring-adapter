@@ -2,6 +2,7 @@ package com.godone.test.analysis.basic;
 
 import com.godone.meta.analysis.BasicAnalysis;
 import com.godone.meta.analysis.TypeAnalysis;
+import com.godone.meta.cache.ResourceCache;
 import com.godone.meta.models.JavaActualType;
 import com.godone.meta.models.JavaFileModel;
 import com.godone.meta.utils.ClassUtil;
@@ -28,6 +29,8 @@ public class AnalysisFromResourceTest {
     @Mock
     ClassUtil classUtil;
     @Mock
+    ResourceCache resourceCache;
+    @Mock
     TypeAnalysis typeAnalysis;
     @Mock
     Provider<TypeAnalysis> typeAnalysisProvider;
@@ -47,7 +50,8 @@ public class AnalysisFromResourceTest {
     @Test
     @DisplayName("文件不存在")
     public void fileNotExist() {
-        JavaFileModel classModel = ReflectionTestUtils.invokeMethod(basicAnalysis, "analysisFromResource", new Object[]{ null });
+        Mockito.when(resourceCache.getCache(Mockito.anyString())).thenReturn(null);
+        JavaFileModel classModel = ReflectionTestUtils.invokeMethod(basicAnalysis, "analysisFromResource", "com.godone.testSuite.PrivateClass");
 
         Assertions.assertNull(classModel);
     }
@@ -56,6 +60,9 @@ public class AnalysisFromResourceTest {
     @DisplayName("使用 qdox 解析失败")
     public void getBuilderFail() {
         Mockito.when(fileUtil.getBuilder(Mockito.any())).thenReturn(null);
+    
+        String filePath = TestUtil.getFileByClassPath("com.godone.testSuite.PrivateClass");
+        Mockito.when(resourceCache.getCache(Mockito.anyString())).thenReturn(filePath);
 
         JavaFileModel classModel = ReflectionTestUtils.invokeMethod(basicAnalysis, "analysisFromResource", "");
         
@@ -67,10 +74,11 @@ public class AnalysisFromResourceTest {
     public void noPublicClass() {
         Mockito.when(fileUtil.getBuilder(Mockito.any())).thenCallRealMethod();
         Mockito.when(fileUtil.getFileOrIOEncode(Mockito.any())).thenReturn(Charset.defaultCharset());
-        
+    
         String filePath = TestUtil.getFileByClassPath("com.godone.testSuite.PrivateClass");
+        Mockito.when(resourceCache.getCache(Mockito.anyString())).thenReturn(filePath);
         
-        JavaFileModel classModel = ReflectionTestUtils.invokeMethod(basicAnalysis, "analysisFromResource", filePath);
+        JavaFileModel classModel = ReflectionTestUtils.invokeMethod(basicAnalysis, "analysisFromResource", "com.godone.testSuite.PrivateClass");
         
         Assertions.assertNull(classModel);
     }
@@ -85,8 +93,9 @@ public class AnalysisFromResourceTest {
         }});
 
         String filePath = TestUtil.getFileByClassPath("com.godone.testSuite.field.ComplexField");
+        Mockito.when(resourceCache.getCache(Mockito.anyString())).thenReturn(filePath);
 
-        JavaFileModel classModel = ReflectionTestUtils.invokeMethod(basicAnalysis, "analysisFromResource", filePath);
+        JavaFileModel classModel = ReflectionTestUtils.invokeMethod(basicAnalysis, "analysisFromResource", "com.godone.testSuite.field.ComplexField");
 
         Assertions.assertNotNull(classModel);
         Assertions.assertEquals(classModel.getFilePath(), filePath);

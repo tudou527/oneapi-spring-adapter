@@ -54,14 +54,11 @@
             <version>1.7.9</version>
         </dependency>
 
-
         <!-- 文件编码探测  -->
         <dependency>
-            <groupId>info.monitorenter</groupId>
+            <groupId>info.monitorenter.cpdetector</groupId>
             <artifactId>cpdetector</artifactId>
             <version>1.0.10</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/src/main/resources/lib/cpdetector_1.0.10.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.mozilla.intl</groupId>
@@ -170,16 +167,13 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
+                            <minimizeJar>true</minimizeJar>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>${start-class}</mainClass>
                                     <manifestEntries>
-                                        <Specification-Title>${project.artifactId}</Specification-Title>
-                                        <Specification-Version>${project.version}</Specification-Version>
-                                        <Implementation-Title>${project.artifactId}</Implementation-Title>
                                         <Implementation-Version>${project.version}</Implementation-Version>
-                                        <Implementation-Vendor-Id>${project.groupId}</Implementation-Vendor-Id>
                                     </manifestEntries>
                                 </transformer>
                             </transformers>
