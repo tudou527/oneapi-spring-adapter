@@ -233,9 +233,9 @@ public class FileUtil {
             BufferedReader inputBuffer = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String inputLine;
             String errLine;
-            while((inputLine = inputBuffer.readLine()) != null) {
-                log.info(inputLine);
-            }
+//            while((inputLine = inputBuffer.readLine()) != null) {
+//                log.info(inputLine);
+//            }
             while((errLine = errorBuffer.readLine()) !=null){
                 log.error(errLine);
             }

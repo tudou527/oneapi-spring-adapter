@@ -142,7 +142,10 @@ public class Application {
             loopCount++;
             analysisClassReference();
         } else {
-            log.info("after loop {}, remain {} class", loopCount, pendingCache.getCache().size());
+            if (pendingCache.getCache().size() > 0) {
+                log.info("after loop {}, remain {} class", loopCount, pendingCache.getCache().size());
+                log.info(String.join("\r\n", pendingCache.getCache()));
+            }
         }
     }
 
