@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public class BaseCache<T> {
     Cache cache;
-    CacheManager cacheManager = CacheManager.create("./src/main/resources/ehcache.xml");
+    CacheManager cacheManager = CacheManager.create(BaseCache.class.getResourceAsStream("/lib/ehcache.xml"));
 
     public BaseCache() {
         cache = cacheManager.getCache("ResourceCache");

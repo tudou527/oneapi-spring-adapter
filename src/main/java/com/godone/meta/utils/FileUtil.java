@@ -5,6 +5,7 @@
  */
 package com.godone.meta.utils;
 
+import com.godone.meta.cache.BaseCache;
 import com.thoughtworks.qdox.JavaProjectBuilder;
 import info.monitorenter.cpdetector.io.ASCIIDetector;
 import info.monitorenter.cpdetector.io.CodepageDetectorProxy;
@@ -14,6 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Singleton;
 import java.io.*;
+import java.net.URL;
+import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
@@ -241,6 +244,26 @@ public class FileUtil {
         } catch (Exception e) {
             e.printStackTrace();
             log.info(String.format("Run Command Error: %s in %s", String.join(" ", cmd), workDir));
+        }
+    }
+    
+    // 返回当前 jar 包运行目录
+    public String getCurrentDir() {
+        File currentFile = new File(this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath());
+        return currentFile.getParentFile().getAbsolutePath();
+    }
+
+    // 复制 procyon-decompiler.jar 文件到当前目录
+    public void copyDecompiler() {
+        try {
+            InputStream is = BaseCache.class.getResourceAsStream("/lib/procyon-decompiler.jar");
+            Path out = Paths.get(getCurrentDir() + "/lib/procyon-decompiler.jar");
+            
+            // 确保 lib 目录存在
+            out.toFile().getParentFile().mkdirs();
+            
+            Files.copy(is, out);
+        } catch (Exception ignore) {
         }
     }
 }

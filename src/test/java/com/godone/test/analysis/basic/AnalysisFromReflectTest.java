@@ -136,9 +136,9 @@ public class AnalysisFromReflectTest {
         Assertions.assertFalse(resourceMap.get(deCompileDir.getAbsolutePath()));
         // 断言解压参数
         String unzipKey = TestUtil.getBaseDir() + "com/godone/testSuite";
-        Assertions.assertEquals(
-            unzipArgs.get(unzipKey),
-            "java -jar /Users/xiaoyun/github/godone/src/main/resources/lib/procyon-decompiler.jar -jar " + TestUtil.getBaseDir() + "com/godone/testSuite/guice-4.2.3.jar -o "+ TestUtil.getBaseDir() + "com/godone/testSuite/deCompile"
-        );
+        
+        Assertions.assertTrue(unzipArgs.get(unzipKey).contains("procyon-decompiler.jar -jar"));
+        Assertions.assertTrue(unzipArgs.get(unzipKey).contains("testSuite/guice-4.2.3.jar"));
+        Assertions.assertTrue(unzipArgs.get(unzipKey).contains("/testSuite/deCompile"));
     }
 }

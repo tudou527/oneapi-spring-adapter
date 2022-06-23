@@ -154,7 +154,7 @@ public class BasicAnalysis {
             fileUtil.exec(String.join(" ", new ArrayList<String>(){{
                 add("java");
                 add("-jar");
-                add("/Users/xiaoyun/github/godone/src/main/resources/lib/procyon-decompiler.jar");
+                add(fileUtil.getCurrentDir() +"/lib/procyon-decompiler.jar");
                 add("-jar");
                 add(jarFilePath);
                 add("-o");

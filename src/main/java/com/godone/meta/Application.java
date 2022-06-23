@@ -57,6 +57,8 @@ public class Application {
     static final Stopwatch stopwatch = Stopwatch.createStarted();
 
     private void run(String[] args) {
+        log.info("version: "+ this.getClass().getPackage().getImplementationVersion());
+        
         try {
             CommandLineParser parser = new DefaultParser();
             Options options = new Options();
@@ -74,6 +76,9 @@ public class Application {
             projectDir = cmd.getOptionValue("p");
             outputFileDir = cmd.getOptionValue("o");
             localRepository = cmd.getOptionValue("r");
+            
+            // 复制反编译 jar 包到当前运行目录
+            fileUtil.copyDecompiler();
     
             log.info("add reflect class cache");
             // 反编译本地 mvn 缓存目录中的 .jar
