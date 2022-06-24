@@ -2,6 +2,7 @@ package com.godone.test.util.mavenUtil;
 
 import com.godone.meta.cache.ReflectCache;
 import com.godone.meta.utils.FileUtil;
+import com.godone.meta.utils.Logger;
 import com.godone.meta.utils.MavenUtil;
 import com.godone.test.TestUtil;
 import org.junit.jupiter.api.Assertions;
@@ -21,6 +22,8 @@ import java.util.List;
 @DisplayName("mavenUtil.saveReflectClassCache")
 public class ReflectClassTest {
     @Mock
+    Logger log;
+    @Mock
     FileUtil fileUtil;
     @Mock
     ReflectCache reflectCache;
@@ -35,6 +38,8 @@ public class ReflectClassTest {
 
         FileUtil fUtil = new FileUtil();
         fileList = fUtil.findFileList("glob:**/*.java", TestUtil.getBaseDir());
+    
+        Mockito.doNothing().when(log).info(Mockito.any(), Mockito.any());
     }
     
     @Test

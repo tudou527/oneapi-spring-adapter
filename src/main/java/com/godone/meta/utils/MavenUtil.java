@@ -6,7 +6,6 @@ import com.godone.meta.cache.ResourceCache;
 import com.google.inject.Inject;
 import com.thoughtworks.qdox.JavaProjectBuilder;
 import com.thoughtworks.qdox.model.JavaClass;
-import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Singleton;
 import java.lang.reflect.Field;
@@ -19,8 +18,9 @@ import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
 @Singleton
-@Slf4j
 public class MavenUtil {
+    @Inject
+    private Logger log;
     @Inject
     private FileUtil fileUtil;
     @Inject
@@ -35,7 +35,7 @@ public class MavenUtil {
         AtomicInteger entryCount = new AtomicInteger();
         List<String> javaFiles = fileUtil.findFileList("glob:**/*.java", entryDir);
     
-        log.info("found {} class from {}", javaFiles.size(), entryDir);
+        log.info("found %s class from %s", javaFiles.size(), entryDir);
     
         javaFiles.forEach(filePath -> {
             JavaProjectBuilder builder = fileUtil.getBuilder(filePath);
@@ -61,7 +61,7 @@ public class MavenUtil {
             }
         });
     
-        log.info("found {} entry class", entryCount.get());
+        log.info("found %s entry class", entryCount.get());
     }
 
     // 缓存所有 jar 包中的类
@@ -71,7 +71,7 @@ public class MavenUtil {
                 // 忽略源码 jar
                 .stream().filter(p -> !p.contains("-source.jar")).collect(Collectors.toList());
         
-        log.info("found {} jar file from {}", jarList.size(), localRepository);
+        log.info("found %s jar file from %s", jarList.size(), localRepository);
 
         jarList.forEach(jarFilePath -> {
             // 通过反射获取 jar 包中所有 classPath
@@ -93,7 +93,7 @@ public class MavenUtil {
             }
         });
     
-        log.info("cache {} class", cacheCount.get());
+        log.info("cache %s class", cacheCount.get());
     }
 
     // 返回 class 中所有 field （包括 parent class）

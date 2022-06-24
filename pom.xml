@@ -41,17 +41,12 @@
         <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
-            <version>4.2.3</version>
+            <version>5.1.0</version>
         </dependency>
         <dependency>
             <groupId>net.sf.ehcache</groupId>
             <artifactId>ehcache</artifactId>
             <version>2.10.9.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.28</version>
         </dependency>
 
         <!-- 文件编码探测  -->
@@ -98,24 +93,9 @@
             <version>2.7.0</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.simplify4u</groupId>
-            <artifactId>slf4j-mock</artifactId>
-            <version>2.2.0</version>
-            <type>pom</type>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <build>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <includes>
-                    <include>**/*.*</include>
-                </includes>
-            </resource>
-        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -183,7 +163,6 @@
                                     <manifestEntries>
                                         <!-- 让 jar 包能输出版本信息 -->
                                         <Implementation-Version>${project.version}</Implementation-Version>
-                                        <Class-Path>lib/procyon-decompiler.jar</Class-Path>
                                     </manifestEntries>
                                 </transformer>
                             </transformers>

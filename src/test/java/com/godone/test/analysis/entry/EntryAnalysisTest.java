@@ -6,6 +6,7 @@ import com.godone.meta.cache.ResourceCache;
 import com.godone.meta.models.*;
 import com.godone.meta.utils.ClassUtil;
 import com.godone.meta.utils.FileUtil;
+import com.godone.meta.utils.Logger;
 import com.godone.test.TestUtil;
 import com.google.inject.Provider;
 import org.junit.jupiter.api.Assertions;
@@ -24,6 +25,8 @@ import java.util.Optional;
 @DisplayName("entryAnalysis.analysis")
 public class EntryAnalysisTest {
     @Mock
+    Logger log;
+    @Mock
     FileUtil fileUtil;
     @Mock
     ClassUtil classUtil;
@@ -39,7 +42,8 @@ public class EntryAnalysisTest {
     @BeforeEach
     public void mockBeforeEach() {
         MockitoAnnotations.openMocks(this);
-
+    
+        Mockito.doNothing().when(log).info(Mockito.any(), Mockito.any());
         Mockito.when(fileUtil.getFileOrIOEncode(Mockito.any())).thenReturn(Charset.defaultCharset());
         Mockito.when(fileUtil.getBuilder(Mockito.any())).thenCallRealMethod();
         Mockito.when(classUtil.getImports(Mockito.any())).thenReturn(new ArrayList<String>(){{

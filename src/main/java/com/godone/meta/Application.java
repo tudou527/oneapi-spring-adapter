@@ -9,31 +9,32 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.godone.meta.analysis.BasicAnalysis;
 import com.godone.meta.analysis.EntryAnalysis;
+import com.godone.meta.cache.*;
 import com.godone.meta.models.JavaFileModel;
 import com.godone.meta.utils.FileUtil;
+import com.godone.meta.utils.Logger;
 import com.godone.meta.utils.MavenUtil;
-import com.godone.meta.cache.*;
 import com.google.common.base.Stopwatch;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Provider;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.cli.*;
 
 import javax.inject.Singleton;
 import java.nio.charset.Charset;
-import java.util.*;
+import java.util.LinkedHashMap;
 import java.util.concurrent.TimeUnit;
 
 @Singleton
-@Slf4j
 public class Application {
     private String projectDir;
     private String outputFileDir;
     private String localRepository;
     private Integer loopCount = 0;
-
+    
+    @Inject
+    private Logger log;
     @Inject
     private MavenUtil mvnUtil;
     @Inject
@@ -57,7 +58,7 @@ public class Application {
     static final Stopwatch stopwatch = Stopwatch.createStarted();
 
     private void run(String[] args) {
-        log.info("version: "+ this.getClass().getPackage().getImplementationVersion());
+        log.info("version: %s", this.getClass().getPackage().getImplementationVersion());
         
         try {
             CommandLineParser parser = new DefaultParser();
@@ -69,7 +70,7 @@ public class Application {
             CommandLine cmd = parser.parse(options, args);
 
             if (!cmd.hasOption("p") || !cmd.hasOption("o") || !cmd.hasOption("r")) {
-                log.error("arguments of p/o/r is required.");
+                log.info("arguments of p/o/r is required.");
                 System.exit(-200);
             }
     
@@ -117,7 +118,7 @@ public class Application {
             // 清空所有缓存
             fileModelCache.clear();
     
-            log.info("exec time: {} second", stopwatch.elapsed(TimeUnit.SECONDS));
+            log.info("exec time: %s second", stopwatch.elapsed(TimeUnit.SECONDS));
             System.exit(-200);
         } catch (ParseException e) {
             e.printStackTrace();
@@ -142,7 +143,7 @@ public class Application {
             analysisClassReference();
         } else {
             if (pendingCache.getCache().size() > 0) {
-                log.info("after loop {}, remain {} class", loopCount, pendingCache.getCache().size());
+                log.info("after loop %s, remain %s class", loopCount, pendingCache.getCache().size());
                 log.info(String.join("\r\n", pendingCache.getCache()));
             }
         }
@@ -151,7 +152,7 @@ public class Application {
     public static void main(String[] args) {
         Injector injector = Guice.createInjector();
         Application app = injector.getInstance(Application.class);
-
+    
         app.run(args);
     }
 }

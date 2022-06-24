@@ -10,13 +10,13 @@ import com.godone.meta.cache.ResourceCache;
 import com.godone.meta.models.*;
 import com.godone.meta.utils.ClassUtil;
 import com.godone.meta.utils.FileUtil;
+import com.godone.meta.utils.Logger;
 import com.godone.meta.utils.MavenUtil;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.thoughtworks.qdox.JavaProjectBuilder;
 import com.thoughtworks.qdox.model.JavaClass;
 import com.thoughtworks.qdox.model.JavaType;
-import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,7 +29,6 @@ import java.util.Optional;
 /**
  * 资源解析
  */
-@Slf4j
 public class BasicAnalysis {
     // 按行读取的文件内容
     List<String> fileLines = new ArrayList<>();
@@ -38,6 +37,8 @@ public class BasicAnalysis {
     // 被解析的 class
     JavaClass targetClass;
 
+    @Inject
+    Logger log;
     @Inject
     FileUtil fileUtil;
     @Inject
@@ -176,7 +177,7 @@ public class BasicAnalysis {
         classModel.setClassPath(String.format("%s.%s", javaClass.getPackageName(), javaClass.getName()));
         classModel.setActualType(classUtil.getActualTypeParameters(javaClass));
     
-        log.info("analysis class: {}", classModel.getClassPath());
+        log.info("analysis class: %s", classModel.getClassPath());
         
         // 继承关系
         classModel.setSuperClass(getParentClass(javaClass));
@@ -205,7 +206,7 @@ public class BasicAnalysis {
         javaClass.getFields().stream().filter(f -> !f.isStatic()).forEach(f -> {
             JavaClassFieldModel field = new JavaClassFieldModel();
         
-            log.info("    {}: {}", f.getName(), f.getType().getGenericValue());
+            log.info("    %s: %s", f.getName(), f.getType().getGenericValue());
 
             field.setName(f.getName());
             field.setDefaultValue(f.getInitializationExpression());

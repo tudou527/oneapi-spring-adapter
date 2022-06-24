@@ -8,7 +8,6 @@ package com.godone.meta.analysis;
 import com.godone.meta.models.*;
 import com.thoughtworks.qdox.model.JavaMethod;
 import com.thoughtworks.qdox.model.JavaParameter;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +15,6 @@ import java.util.List;
 /**
  * 入口文件解析，在 BasicAnalysis 的基础上多了 method 相关的逻辑
  */
-@Slf4j
 public class EntryAnalysis extends BasicAnalysis {
     // 入口函数
     public JavaFileModel analysis(String classPath) {
@@ -38,7 +36,7 @@ public class EntryAnalysis extends BasicAnalysis {
     private JavaClassMethodModel analysisMethod(JavaMethod method) {
         JavaClassMethodModel javaMethod = new JavaClassMethodModel();
     
-        log.info("  method: {}", method.getName());
+        log.info("  method: %s", method.getName());
 
         javaMethod.setName(method.getName());
         // 描述&注解
@@ -48,7 +46,7 @@ public class EntryAnalysis extends BasicAnalysis {
         // 入参及类型
         javaMethod.setParameters(getParameters(method));
     
-        log.info("    return: {}", method.getReturnType().getGenericValue());
+        log.info("    return: %s", method.getReturnType().getGenericValue());
         // 返回值及类型
         JavaActualType methodReturnType = typeAnalysis.get().analysis(method.getReturnType(), fileModel);
         
@@ -73,7 +71,7 @@ public class EntryAnalysis extends BasicAnalysis {
 
             param.setName(p.getName());
 
-            log.info("      {}: {}", p.getName(), p.getType().getGenericValue());
+            log.info("      %s: %s", p.getName(), p.getType().getGenericValue());
         
             // 方法入参及类型
             JavaActualType paramType = typeAnalysis.get().analysis(p.getType(), fileModel);

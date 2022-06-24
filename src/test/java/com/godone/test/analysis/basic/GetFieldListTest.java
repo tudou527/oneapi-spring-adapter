@@ -5,6 +5,7 @@ import com.godone.meta.analysis.TypeAnalysis;
 import com.godone.meta.models.JavaClassFieldModel;
 import com.godone.meta.models.JavaFileModel;
 import com.godone.meta.utils.ClassUtil;
+import com.godone.meta.utils.Logger;
 import com.godone.test.TestUtil;
 import com.google.inject.Provider;
 import com.thoughtworks.qdox.model.JavaClass;
@@ -25,6 +26,8 @@ public class GetFieldListTest {
     @Mock
     ClassUtil classUtil;
     @Mock
+    Logger log;
+    @Mock
     TypeAnalysis typeAnalysis;
     @Mock
     Provider<TypeAnalysis> typeAnalysisProvider;
@@ -38,6 +41,7 @@ public class GetFieldListTest {
         Mockito.when(classUtil.getDescription(Mockito.any(), Mockito.any())).thenCallRealMethod();
         Mockito.when(classUtil.getAnnotation(Mockito.any(), Mockito.any())).thenCallRealMethod();
         Mockito.when(typeAnalysisProvider.get()).thenReturn(typeAnalysis);
+        Mockito.doNothing().when(log).info(Mockito.any(), Mockito.any());
         
         // 设置 private 属性
         ReflectionTestUtils.setField(basicAnalysis, "fileLines", new ArrayList<String>());

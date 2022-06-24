@@ -7,6 +7,7 @@ import com.godone.meta.models.JavaActualType;
 import com.godone.meta.models.JavaFileModel;
 import com.godone.meta.utils.ClassUtil;
 import com.godone.meta.utils.FileUtil;
+import com.godone.meta.utils.Logger;
 import com.godone.test.TestUtil;
 import com.google.inject.Provider;
 import org.junit.jupiter.api.Assertions;
@@ -24,6 +25,8 @@ import java.util.ArrayList;
 
 @DisplayName("basic.analysis.analysisFromResource")
 public class AnalysisFromResourceTest {
+    @Mock
+    Logger log;
     @Mock
     FileUtil fileUtil;
     @Mock
@@ -45,6 +48,7 @@ public class AnalysisFromResourceTest {
             setClassPath("com.godone.test.mockType");
         }});
         Mockito.when(typeAnalysisProvider.get()).thenReturn(typeAnalysis);
+        Mockito.doNothing().when(log).info(Mockito.any(), Mockito.any());
     }
 
     @Test

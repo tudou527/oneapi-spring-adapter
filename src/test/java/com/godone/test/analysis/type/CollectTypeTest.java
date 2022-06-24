@@ -4,6 +4,7 @@ import com.godone.meta.analysis.TypeAnalysis;
 import com.godone.meta.cache.PendingCache;
 import com.godone.meta.models.JavaActualType;
 import com.godone.meta.models.JavaFileModel;
+import com.godone.meta.utils.Logger;
 import com.godone.test.TestUtil;
 import com.google.inject.Provider;
 import com.thoughtworks.qdox.model.JavaClass;
@@ -21,6 +22,8 @@ import java.util.ArrayList;
 @DisplayName("typeAnalysis.analysis")
 public class CollectTypeTest {
     @Mock
+    Logger log;
+    @Mock
     private PendingCache pendingCache;
     @Mock
     Provider<TypeAnalysis> typeAnalysisProvider;
@@ -33,6 +36,8 @@ public class CollectTypeTest {
         
         Mockito.doNothing().when(pendingCache).setCache(Mockito.any());
         Mockito.when(typeAnalysisProvider.get()).thenReturn(typeAnalysis);
+    
+        Mockito.doNothing().when(log).info(Mockito.any(), Mockito.any());
     }
     
     private JavaActualType getActualType(String fieldName) {

@@ -1,23 +1,30 @@
 package com.godone.test.util.fileUtil;
 
 import com.godone.meta.utils.FileUtil;
+import com.godone.meta.utils.Logger;
 import com.godone.test.TestUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.io.File;
 
 @DisplayName("fileUtil.exec")
 public class ExecTest {
+    @Mock
+    Logger log;
     @InjectMocks
     FileUtil fileUtil;
     @BeforeEach
     public void mockBeforeEach() {
         MockitoAnnotations.openMocks(this);
+
+        Mockito.doNothing().when(log).info(Mockito.any(), Mockito.any());
     }
     
     @Test

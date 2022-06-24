@@ -3,22 +3,23 @@ package com.godone.meta.analysis;
 import com.godone.meta.cache.PendingCache;
 import com.godone.meta.models.JavaActualType;
 import com.godone.meta.models.JavaFileModel;
+import com.godone.meta.utils.Logger;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.thoughtworks.qdox.model.JavaType;
 import com.thoughtworks.qdox.model.impl.DefaultJavaParameterizedType;
 import com.thoughtworks.qdox.type.TypeResolver;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Slf4j
 public class TypeAnalysis {
     private JavaType type;
     // type 所在的宿主文件
     private JavaFileModel hostModel;
+    @Inject
+    Logger log;
     @Inject
     private PendingCache pendingCache;
     @Inject
@@ -81,9 +82,9 @@ public class TypeAnalysis {
                 }
                 
                 if (hostModel.getFileType().equals("ENTRY")) {
-                    log.info("        child type: {}", ct.getBinaryName());
+                    log.info("        child type: %s", ct.getBinaryName());
                 } else {
-                    log.info("      child type: {}", ct.getBinaryName());
+                    log.info("      child type: %s", ct.getBinaryName());
                 }
 
                 JavaActualType childActualType = typeAnalysis.get().analysis(ct, hostModel);

@@ -6,17 +6,15 @@
 package com.godone.meta.utils;
 
 import com.godone.meta.cache.BaseCache;
+import com.google.inject.Inject;
 import com.thoughtworks.qdox.JavaProjectBuilder;
 import info.monitorenter.cpdetector.io.ASCIIDetector;
 import info.monitorenter.cpdetector.io.CodepageDetectorProxy;
 import info.monitorenter.cpdetector.io.JChardetFacade;
 import info.monitorenter.cpdetector.io.UnicodeDetector;
-import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Singleton;
 import java.io.*;
-import java.net.URL;
-import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
@@ -27,9 +25,10 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-@Slf4j
 @Singleton
 public class FileUtil {
+    @Inject
+    Logger log;
     /**
      * 获取探测到的文件对象
      */
@@ -225,7 +224,7 @@ public class FileUtil {
      */
     public void exec(String cmd, String workDir) {
         try {
-            log.info(String.format("Run command: %s", String.join(" ", cmd)));
+            log.info("Run command: %s", String.join(" ", cmd));
             ProcessBuilder pb = new ProcessBuilder("/bin/sh", "-c", cmd);
             pb.directory(new File(workDir));
             Process process = pb.start();
@@ -237,13 +236,13 @@ public class FileUtil {
 //                log.info(inputLine);
 //            }
             while((errLine = errorBuffer.readLine()) !=null){
-                log.error(errLine);
+                log.info(errLine);
             }
             process.waitFor();
             log.info("Run command done.");
         } catch (Exception e) {
             e.printStackTrace();
-            log.info(String.format("Run Command Error: %s in %s", String.join(" ", cmd), workDir));
+            log.info("Run Command Error: %s in %s", String.join(" ", cmd), workDir);
         }
     }
     
