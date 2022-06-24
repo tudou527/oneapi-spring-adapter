@@ -31,8 +31,6 @@ public class TypeAnalysis {
     public JavaActualType analysis(JavaType type, JavaFileModel fileModel) {
         this.type = type;
         this.hostModel = fileModel;
-    
-        log.info("      analysis type: {}", type.getBinaryName());
 
         return getType();
     }
@@ -82,7 +80,12 @@ public class TypeAnalysis {
                     javaType.setItems(new ArrayList<>());
                 }
                 
-                log.info("      analysis child type: {}", ct.getBinaryName());
+                if (hostModel.getFileType().equals("ENTRY")) {
+                    log.info("        child type: {}", ct.getBinaryName());
+                } else {
+                    log.info("      child type: {}", ct.getBinaryName());
+                }
+
                 JavaActualType childActualType = typeAnalysis.get().analysis(ct, hostModel);
                 // 递归解析每个子类型
                 javaType.getItems().add(childActualType);

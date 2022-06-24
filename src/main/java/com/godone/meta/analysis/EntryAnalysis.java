@@ -8,6 +8,7 @@ package com.godone.meta.analysis;
 import com.godone.meta.models.*;
 import com.thoughtworks.qdox.model.JavaMethod;
 import com.thoughtworks.qdox.model.JavaParameter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.List;
 /**
  * 入口文件解析，在 BasicAnalysis 的基础上多了 method 相关的逻辑
  */
+@Slf4j
 public class EntryAnalysis extends BasicAnalysis {
     // 入口函数
     public JavaFileModel analysis(String classPath) {
@@ -35,6 +37,8 @@ public class EntryAnalysis extends BasicAnalysis {
     // 解析方法
     private JavaClassMethodModel analysisMethod(JavaMethod method) {
         JavaClassMethodModel javaMethod = new JavaClassMethodModel();
+    
+        log.info("  method: {}", method.getName());
 
         javaMethod.setName(method.getName());
         // 描述&注解
@@ -43,8 +47,11 @@ public class EntryAnalysis extends BasicAnalysis {
 
         // 入参及类型
         javaMethod.setParameters(getParameters(method));
+    
+        log.info("    return: {}", method.getReturnType().getGenericValue());
         // 返回值及类型
         JavaActualType methodReturnType = typeAnalysis.get().analysis(method.getReturnType(), fileModel);
+        
         javaMethod.setReturnType(methodReturnType);
 
         return javaMethod;
@@ -53,6 +60,8 @@ public class EntryAnalysis extends BasicAnalysis {
     // 方法入参
     private ArrayList<JavaMethodParameter> getParameters(JavaMethod method) {
         ArrayList<JavaMethodParameter> paramList = new ArrayList<>();
+    
+        log.info("    params: ");
 
         List<JavaParameter> parameters = method.getParameters();
         if (parameters == null || parameters.isEmpty()) {
@@ -63,6 +72,8 @@ public class EntryAnalysis extends BasicAnalysis {
             JavaMethodParameter param = new JavaMethodParameter();
 
             param.setName(p.getName());
+
+            log.info("      {}: {}", p.getName(), p.getType().getGenericValue());
         
             // 方法入参及类型
             JavaActualType paramType = typeAnalysis.get().analysis(p.getType(), fileModel);

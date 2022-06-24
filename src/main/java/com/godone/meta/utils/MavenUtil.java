@@ -13,8 +13,10 @@ import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.stream.Collectors;
 
 @Singleton
 @Slf4j
@@ -30,7 +32,12 @@ public class MavenUtil {
 
     // 缓存入口文件及其他资源文件
     public void saveResource(String entryDir, boolean saveAsEntry) {
-        fileUtil.findFileList("glob:**/*.java", entryDir).forEach(filePath -> {
+        AtomicInteger entryCount = new AtomicInteger();
+        List<String> javaFiles = fileUtil.findFileList("glob:**/*.java", entryDir);
+    
+        log.info("found {} class from {}", javaFiles.size(), entryDir);
+    
+        javaFiles.forEach(filePath -> {
             JavaProjectBuilder builder = fileUtil.getBuilder(filePath);
             if (builder != null) {
                 Optional<JavaClass> optionalJavaClass = builder.getClasses().stream().filter(JavaClass::isPublic).findFirst();
@@ -46,37 +53,47 @@ public class MavenUtil {
                     if (saveAsEntry) {
                         boolean hasEntryAnnotation = javaClass.getAnnotations().stream().anyMatch(an -> an.getType().getName().endsWith("Controller"));
                         if (hasEntryAnnotation) {
+                            entryCount.set(entryCount.get() + 1);
                             entryCache.setCache(className, filePath);
                         }
                     }
                 }
             }
         });
+    
+        log.info("found {} entry class", entryCount.get());
     }
 
     // 缓存所有 jar 包中的类
     public void saveReflectClassCache(String localRepository) {
-        fileUtil.findFileList("glob:**/*.jar", localRepository).forEach(jarFilePath -> {
-            // 跳过源码JAR
-            if (!jarFilePath.contains("-sources.jar")) {
-                // 通过反射获取 jar 包中所有 classPath
-                try {
-                    JarFile jarFile = new JarFile(jarFilePath);
-                    Enumeration<JarEntry> entries = jarFile.entries();
-                    JarEntry entry;
+        AtomicInteger cacheCount = new AtomicInteger();
+        List<String> jarList = fileUtil.findFileList("glob:**/*.jar", localRepository)
+                // 忽略源码 jar
+                .stream().filter(p -> !p.contains("-source.jar")).collect(Collectors.toList());
+        
+        log.info("found {} jar file from {}", jarList.size(), localRepository);
 
-                    while (entries.hasMoreElements()) {
-                        entry = entries.nextElement();
+        jarList.forEach(jarFilePath -> {
+            // 通过反射获取 jar 包中所有 classPath
+            try {
+                JarFile jarFile = new JarFile(jarFilePath);
+                Enumeration<JarEntry> entries = jarFile.entries();
+                JarEntry entry;
 
-                        if (!entry.getName().contains("META-INF") && entry.getName().contains(".class")) {
-                            String classPath = entry.getName().substring(0, entry.getName().length() - 6).replace("/", ".");
-                            reflectCache.setCache(classPath, jarFilePath);
-                        }
+                while (entries.hasMoreElements()) {
+                    entry = entries.nextElement();
+
+                    if (!entry.getName().contains("META-INF") && entry.getName().contains(".class")) {
+                        String classPath = entry.getName().substring(0, entry.getName().length() - 6).replace("/", ".");
+                        cacheCount.set(cacheCount.get() + 1);
+                        reflectCache.setCache(classPath, jarFilePath);
                     }
-                } catch (Exception ignore) {
                 }
+            } catch (Exception ignore) {
             }
         });
+    
+        log.info("cache {} class", cacheCount.get());
     }
 
     // 返回 class 中所有 field （包括 parent class）

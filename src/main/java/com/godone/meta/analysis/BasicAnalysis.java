@@ -70,15 +70,15 @@ public class BasicAnalysis {
     private JavaFileModel analysisFromResource(String classPath) {
         String childClassName = "";
         String javaFilePath = resourceCache.getCache(classPath);
-        
-        if (javaFilePath == null) {
-            return null;
-        }
     
-        // 兼容子类的情况
-        if (classPath.contains("$")) {
+        if (javaFilePath == null && classPath.contains("$")) {
+            // 兼容子类的情况
             childClassName = classPath.split("\\$")[1];
             javaFilePath = resourceCache.getCache(classPath.split("\\$")[0]);
+        }
+
+        if (javaFilePath == null) {
+            return null;
         }
 
         JavaProjectBuilder builder = fileUtil.getBuilder(javaFilePath);
@@ -165,16 +165,18 @@ public class BasicAnalysis {
             mvnUtil.saveResource(deCompileFile.getPath(), false);
         }
 
-        return analysisFromResource(resourceCache.getCache(classPath));
+        return analysisFromResource(classPath);
     }
 
     // 分析 class
     private JavaClassModel analysisClass(JavaClass javaClass) {
         JavaClassModel classModel = new JavaClassModel();
-
+    
         classModel.setName(javaClass.getName());
         classModel.setClassPath(String.format("%s.%s", javaClass.getPackageName(), javaClass.getName()));
         classModel.setActualType(classUtil.getActualTypeParameters(javaClass));
+    
+        log.info("analysis class: {}", classModel.getClassPath());
         
         // 继承关系
         classModel.setSuperClass(getParentClass(javaClass));
@@ -189,8 +191,7 @@ public class BasicAnalysis {
         classModel.setIsAbstract(javaClass.isAbstract());
         classModel.setIsInterface(javaClass.isInterface());
     
-        log.info("analysis class: {}", javaClass.getName());
-
+        log.info("  fields: ");
         classModel.setFields(getFieldList(javaClass));
 
         return classModel;
@@ -204,8 +205,8 @@ public class BasicAnalysis {
         javaClass.getFields().stream().filter(f -> !f.isStatic()).forEach(f -> {
             JavaClassFieldModel field = new JavaClassFieldModel();
         
-            log.info("  analysis field: {}", f.getName());
-        
+            log.info("    {}: {}", f.getName(), f.getType().getGenericValue());
+
             field.setName(f.getName());
             field.setDefaultValue(f.getInitializationExpression());
             

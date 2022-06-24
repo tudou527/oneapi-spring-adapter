@@ -69,7 +69,7 @@ public class Application {
             CommandLine cmd = parser.parse(options, args);
 
             if (!cmd.hasOption("p") || !cmd.hasOption("o") || !cmd.hasOption("r")) {
-                log.error("参数不完整");
+                log.error("arguments of p/o/r is required.");
                 System.exit(-200);
             }
     
@@ -80,18 +80,17 @@ public class Application {
             // 复制反编译 jar 包到当前运行目录
             fileUtil.copyDecompiler();
     
-            log.info("add reflect class cache");
+            log.info("cache reflect class");
             // 反编译本地 mvn 缓存目录中的 .jar
             mvnUtil.saveReflectClassCache(localRepository);
     
-            log.info("add resource cache");
+            log.info("cache resource");
             // 缓存入口文件及其他资源文件
             mvnUtil.saveResource(projectDir, true);
 
             log.info("analysis entry");
             // 分析入口文件
             entryCache.getCache().forEach(classPath -> {
-                log.info("analysis class: {}", classPath);
                 JavaFileModel fileModel = entryAnalysis.get().analysis(classPath);
                 if (fileModel != null) {
                     fileModelCache.setCache(fileModel);

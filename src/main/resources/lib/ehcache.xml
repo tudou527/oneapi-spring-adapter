@@ -38,7 +38,7 @@
         内存最多缓存 500 条数据，超过时写入磁盘（磁盘上限 30w)
     -->
     <cache name="ResourceCache"
-           maxElementsInMemory="500"
+           maxElementsInMemory="1000"
            maxEntriesLocalDisk="300000"
            eternal="true"
            overflowToDisk="true"
@@ -64,7 +64,7 @@
         内存最多缓存 500 条数据，超过时写入磁盘（磁盘上限 30w)
     -->
     <cache name="PendingClassCache"
-           maxElementsInMemory="500"
+           maxElementsInMemory="1000"
            maxEntriesLocalDisk="300000"
            eternal="true"
            overflowToDisk="true"
@@ -77,7 +77,7 @@
         内存最多缓存 500 条数据，超过时写入磁盘（磁盘上限 30w)
     -->
     <cache name="ReflectClassCache"
-           maxElementsInMemory="500"
+           maxElementsInMemory="1000"
            maxEntriesLocalDisk="300000"
            eternal="true"
            overflowToDisk="true"
