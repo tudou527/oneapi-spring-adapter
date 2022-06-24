@@ -31,9 +31,20 @@ public class PendingCache extends BaseCache<String> {
     }
     
     public void setCache(String classPath) {
-        if (blackListClassPrefix.stream().noneMatch(classPath::startsWith) && classPath.length() != 1) {
-            cache.put(new Element(classPath, classPath));
+        if (
+            blackListClassPrefix.stream().noneMatch(classPath::startsWith) &&
+            classPath.length() != 1 &&
+            !getCache().contains(classPath)
+        ) {
+            // 设置为待解析状态
+            cache.put(new Element(classPath, "wait"));
         }
     }
     
+    public void updateCache(String classPath) {
+        String cacheValue = getCache(classPath);
+        if ("wait".equals(cacheValue)) {
+            cache.put(new Element(classPath, "done"));
+        }
+    }
 }

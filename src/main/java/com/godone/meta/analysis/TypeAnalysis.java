@@ -1,6 +1,7 @@
 package com.godone.meta.analysis;
 
 import com.godone.meta.cache.PendingCache;
+import com.godone.meta.models.ClassTypeEnum;
 import com.godone.meta.models.JavaActualType;
 import com.godone.meta.models.JavaFileModel;
 import com.godone.meta.utils.Logger;
@@ -80,13 +81,13 @@ public class TypeAnalysis {
                 if (javaType.getItems() == null) {
                     javaType.setItems(new ArrayList<>());
                 }
-                
-                if (hostModel.getFileType().equals("ENTRY")) {
-                    log.info("        child type: %s", ct.getBinaryName());
+    
+                if (hostModel.getFileType().equals(ClassTypeEnum.ENTRY)) {
+                    log.info("        child type: %s", ct.getGenericValue());
                 } else {
-                    log.info("      child type: %s", ct.getBinaryName());
+                    log.info("      child type: %s", ct.getGenericValue());
                 }
-
+    
                 JavaActualType childActualType = typeAnalysis.get().analysis(ct, hostModel);
                 // 递归解析每个子类型
                 javaType.getItems().add(childActualType);

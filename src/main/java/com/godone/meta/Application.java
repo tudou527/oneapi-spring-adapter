@@ -24,7 +24,9 @@ import org.apache.commons.cli.*;
 import javax.inject.Singleton;
 import java.nio.charset.Charset;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Singleton
 public class Application {
@@ -89,7 +91,7 @@ public class Application {
             // 缓存入口文件及其他资源文件
             mvnUtil.saveResource(projectDir, true);
 
-            log.info("analysis entry");
+            log.info("====== analysis entry ======");
             // 分析入口文件
             entryCache.getCache().forEach(classPath -> {
                 JavaFileModel fileModel = entryAnalysis.get().analysis(classPath);
@@ -99,7 +101,7 @@ public class Application {
             });
             
             // 待解析的资源
-            log.info("analysis class reference");
+            log.info("====== analysis resource ======");
             analysisClassReference();
     
             entryCache.clear();
@@ -126,23 +128,27 @@ public class Application {
     }
 
     private void analysisClassReference() {
-        // 所有待解析的资源
-        pendingCache.getCache().forEach((classPath) -> {
-            JavaFileModel fileModel = basicAnalysis.get().analysis(classPath);
+        // 匹配出待解析的 class 列表
+        List<String> paddingClassPath = pendingCache.getCache().stream().filter(c -> "wait".equals(pendingCache.getCache(c))).collect(Collectors.toList());
 
+        // 所有待解析的资源
+        paddingClassPath.forEach((classPath) -> {
+            JavaFileModel fileModel = basicAnalysis.get().analysis(classPath);
             if (fileModel != null) {
                 fileModelCache.setCache(fileModel);
             }
-            
             // 分析一次后无论是否有结果都从队列中删除
-            pendingCache.removeCache(classPath);
+            pendingCache.updateCache(classPath);
         });
         
-        if (pendingCache.getCache().size() > 0 && loopCount < 9) {
+        // 再统计一次
+        List<String> remainList = pendingCache.getCache().stream().filter(c -> "wait".equals(pendingCache.getCache(c))).collect(Collectors.toList());
+        
+        if (remainList.size() > 0 && loopCount < 9) {
             loopCount++;
             analysisClassReference();
         } else {
-            if (pendingCache.getCache().size() > 0) {
+            if (remainList.size() > 0) {
                 log.info("after loop %s, remain %s class", loopCount, pendingCache.getCache().size());
                 log.info(String.join("\r\n", pendingCache.getCache()));
             }

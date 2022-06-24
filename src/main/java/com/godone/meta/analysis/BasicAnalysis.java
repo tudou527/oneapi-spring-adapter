@@ -16,6 +16,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.thoughtworks.qdox.JavaProjectBuilder;
 import com.thoughtworks.qdox.model.JavaClass;
+import com.thoughtworks.qdox.model.JavaField;
 import com.thoughtworks.qdox.model.JavaType;
 
 import java.io.File;
@@ -25,6 +26,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * 资源解析
@@ -177,7 +179,7 @@ public class BasicAnalysis {
         classModel.setClassPath(String.format("%s.%s", javaClass.getPackageName(), javaClass.getName()));
         classModel.setActualType(classUtil.getActualTypeParameters(javaClass));
     
-        log.info("analysis class: %s", classModel.getClassPath());
+        log.info("class: %s", classModel.getClassPath());
         
         // 继承关系
         classModel.setSuperClass(getParentClass(javaClass));
@@ -191,8 +193,7 @@ public class BasicAnalysis {
         classModel.setIsPrivate(javaClass.isPrivate());
         classModel.setIsAbstract(javaClass.isAbstract());
         classModel.setIsInterface(javaClass.isInterface());
-    
-        log.info("  fields: ");
+        
         classModel.setFields(getFieldList(javaClass));
 
         return classModel;
@@ -201,9 +202,12 @@ public class BasicAnalysis {
     // 字段列表
     private ArrayList<JavaClassFieldModel> getFieldList(JavaClass javaClass) {
         ArrayList<JavaClassFieldModel> fieldList = new ArrayList<>();
+        List<JavaField> javaFieldList = javaClass.getFields().stream().filter(f -> !f.isStatic()).collect(Collectors.toList());
+    
+        log.info("  field count: %s", javaFieldList.size());
     
         // 过滤掉 static 字段
-        javaClass.getFields().stream().filter(f -> !f.isStatic()).forEach(f -> {
+        javaFieldList.forEach(f -> {
             JavaClassFieldModel field = new JavaClassFieldModel();
         
             log.info("    %s: %s", f.getName(), f.getType().getGenericValue());
