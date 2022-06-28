@@ -49,6 +49,12 @@
             <version>2.10.9.2</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>5.3.20</version>
+        </dependency>
+
         <!-- 文件编码探测  -->
         <dependency>
             <groupId>info.monitorenter.cpdetector</groupId>

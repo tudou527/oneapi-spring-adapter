@@ -9,7 +9,9 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.thoughtworks.qdox.model.JavaType;
 import com.thoughtworks.qdox.model.impl.DefaultJavaParameterizedType;
+import com.thoughtworks.qdox.model.impl.DefaultJavaWildcardType;
 import com.thoughtworks.qdox.type.TypeResolver;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +41,18 @@ public class TypeAnalysis {
 
     private JavaActualType getType() {
         JavaActualType javaType = new JavaActualType();
+        
+        // 类型为：? (extends|super) ImmutableCollection
+        if (type instanceof DefaultJavaWildcardType) {
+            DefaultJavaWildcardType wildType = (DefaultJavaWildcardType) type;
+            // 目前只想到了反射这一种方式拿到 extends 的具体类型
+            List<JavaType> bounds = (List<JavaType>) ReflectionTestUtils.getField(wildType, "bounds");
+            // 暂时只支持解析第一个继承的类型
+            if (bounds != null && bounds.size() > 0) {
+                this.type = bounds.get(0);
+            }
+        }
+    
         String fullTypeName = type.getFullyQualifiedName();
 
         if (type instanceof DefaultJavaParameterizedType) {

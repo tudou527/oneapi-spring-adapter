@@ -4,6 +4,4 @@
 
 ## Bad Case
 ```
-// 包含 extends 的复杂类型
-final transient ImmutableMap<K, ? extends ImmutableCollection<V>> map;
 ```
