@@ -60,6 +60,7 @@ public class Application {
     static final Stopwatch stopwatch = Stopwatch.createStarted();
 
     private void run(String[] args) {
+        boolean testEnv = "test".equals(System.getProperties().getProperty("env"));
         log.info("version: %s", this.getClass().getPackage().getImplementationVersion());
         
         try {
@@ -73,7 +74,11 @@ public class Application {
 
             if (!cmd.hasOption("p") || !cmd.hasOption("o") || !cmd.hasOption("r")) {
                 log.info("arguments of p/o/r is required.");
-                System.exit(-200);
+                if (testEnv) {
+                    return;
+                } else {
+                    System.exit(-200);
+                }
             }
     
             projectDir = cmd.getOptionValue("p");
@@ -121,7 +126,9 @@ public class Application {
             fileModelCache.clear();
     
             log.info("exec time: %s second", stopwatch.elapsed(TimeUnit.SECONDS));
-            System.exit(-200);
+            if (!testEnv) {
+                System.exit(-200);
+            }
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -158,7 +165,12 @@ public class Application {
     public static void main(String[] args) {
         Injector injector = Guice.createInjector();
         Application app = injector.getInstance(Application.class);
-    
+
+        String env = System.getProperties().getProperty("env");
+        if (env == null) {
+            // 设置一个环境变量，用于区分运行时及单元测试
+            System.getProperties().setProperty("env", "prod");
+        }
         app.run(args);
     }
 }

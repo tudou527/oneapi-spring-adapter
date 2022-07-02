@@ -78,7 +78,7 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>RELEASE</version>
+            <version>5.8.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -127,7 +127,7 @@
                 <version>0.8.8</version>
                 <configuration>
                     <includes>
-                        <include>com/oneapi/spring/**/*</include>
+                        <include>com/oneapi/**/*</include>
                     </includes>
                     <excludes>
                         <exclude>com/oneapi/spring/models/**/*</exclude>

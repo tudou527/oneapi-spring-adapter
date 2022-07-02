@@ -1,13 +1,14 @@
 package com.oneapi.spring.test.application;
 
+import com.google.inject.Provider;
 import com.oneapi.spring.Application;
 import com.oneapi.spring.analysis.BasicAnalysis;
 import com.oneapi.spring.cache.FileModelCache;
 import com.oneapi.spring.cache.PendingCache;
 import com.oneapi.spring.models.JavaFileModel;
-import com.oneapi.spring.utils.MavenUtil;
 import com.oneapi.spring.test.TestUtil;
-import com.google.inject.Provider;
+import com.oneapi.spring.utils.Logger;
+import com.oneapi.spring.utils.MavenUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -19,16 +20,14 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.stubbing.Answer;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.PrintStream;
-import java.security.AccessControlException;
-import java.security.Permission;
 import java.util.ArrayList;
 import java.util.List;
 
 @DisplayName("Application")
 public class ApplicationTest {
+    @Mock
+    Logger log;
     @Mock
     MavenUtil mvnUtil;
     @Mock
@@ -41,28 +40,10 @@ public class ApplicationTest {
     Provider<BasicAnalysis> basicAnalysis;
     @InjectMocks
     Application app;
-    
-    private PrintStream console = null;
-    private ByteArrayOutputStream bytes = null;
 
     @BeforeEach
-    public void setUp() {
-        final SecurityManager securityManager = new SecurityManager() {
-            public void checkPermission(Permission permission) {
-            if (permission.getName().startsWith("exitVM.-200")) {
-                throw new AccessControlException("");
-            }
-            }
-        };
-    
-        System.setSecurityManager(securityManager);
-        bytes = new ByteArrayOutputStream();
-        console = System.out;
-        System.setOut(new PrintStream(bytes));
-    }
-    
-    @BeforeEach
-    public void mockBeforeEach() {
+    public void mockBeforeEach() throws Exception {
+        System.getProperties().setProperty("env", "test");
         MockitoAnnotations.openMocks(this);
     }
     
@@ -100,8 +81,10 @@ public class ApplicationTest {
         
         try {
             ReflectionTestUtils.invokeMethod(app, "analysisClassReference");
-        } catch (RuntimeException ignore){}
-        
+        } catch (RuntimeException e){
+            e.printStackTrace();
+        }
+
         Assertions.assertEquals(updateCacheKey.size(), 20);
         Assertions.assertEquals(updateCacheKey.get(0), "com.oneapi.spring.a.b.c");
         Assertions.assertEquals(updateCacheKey.get(1), "com.oneapi.spring.a.d.f");
@@ -114,19 +97,21 @@ public class ApplicationTest {
     
     @Test
     @DisplayName("参数不完整")
-    public void paramsError() {
+    public void paramsError() throws Exception {
         try {
             Application.main(new String[] {});
-        } catch (Exception ignore){}
-        
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
         Mockito.verify(mvnUtil, Mockito.times(0)).saveResource(Mockito.anyString(), Mockito.anyBoolean());
     }
-    
+
     @Test
     @DisplayName("有完整的解析结果")
     public void analysisResult() {
         File result = new File(TestUtil.getBaseDir()+ "com/oneapi/spring/testSuite/result.json");
-    
+
         try {
             Application.main(new String[] {
                 "-p",
@@ -136,8 +121,10 @@ public class ApplicationTest {
                 "-r",
                 TestUtil.getBaseDir()+ "com/oneapi/spring/testSuite/field",
             });
-        } catch (RuntimeException ignore){}
-        
+        } catch (RuntimeException e){
+            e.printStackTrace();
+        }
+
         Assertions.assertTrue(result.exists());
         result.delete();
     }
