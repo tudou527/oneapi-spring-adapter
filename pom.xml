@@ -3,13 +3,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.godone</groupId>
-    <artifactId>meta</artifactId>
+    <groupId>com.oneapi</groupId>
+    <artifactId>spring-adapter</artifactId>
     <version>1.0.0</version>
 
     <properties>
         <java.version>1.8</java.version>
-        <start-class>com.godone.meta.Application</start-class>
+        <start-class>com.oneapi.spring.Application</start-class>
     </properties>
 
     <dependencies>
@@ -119,10 +119,10 @@
                 <version>0.8.8</version>
                 <configuration>
                     <includes>
-                        <include>com/godone/**/*</include>
+                        <include>com/oneapi/spring/**/*</include>
                     </includes>
                     <excludes>
-                        <exclude>com/godone/meta/models/**/*</exclude>
+                        <exclude>com/oneapi/spring/models/**/*</exclude>
                     </excludes>
                 </configuration>
                 <executions>

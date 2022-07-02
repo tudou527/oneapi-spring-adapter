@@ -1,7 +1,6 @@
-# 开发
-需要依次为 lib/ 下的 jar 包执行右键、Make Directory as...
+# OneAPI Spring 适配端
 
+[![codecov](https://codecov.io/gh/tudou527/oneapi-spring-adapter/branch/master/graph/badge.svg)](https://codecov.io/gh/tudou527/oneapi-spring-adapter)
 
-## Bad Case
 ```
 ```

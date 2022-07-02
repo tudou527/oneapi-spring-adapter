@@ -1,0 +1,37 @@
+name: CI
+on: [push]
+jobs:
+  install-file:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+          cache: 'maven'
+      - name: Install Cpdetector
+        run: mvn install:install-file -Dfile=${{ github.workspace }}/lib/cpdetector-1.0.10.jar -DgroupId=info.monitorenter.cpdetector -DartifactId=cpdetector -Dversion=1.0.10 -Dpackaging=jar -DgeneratePom=true -DcreateChecksum=true
+      - name: Install chardet
+        run: mvn install:install-file -Dfile=${{ github.workspace }}/lib/chardet-1.0.jar -DgroupId=org.mozilla.intl -DartifactId=chardet -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true -DcreateChecksum=true
+  run-test:
+    needs: install-file
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+          cache: 'maven'
+      - name: Run Test
+        run: mvn clean install test
+      - name: Upload Coverage
+        uses: codecov/codecov-action@v3.1.0
+        with:
+          files: ${{ github.workspace }}/target/site/jacoco/jacoco.xml
+          name: codecov-umbrella
+          fail_ci_if_error: true
+          verbose: true
