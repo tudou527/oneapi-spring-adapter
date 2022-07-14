@@ -1,8 +1,8 @@
 name: CI
 on:
   push:
-    tags:
-      - '**'
+    branches:
+    - main
 jobs:
   install-file:
     runs-on: ubuntu-latest
@@ -41,12 +41,3 @@ jobs:
           name: codecov-umbrella
           fail_ci_if_error: true
           verbose: true
-  release-package:
-    needs: run-test
-    runs-on: ubuntu-latest
-    steps:
-      - name: package
-        run: mvn --batch-mode deploy -Dmaven.test.skip=true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
