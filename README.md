@@ -1,6 +1,6 @@
 # OneAPI Spring Adapter
 
-![ci](https://github.com/tudou527/oneapi-spring-adapter/actions/workflows/workflow.yml/badge.svg)
+![ci](https://github.com/tudou527/oneapi-spring-adapter/actions/workflows/ci.yml/badge.svg)
 [![codecov](https://codecov.io/gh/tudou527/oneapi-spring-adapter/branch/master/graph/badge.svg)](https://codecov.io/gh/tudou527/oneapi-spring-adapter)
 
 > Spring 项目（Spring Boot/Spring MVC）RESTful API 生成工具
