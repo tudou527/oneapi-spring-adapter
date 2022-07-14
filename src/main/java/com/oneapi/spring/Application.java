@@ -72,8 +72,8 @@ public class Application {
 
             CommandLine cmd = parser.parse(options, args);
 
-            if (!cmd.hasOption("p") || !cmd.hasOption("o") || !cmd.hasOption("r")) {
-                log.info("arguments of p/o/r is required.");
+            if (!cmd.hasOption("p") || !cmd.hasOption("o")) {
+                log.info("arguments of p/o is required.");
                 if (testEnv) {
                     return;
                 } else {
@@ -84,6 +84,10 @@ public class Application {
             projectDir = cmd.getOptionValue("p");
             outputFileDir = cmd.getOptionValue("o");
             localRepository = cmd.getOptionValue("r");
+    
+            if (localRepository == null) {
+                localRepository = System.getProperty("user.home") + "/.m2";
+            }
             
             // 复制反编译 jar 包到当前运行目录
             fileUtil.copyDecompiler();
