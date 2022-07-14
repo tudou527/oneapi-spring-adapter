@@ -4,7 +4,7 @@ on:
     tags:
       - '**'
 jobs:
-  install-file:
+  release:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
