@@ -5,15 +5,15 @@
  */
 package com.oneapi.spring.utils;
 
+import com.google.inject.Provider;
+import com.oneapi.spring.analysis.TypeAnalysis;
 import com.oneapi.spring.cache.PendingCache;
 import com.oneapi.spring.cache.ResourceCache;
 import com.google.inject.Inject;
 import com.oneapi.spring.models.*;
 import com.thoughtworks.qdox.model.*;
-import com.thoughtworks.qdox.model.expression.AnnotationValue;
-import com.thoughtworks.qdox.model.expression.AnnotationValueList;
-import com.thoughtworks.qdox.model.expression.Constant;
-import com.thoughtworks.qdox.model.expression.FieldRef;
+import com.thoughtworks.qdox.model.expression.*;
+import com.thoughtworks.qdox.model.impl.DefaultJavaAnnotation;
 import com.thoughtworks.qdox.model.impl.DefaultJavaParameterizedType;
 
 import javax.inject.Singleton;
@@ -28,6 +28,8 @@ public class ClassUtil {
     private PendingCache pendingCache;
     @Inject
     private ResourceCache resourceCache;
+    @Inject
+    Provider<TypeAnalysis> typeAnalysis;
 
     // 注解
     public ArrayList<JavaAnnotationModel> getAnnotation(List<JavaAnnotation> annotations, JavaFileModel hostModel) {
@@ -87,8 +89,21 @@ public class ClassUtil {
                             anPropertyValue.add(refValue.getName());
                         }
                         
-                        if (val instanceof DefaultJavaParameterizedType) {
-                            System.out.println("DefaultJavaParameterizedType: " + val);
+                        // 值为 class Exp: @AppSwitch(level = UserConfig.class)
+                        if (val instanceof TypeRef) {
+                            JavaType valType = ((TypeRef) val).getType();
+                            JavaActualType childActualType = typeAnalysis.get().analysis(valType, hostModel);
+                            anPropertyValue.add(childActualType.getClassPath());
+                        }
+    
+                        // 值为其他注解 Exp: @ApiImplicitParams({@ApiImplicitParam(name = "type", value = "")})
+                        if (val instanceof DefaultJavaAnnotation) {
+                            ArrayList<JavaAnnotationModel> childAns = getAnnotation(new ArrayList<JavaAnnotation>(){{
+                                add((JavaAnnotation)val);
+                            }}, hostModel);
+                            if (childAns.size() > 0) {
+                                anPropertyValue.add(childAns.get(0));
+                            }
                         }
 
                         if (val instanceof Constant) {
