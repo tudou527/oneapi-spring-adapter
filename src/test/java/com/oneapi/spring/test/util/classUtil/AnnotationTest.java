@@ -1,5 +1,8 @@
 package com.oneapi.spring.test.util.classUtil;
 
+import com.google.inject.Provider;
+import com.oneapi.spring.analysis.EntryAnalysis;
+import com.oneapi.spring.analysis.TypeAnalysis;
 import com.oneapi.spring.cache.PendingCache;
 import com.oneapi.spring.models.JavaAnnotationField;
 import com.oneapi.spring.models.JavaAnnotationModel;
@@ -7,6 +10,7 @@ import com.oneapi.spring.models.JavaFileModel;
 import com.oneapi.spring.utils.ClassUtil;
 import com.oneapi.spring.test.TestUtil;
 import com.thoughtworks.qdox.model.JavaClass;
+import com.thoughtworks.qdox.model.JavaMethod;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -17,11 +21,17 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 @DisplayName("classUtil.getAnnotation")
 public class AnnotationTest {
     @Mock
     PendingCache pendingCache;
+    @Mock
+    TypeAnalysis typeAnalysis;
+    @Mock
+    Provider<TypeAnalysis> typeAnalysisProvider;
     @InjectMocks
     ClassUtil classUtil;
 
@@ -35,6 +45,7 @@ public class AnnotationTest {
             add("com.oneapi.spring.testSuite.CustomAn");
             add("com.google.inject.Singleton");
             add("com.oneapi.spring.testSuite.AuthOperationEnum");
+            add("com.oneapi.spring.testSuite.CustomController");
         }});
     }
     
@@ -42,7 +53,7 @@ public class AnnotationTest {
     @DisplayName("解析注解属性")
     public void classAnnotation() {
         JavaClass javaClass = TestUtil.getJavaClass("com.oneapi.spring.testSuite.TestController");
-    
+
         // Mock pendingCache.setCache 方法
         Mockito.doNothing().when(pendingCache).setCache(Mockito.anyString());
 
@@ -109,5 +120,29 @@ public class AnnotationTest {
     public void annotationEmpty() {
         ArrayList<JavaAnnotationModel> annotations = classUtil.getAnnotation(new ArrayList<>(), mockFileModel);
         Assertions.assertEquals(annotations.size(), 0);
+    }
+
+    @Test
+    @DisplayName("属性为 class")
+    public void attrIsClass() {
+        Mockito.when(typeAnalysisProvider.get()).thenReturn(typeAnalysis);
+        Mockito.when(typeAnalysis.analysis(Mockito.any(), Mockito.any())).thenCallRealMethod();
+
+        JavaClass javaClass = TestUtil.getJavaClass("com.oneapi.spring.testSuite.TestController");
+
+        Optional<JavaMethod> method = javaClass.getMethods().stream().filter(m -> m.getName().contains("attrIsClassInAnnotation")).findAny();
+
+        Assertions.assertTrue(method.isPresent());
+
+        ArrayList<JavaAnnotationModel> annotations = classUtil.getAnnotation(method.get().getAnnotations(), mockFileModel);
+        Assertions.assertNotNull(annotations);
+        Assertions.assertEquals(annotations.size(), 1);
+
+        JavaAnnotationModel firstAn = annotations.get(0);
+        Assertions.assertEquals(firstAn.getName(), "CustomClassAn");
+
+        ArrayList<JavaAnnotationField> fields = firstAn.getFields();
+        Assertions.assertEquals(fields.size(), 1);
+        Assertions.assertEquals(fields.get(0).getName(), "level");
     }
 }

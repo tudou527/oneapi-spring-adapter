@@ -30,8 +30,13 @@ public class TestController {
     ){
         return new Result<String>();
     }
-    
+
     public Result<String> noArguments() {
+        return new Result<String>();
+    }
+
+    @CustomClassAn(level=TestController.class)
+    public Result<String> attrIsClassInAnnotation() {
         return new Result<String>();
     }
 }

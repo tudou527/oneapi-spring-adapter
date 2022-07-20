@@ -12,7 +12,7 @@
 * 支持通过源码 jar、反编译等方式补充类型信息
 * 支持企业内部 RPC 协议（非 RESTful API）
 
-## 与 YApi/Apifox 等差异
+## 与 YApi、Apifox 等差异
 * API 生产与消费的区别
 
 

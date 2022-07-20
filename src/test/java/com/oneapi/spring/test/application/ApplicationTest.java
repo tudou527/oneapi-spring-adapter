@@ -3,7 +3,10 @@ package com.oneapi.spring.test.application;
 import com.google.inject.Provider;
 import com.oneapi.spring.Application;
 import com.oneapi.spring.analysis.BasicAnalysis;
+import com.oneapi.spring.analysis.EntryAnalysis;
+import com.oneapi.spring.analysis.TypeAnalysis;
 import com.oneapi.spring.cache.*;
+import com.oneapi.spring.models.JavaClassModel;
 import com.oneapi.spring.models.JavaFileModel;
 import com.oneapi.spring.test.TestUtil;
 import com.oneapi.spring.utils.FileUtil;
@@ -51,6 +54,10 @@ public class ApplicationTest {
     BasicAnalysis basicAnalysisReal;
     @Mock
     Provider<BasicAnalysis> basicAnalysis;
+    @Mock
+    EntryAnalysis entryAnalysis;
+    @Mock
+    Provider<EntryAnalysis> entryAnalysisProvider;
     @InjectMocks
     Application app;
     
@@ -61,9 +68,9 @@ public class ApplicationTest {
     public void setUp() {
         final SecurityManager securityManager = new SecurityManager() {
             public void checkPermission(Permission permission) {
-                if (permission.getName().startsWith("exitVM.-200")) {
-                    throw new AccessControlException("");
-                }
+            if (permission.getName().startsWith("exitVM.-200")) {
+                throw new AccessControlException("");
+            }
             }
         };
         
@@ -76,6 +83,8 @@ public class ApplicationTest {
     @BeforeEach
     public void mockBeforeEach() {
         MockitoAnnotations.openMocks(this);
+
+        Mockito.when(entryAnalysisProvider.get()).thenReturn(entryAnalysis);
     }
     
     @Test
@@ -145,15 +154,18 @@ public class ApplicationTest {
             return null;
         }).when(mvnUtil).saveReflectClassCache(Mockito.anyString());
         
-        Mockito.when(entryCache.getCache()).thenReturn(new ArrayList<>());
+        Mockito.when(entryCache.getCache()).thenReturn(new ArrayList<String>() {{
+            add("com.test.a.b.c");
+        }});
         Mockito.when(pendingCache.getCache()).thenReturn(new ArrayList<>());
-        
+        Mockito.when(entryAnalysis.analysis(Mockito.anyString())).thenReturn(new JavaFileModel());
+
         try {
             ReflectionTestUtils.invokeMethod(app, "run", (Object) new String[] {
-                    "-p",
-                    TestUtil.getBaseDir()+ "com/godone/testSuite",
-                    "-o",
-                    TestUtil.getBaseDir()+ "com/godone/testSuite",
+                "-p",
+                TestUtil.getBaseDir()+ "com/godone/testSuite",
+                "-o",
+                TestUtil.getBaseDir()+ "com/godone/testSuite",
             });
         } catch (RuntimeException ignore){
             System.out.print(ignore.getStackTrace());
@@ -170,12 +182,12 @@ public class ApplicationTest {
         
         try {
             Application.main(new String[] {
-                    "-p",
-                    TestUtil.getBaseDir()+ "com/godone/testSuite",
-                    "-o",
-                    TestUtil.getBaseDir()+ "com/godone/testSuite",
-                    "-r",
-                    TestUtil.getBaseDir()+ "com/godone/testSuite/field",
+                "-p",
+                TestUtil.getBaseDir()+ "com/godone/testSuite",
+                "-o",
+                TestUtil.getBaseDir()+ "com/godone/testSuite",
+                "-r",
+                TestUtil.getBaseDir()+ "com/godone/testSuite/field",
             });
         } catch (RuntimeException ignore){}
         
