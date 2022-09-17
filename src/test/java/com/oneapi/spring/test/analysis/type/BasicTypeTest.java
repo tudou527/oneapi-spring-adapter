@@ -112,4 +112,21 @@ public class BasicTypeTest {
         Assertions.assertEquals(pendCacheKey.size(),1);
         Assertions.assertEquals(pendCacheKey.get(0),"com.oneapi.spring.testSuite.field.ComplexField$ComplexSubClass");
     }
+
+    @Test
+    @DisplayName("同目录子类")
+    public void subClassInSameDir() {
+        List<String> pendCacheKey = new ArrayList<>();
+        Mockito.doAnswer((Answer<String>) invocation -> {
+            Object[] args = invocation.getArguments();
+            pendCacheKey.add((String) args[0]);
+            return null;
+        }).when(pendingCache).setCache(Mockito.anyString());
+
+        JavaActualType subClass = getActualType("sameDirSubClass");
+
+        Assertions.assertNotNull(subClass);
+        Assertions.assertEquals(subClass.getName(),"FieldComplexSubClass");
+        Assertions.assertEquals(subClass.getClassPath(),"com.oneapi.spring.testSuite.field.FieldWithDefaultValue$FieldComplexSubClass");
+    }
 }

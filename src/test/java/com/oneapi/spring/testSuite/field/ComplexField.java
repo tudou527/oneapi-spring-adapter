@@ -37,6 +37,7 @@ public class ComplexField<T> {
 
     // 子类
     private ComplexSubClass subClass;
+    private FieldWithDefaultValue.FieldComplexSubClass sameDirSubClass;
     
     // 扩展类
     private Result<? extends Description> extendField;

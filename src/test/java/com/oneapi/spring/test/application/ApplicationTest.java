@@ -147,7 +147,7 @@ public class ApplicationTest {
     @DisplayName("repository 默认值")
     public void repositoryDefault() {
         AtomicReference<String> repository = new AtomicReference<>("");
-        File result = new File(TestUtil.getBaseDir()+ "com/godone/testSuite/result.json");
+        File result = new File(TestUtil.getBaseDir()+ "com/godone/testSuite/oneapi.json");
         Mockito.doAnswer(invocation -> {
             Object[] args = invocation.getArguments();
             repository.set((String) args[0]);
@@ -178,7 +178,7 @@ public class ApplicationTest {
     @Test
     @DisplayName("有完整的解析结果")
     public void analysisResult() {
-        File result = new File(TestUtil.getBaseDir()+ "com/godone/testSuite/result.json");
+        File result = new File(TestUtil.getBaseDir()+ "com/godone/testSuite/oneapi.json");
         
         try {
             Application.main(new String[] {

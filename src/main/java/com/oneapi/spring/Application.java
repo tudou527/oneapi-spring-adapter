@@ -124,7 +124,7 @@ public class Application {
                 analysisResult.put(classPath, fileModelCache.getCache(classPath));
             });
             String analysisResultStr = JSON.toJSONString(analysisResult, SerializerFeature.DisableCircularReferenceDetect);
-            fileUtil.writeFile(analysisResultStr, outputFileDir+ "/result.json", Charset.defaultCharset());
+            fileUtil.writeFile(analysisResultStr, outputFileDir+ "/oneapi.json", Charset.defaultCharset());
 
             // 清空所有缓存
             fileModelCache.clear();

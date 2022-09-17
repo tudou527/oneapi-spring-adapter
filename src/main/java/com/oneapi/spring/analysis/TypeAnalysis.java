@@ -129,7 +129,22 @@ public class TypeAnalysis {
         // 从 import 列表中找到匹配的 class 并加入到待解析队列
         Optional<String> optionalFullTypeName = hostModel.getImports().stream().filter(str -> str.endsWith(simpleTypeName)).findFirst();
         optionalFullTypeName.ifPresent(s -> pendingCache.setCache(s));
+        if (optionalFullTypeName.isPresent()) {
+            pendingCache.setCache(optionalFullTypeName.get());
+            return optionalFullTypeName.get();
+        }
 
-        return optionalFullTypeName.orElse(null);
+        // 引用同目录下的子类时格式可能是 MainClass.SubClass 形式
+        String[] typeNameStr = typeName.split("\\.");
+        String mainClass = typeNameStr[typeNameStr.length -2];
+        if (mainClass != null) {
+            Optional<String> fullTypeName = hostModel.getImports().stream().filter(str -> str.endsWith(mainClass)).findFirst();
+            if (fullTypeName.isPresent()) {
+                pendingCache.setCache(fullTypeName.get());
+                return fullTypeName.get() + "$"+ simpleTypeName;
+            }
+        }
+
+        return null;
     }
 }

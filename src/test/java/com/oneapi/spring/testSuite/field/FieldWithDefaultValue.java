@@ -44,4 +44,8 @@ public class FieldWithDefaultValue {
     
     private ArrayList<Double> doubleArrayListField;
     private Collection<Boolean> booleanCollectionField;
+
+    public class FieldComplexSubClass {
+        private String subClassName;
+    }
 }
