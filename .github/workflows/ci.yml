@@ -36,6 +36,8 @@ jobs:
         run: mvn clean install test
       - name: Upload Coverage
         uses: codecov/codecov-action@v3.1.0
+        env:
+          CODECOV_TOKEN: f1581595-26e7-4ea5-acb1-3cbda1470d08
         with:
           files: ${{ github.workspace }}/target/site/jacoco/jacoco.xml
           name: codecov-umbrella
