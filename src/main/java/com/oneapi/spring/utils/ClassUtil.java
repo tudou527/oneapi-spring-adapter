@@ -192,7 +192,7 @@ public class ClassUtil {
         JavaType superClass = javaClass.getSuperJavaClass();
         // 存在父类时，导入父类的 class (java.lang.Object 的判断可能不严谨)
         if (superClass instanceof DefaultJavaParameterizedType) {
-            superClassName = ((DefaultJavaParameterizedType) superClass).getBinaryName();
+            superClassName = ((DefaultJavaParameterizedType) superClass).getSimpleName();
         }
 
         // 根据 java 的导入规则，当前目录下的文件可以不用手动 import，所以这里需要补全当前目录下的其他 class 作为默认导入

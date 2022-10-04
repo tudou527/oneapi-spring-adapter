@@ -129,7 +129,6 @@ public class AnnotationTest {
         Mockito.when(typeAnalysis.analysis(Mockito.any(), Mockito.any())).thenCallRealMethod();
 
         JavaClass javaClass = TestUtil.getJavaClass("com.oneapi.spring.testSuite.TestController");
-
         Optional<JavaMethod> method = javaClass.getMethods().stream().filter(m -> m.getName().contains("attrIsClassInAnnotation")).findAny();
 
         Assertions.assertTrue(method.isPresent());
@@ -144,5 +143,33 @@ public class AnnotationTest {
         ArrayList<JavaAnnotationField> fields = firstAn.getFields();
         Assertions.assertEquals(fields.size(), 1);
         Assertions.assertEquals(fields.get(0).getName(), "level");
+    }
+
+    @Test
+    @DisplayName("annotation value type is DefaultJavaAnnotation")
+    public void defaultJavaAnnoValueType() {
+        Mockito.when(typeAnalysisProvider.get()).thenReturn(typeAnalysis);
+        Mockito.when(typeAnalysis.analysis(Mockito.any(), Mockito.any())).thenCallRealMethod();
+
+        JavaClass javaClass = TestUtil.getJavaClass("com.oneapi.spring.testSuite.TestController");
+        Optional<JavaMethod> method = javaClass.getMethods().stream().filter(m -> m.getName().contains("defaultJavaAnnoValueType")).findAny();
+
+        Assertions.assertTrue(method.isPresent());
+        ArrayList<JavaAnnotationModel> annotations = classUtil.getAnnotation(method.get().getAnnotations(), mockFileModel);
+        Assertions.assertNotNull(annotations);
+
+        ArrayList<JavaAnnotationField> anFields = annotations.get(0).getFields();
+        Assertions.assertEquals(anFields.size(), 1);
+
+        JavaAnnotationField firstField = anFields.get(0);
+        Assertions.assertEquals(firstField.getName(), "value");
+        Assertions.assertEquals(firstField.isArray(), true);
+
+        ArrayList<JavaAnnotationModel> values = (ArrayList) firstField.getValue();
+        Assertions.assertEquals(values.size(), 1);
+
+        JavaAnnotationModel firstChild = values.get(0);
+        Assertions.assertEquals(firstChild.getName(), "CustomClassAn");
+        Assertions.assertEquals(firstChild.getFields().get(0).getName(), "level");
     }
 }

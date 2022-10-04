@@ -39,4 +39,9 @@ public class TestController {
     public Result<String> attrIsClassInAnnotation() {
         return new Result<String>();
     }
+
+    @CustomListAn({ @CustomClassAn(level=TestController.class) })
+    public Result<String> defaultJavaAnnoValueType() {
+        return null;
+    }
 }
