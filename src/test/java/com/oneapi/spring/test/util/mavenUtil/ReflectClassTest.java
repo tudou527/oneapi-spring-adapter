@@ -46,10 +46,10 @@ public class ReflectClassTest {
     @DisplayName("缓存 jar 包中的 class")
     public void saveReflectClass() {
         List<String> jarList = new ArrayList<String>() {{
-            add(TestUtil.getBaseDir() + "com/oneapi/spring/testSuite/guice-4.2.3.jar");
+            add(TestUtil.currentDir + "/lib/chardet-1.0.jar");
         }};
         Mockito.when(fileUtil.findFileList(Mockito.anyString(), Mockito.anyString())).thenReturn(jarList);
-    
+
         // 保存 resource 缓存调用参数
         HashMap<String, String> reflectCacheData = new HashMap<>();
         Mockito.when(reflectCache.setCache(Mockito.anyString(), Mockito.anyString())).thenAnswer((Answer<String>) invocation -> {
@@ -60,7 +60,7 @@ public class ReflectClassTest {
     
         mvnUtil.saveReflectClassCache("");
     
-        Assertions.assertEquals(reflectCacheData.size(), 585);
+        Assertions.assertEquals(reflectCacheData.size(), 29);
     }
     
     @Test

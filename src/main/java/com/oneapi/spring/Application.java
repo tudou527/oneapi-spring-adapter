@@ -60,9 +60,9 @@ public class Application {
     static final Stopwatch stopwatch = Stopwatch.createStarted();
 
     private void run(String[] args) {
-        boolean testEnv = "test".equals(System.getProperties().getProperty("env"));
+        boolean testEnv = "test".equals(System.getProperty("global.env"));
         log.info("version: %s", this.getClass().getPackage().getImplementationVersion());
-        
+
         try {
             CommandLineParser parser = new DefaultParser();
             Options options = new Options();

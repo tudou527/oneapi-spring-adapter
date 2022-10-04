@@ -94,7 +94,8 @@ public class BasicAnalysis {
             fileLines = Files.readAllLines(Paths.get(javaFilePath), fileUtil.getFileOrIOEncode(javaFilePath));
         } catch (IOException ignored) {}
 
-        Optional<JavaClass> optionalClass = builder.getClasses().stream().filter(JavaClass::isPublic).findFirst();
+        // 这里只过滤掉非 private class（因为代码中不一定会声明 public class）
+        Optional<JavaClass> optionalClass = builder.getClasses().stream().filter(cls -> !cls.isPrivate()).findFirst();
         // 处理子类
         if (!childClassName.isEmpty()) {
             String finalChildClassName = childClassName;

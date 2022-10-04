@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="App" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="com.oneapi.spring.Application" />
+    <module name="spring-adapter" />
+    <option name="PROGRAM_PARAMETERS" value="-p $PROJECT_DIR$/../oneapi-java-repo/mall -o $PROJECT_DIR$/../oneapi-website/src/demo" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

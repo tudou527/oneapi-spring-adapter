@@ -1,5 +1,6 @@
 package com.oneapi.spring.test.application;
 
+import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.oneapi.spring.Application;
 import com.oneapi.spring.analysis.BasicAnalysis;
@@ -60,26 +61,7 @@ public class ApplicationTest {
     Provider<EntryAnalysis> entryAnalysisProvider;
     @InjectMocks
     Application app;
-    
-    private PrintStream console = null;
-    private ByteArrayOutputStream bytes = null;
-    
-    @BeforeEach
-    public void setUp() {
-        final SecurityManager securityManager = new SecurityManager() {
-            public void checkPermission(Permission permission) {
-            if (permission.getName().startsWith("exitVM.-200")) {
-                throw new AccessControlException("");
-            }
-            }
-        };
-        
-        System.setSecurityManager(securityManager);
-        bytes = new ByteArrayOutputStream();
-        console = System.out;
-        System.setOut(new PrintStream(bytes));
-    }
-    
+
     @BeforeEach
     public void mockBeforeEach() {
         MockitoAnnotations.openMocks(this);
@@ -160,36 +142,35 @@ public class ApplicationTest {
         Mockito.when(pendingCache.getCache()).thenReturn(new ArrayList<>());
         Mockito.when(entryAnalysis.analysis(Mockito.anyString())).thenReturn(new JavaFileModel());
 
-        try {
-            ReflectionTestUtils.invokeMethod(app, "run", (Object) new String[] {
-                "-p",
-                TestUtil.getBaseDir()+ "com/godone/testSuite",
-                "-o",
-                TestUtil.getBaseDir()+ "com/godone/testSuite",
-            });
-        } catch (RuntimeException ignore){
-            System.out.print(ignore.getStackTrace());
-        }
-        
+        ReflectionTestUtils.invokeMethod(app, "run", (Object) new String[] {
+            "-p",
+            TestUtil.getBaseDir()+ "com/godone/testSuite",
+            "-o",
+            TestUtil.getBaseDir()+ "com/godone/testSuite",
+        });
+
         Assertions.assertTrue(repository.get().contains(System.getProperty("user.home")));
         result.delete();
     }
     
     @Test
-    @DisplayName("有完整的解析结果")
+    @DisplayName("正常解析结果")
     public void analysisResult() {
-        File result = new File(TestUtil.getBaseDir()+ "com/godone/testSuite/oneapi.json");
-        
-        try {
-            Application.main(new String[] {
-                "-p",
-                TestUtil.getBaseDir()+ "com/godone/testSuite",
-                "-o",
-                TestUtil.getBaseDir()+ "com/godone/testSuite",
-                "-r",
-                TestUtil.getBaseDir()+ "com/godone/testSuite/field",
-            });
-        } catch (RuntimeException ignore){}
+        File result = new File(TestUtil.getBaseDir()+ "com/oneapi/spring/testSuite/oneapi.json");
+
+        Application.main(new String[] {
+            "-p",
+            TestUtil.getBaseDir()+ "com/oneapi/spring/testSuite",
+            "-o",
+            TestUtil.getBaseDir()+ "com/oneapi/spring/testSuite",
+            "-r",
+            TestUtil.getBaseDir()+ "com/oneapi/spring/testSuite/field",
+        });
+//        try {
+//
+//        } catch (RuntimeException ignore){
+//            System.out.print(ignore);
+//        }
         
         Assertions.assertTrue(result.exists());
         result.delete();

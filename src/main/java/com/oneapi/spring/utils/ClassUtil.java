@@ -11,6 +11,7 @@ import com.oneapi.spring.cache.PendingCache;
 import com.oneapi.spring.cache.ResourceCache;
 import com.google.inject.Inject;
 import com.oneapi.spring.models.*;
+import com.thoughtworks.qdox.JavaProjectBuilder;
 import com.thoughtworks.qdox.model.*;
 import com.thoughtworks.qdox.model.expression.*;
 import com.thoughtworks.qdox.model.impl.DefaultJavaAnnotation;
@@ -22,6 +23,8 @@ import java.util.*;
 
 @Singleton
 public class ClassUtil {
+    @Inject
+    private FileUtil fileUtil;
     @Inject
     private MavenUtil mvnUtil;
     @Inject
@@ -184,14 +187,34 @@ public class ClassUtil {
                 importList.add(imp);
             }
         });
-        
+
+        String superClassName = "";
+        JavaType superClass = javaClass.getSuperJavaClass();
+        // 存在父类时，导入父类的 class (java.lang.Object 的判断可能不严谨)
+        if (superClass instanceof DefaultJavaParameterizedType) {
+            superClassName = ((DefaultJavaParameterizedType) superClass).getBinaryName();
+        }
+
         // 根据 java 的导入规则，当前目录下的文件可以不用手动 import，所以这里需要补全当前目录下的其他 class 作为默认导入
         String classDirPath = new File(javaClass.getSource().getURL().getPath()).getParent();
-    
+        String finalSuperClassName = superClassName;
         resourceCache.getCache().forEach((classPath) -> {
-            String fileDirPath = new File(resourceCache.getCache(classPath)).getParent();
+            String filePath = resourceCache.getCache(classPath);
+            String fileDirPath = new File(filePath).getParent();
             if (classDirPath.equals(fileDirPath)) {
-                importList.add(classPath);
+                // 导入类为父类时尝试导入父类下所有的 class
+                if (classPath.endsWith("."+ finalSuperClassName)) {
+                    JavaProjectBuilder builder = fileUtil.getBuilder(filePath);
+                    builder.getClasses().forEach(subClass -> {
+                        String subClassPath = subClass.getFullyQualifiedName();
+                        if (!classPath.equals(subClassPath)) {
+                            subClassPath = subClassPath.replace(classPath +".", classPath +"$");
+                        }
+                        importList.add(subClassPath);
+                    });
+                } else {
+                    importList.add(classPath);
+                }
             }
         });
 
