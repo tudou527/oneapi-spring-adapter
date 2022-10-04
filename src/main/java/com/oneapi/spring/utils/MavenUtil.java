@@ -32,23 +32,29 @@ public class MavenUtil {
 
     // 缓存入口文件及其他资源文件
     public void saveResource(String entryDir, boolean saveAsEntry) {
+        String globalEnv = System.getProperty("global.env");
+
         AtomicInteger entryCount = new AtomicInteger();
-        List<String> javaFiles = fileUtil.findFileList("glob:**/*.java", entryDir);
+        List<String> javaFiles = fileUtil.findFileList("glob:**/*.java", entryDir)
+                // 过滤掉 test 目录
+                .stream().filter(p -> {
+                    return "test".equals(globalEnv) ? true : !p.contains("/test/");
+                })
+                .collect(Collectors.toList());
     
         log.info("found %s class from %s", javaFiles.size(), entryDir);
     
         javaFiles.forEach(filePath -> {
             JavaProjectBuilder builder = fileUtil.getBuilder(filePath);
             if (builder != null) {
-                Optional<JavaClass> optionalJavaClass = builder.getClasses().stream().filter(JavaClass::isPublic).findFirst();
-    
+                Optional<JavaClass> optionalJavaClass = builder.getClasses().stream().filter(cls -> !cls.isPrivate()).findFirst();
+
                 if (optionalJavaClass.isPresent()) {
                     JavaClass javaClass = optionalJavaClass.get();
-                    String className = String.format("%s.%s", javaClass.getPackageName(), javaClass.getName());
-    
+                    String className = javaClass.getFullyQualifiedName();
                     // 缓存为资源文件
                     resourceCache.setCache(className, filePath);
-                    
+
                     // 缓存为入口
                     if (saveAsEntry) {
                         boolean hasEntryAnnotation = javaClass.getAnnotations().stream().anyMatch(an -> an.getType().getName().endsWith("Controller"));
@@ -68,8 +74,9 @@ public class MavenUtil {
     public void saveReflectClassCache(String localRepository) {
         AtomicInteger cacheCount = new AtomicInteger();
         List<String> jarList = fileUtil.findFileList("glob:**/*.jar", localRepository)
-                // 忽略源码 jar
-                .stream().filter(p -> !p.contains("-source.jar")).collect(Collectors.toList());
+                // 忽略源码 jar 及 /test/ 目录
+                .stream().filter(p -> !p.contains("-source.jar") && !p.contains("/test/"))
+                .collect(Collectors.toList());
         
         log.info("found %s jar file from %s", jarList.size(), localRepository);
 

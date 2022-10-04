@@ -41,7 +41,7 @@ public class ResourceTest {
         MockitoAnnotations.openMocks(this);
 
         FileUtil fUtil = new FileUtil();
-        fileList = fUtil.findFileList("glob:**/*.java", TestUtil.getBaseDir());
+        fileList = fUtil.findFileList("glob:**/*.java", TestUtil.currentDir);
     
         Mockito.doNothing().when(log).info(Mockito.any(), Mockito.any());
     }
@@ -115,7 +115,7 @@ public class ResourceTest {
             entryCacheData.put((String) args[0], (String) args[1]);
             return null;
         });
-        
+
         mvnUtil.saveResource(TestUtil.getBaseDir(), true);
         
         // 入口缓存数量 > 0

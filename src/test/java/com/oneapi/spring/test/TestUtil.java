@@ -7,7 +7,7 @@ import com.thoughtworks.qdox.model.JavaClass;
 import java.nio.file.Paths;
 
 public class TestUtil {
-    static String currentDir = Paths.get("").toAbsolutePath().toString();
+    public static String currentDir = Paths.get("").toAbsolutePath().toString();
     
     public static String getBaseDir() {
         return currentDir +"/src/test/java/";

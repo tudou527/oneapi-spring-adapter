@@ -61,7 +61,7 @@ public class AnalysisFromResourceTest {
 
         Assertions.assertNull(classModel);
     }
-    
+
     @Test
     @DisplayName("使用 qdox 解析失败")
     public void getBuilderFail() {
@@ -74,9 +74,9 @@ public class AnalysisFromResourceTest {
         
         Assertions.assertNull(classModel);
     }
-    
+
     @Test
-    @DisplayName("不存在 public 类")
+    @DisplayName("非 public 类")
     public void noPublicClass() {
         Mockito.when(fileUtil.getBuilder(Mockito.any())).thenCallRealMethod();
         Mockito.when(fileUtil.getFileOrIOEncode(Mockito.any())).thenReturn(Charset.defaultCharset());
@@ -86,10 +86,9 @@ public class AnalysisFromResourceTest {
         
         JavaFileModel classModel = ReflectionTestUtils.invokeMethod(basicAnalysis, "analysisFromResource", "com.oneapi.spring.testSuite.PrivateClass");
         
-        Assertions.assertNull(classModel);
+        Assertions.assertNotNull(classModel);
     }
-    
-    
+
     @Test
     @DisplayName("子类")
     public void subClass() {
@@ -119,7 +118,7 @@ public class AnalysisFromResourceTest {
         Assertions.assertEquals(subClass.getClassPath(), "com.oneapi.spring.testSuite.field.ComplexField$ComplexSubClass");
         Assertions.assertEquals(subClass.getFields().size(), 1);
     }
-    
+
     @Test
     @DisplayName("正常解析类型")
     public void normal() {
