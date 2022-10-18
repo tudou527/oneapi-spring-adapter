@@ -2,7 +2,7 @@
   <configuration default="false" name="App" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="com.oneapi.spring.Application" />
     <module name="spring-adapter" />
-    <option name="PROGRAM_PARAMETERS" value="-p $PROJECT_DIR$/../oneapi-java-demo/mall -o $PROJECT_DIR$/../oneapi-website/src/demo" />
+    <option name="PROGRAM_PARAMETERS" value="-p $PROJECT_DIR$/src/test -o $PROJECT_DIR$/.." />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

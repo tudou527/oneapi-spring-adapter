@@ -37,9 +37,7 @@ public class MavenUtil {
         AtomicInteger entryCount = new AtomicInteger();
         List<String> javaFiles = fileUtil.findFileList("glob:**/*.java", entryDir)
                 // 过滤掉 test 目录
-                .stream().filter(p -> {
-                    return "test".equals(globalEnv) ? true : !p.contains("/test/");
-                })
+                .stream().filter(p -> "test".equals(globalEnv) ? true : !p.contains("/test/"))
                 .collect(Collectors.toList());
     
         log.info("found %s class from %s", javaFiles.size(), entryDir);
@@ -57,10 +55,16 @@ public class MavenUtil {
 
                     // 缓存为入口
                     if (saveAsEntry) {
-                        boolean hasEntryAnnotation = javaClass.getAnnotations().stream().anyMatch(an -> an.getType().getName().endsWith("Controller"));
-                        if (hasEntryAnnotation) {
+                        Optional<JavaClass> entryClass = builder.getClasses()
+                            .stream().filter(cls -> cls.getAnnotations().stream().anyMatch(an -> an.getType().getName().endsWith("Controller")))
+                            .findFirst();
+                        if (entryClass.isPresent()) {
+                            String entryClassName = entryClass.get().getFullyQualifiedName();
+                            if (!entryClassName.equals(className)) {
+                                entryClassName = entryClassName.replace(className+".", className+"$");
+                            }
                             entryCount.set(entryCount.get() + 1);
-                            entryCache.setCache(className, filePath);
+                            entryCache.setCache(entryClassName, filePath);
                         }
                     }
                 }
