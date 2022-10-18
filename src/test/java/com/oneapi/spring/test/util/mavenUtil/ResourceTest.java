@@ -132,5 +132,9 @@ public class ResourceTest {
         });
         // 资源缓存不存在
         Assertions.assertTrue(resourceCacheData.size() > 1);
+
+        // 断言内部类
+        String nextedClass = entryCacheData.get("com.oneapi.spring.testSuite.NestedClass$Controller");
+        Assertions.assertTrue(nextedClass.contains("com/oneapi/spring/testSuite/NestedClass.java"));
     }
 }

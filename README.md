@@ -16,8 +16,3 @@
 * 其他
   * 解析结果示例：./attach/result.json
   * result.json 类型定义：./attach/JavaMeta.d.ts
-
-## BadCase
-  * /org/apache/commons/commons-pool2/2.11.1/commons-pool2-2.11.1-sources.jar
-    * org.apache.commons.pool2.impl.GenericObjectPool#L104
-      * IdentityWrapper 类型来自于继承类 BaseGenericObjectPool 中的定义
